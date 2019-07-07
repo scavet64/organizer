@@ -1,4 +1,4 @@
-package com.scavettapps.organizer.entity;
+package com.scavettapps.organizer.core.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -7,6 +7,6 @@ import javax.persistence.Table;
 @Table(name = "scan_locations")
 public class ScanLocation extends AbstractPersistableEntity<Long> {
 
-	private String path;
-	
+   private String path;
+
 }

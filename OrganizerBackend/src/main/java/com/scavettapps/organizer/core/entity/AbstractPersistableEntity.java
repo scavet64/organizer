@@ -1,4 +1,4 @@
-package com.scavettapps.organizer.entity;
+package com.scavettapps.organizer.core.entity;
 
 import java.io.Serializable;
 
