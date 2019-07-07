@@ -1,6 +1,7 @@
 package com.scavettapps.organizer.controller;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,39 +11,59 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.scavettapps.organizer.controller.response.DataResponse;
 import com.scavettapps.organizer.controller.response.Response;
-import com.scavettapps.organizer.entity.File;
-import com.scavettapps.organizer.repository.FileRepository;
-import com.scavettapps.organizer.service.FileScanningService;
+import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
+import com.scavettapps.organizer.core.entity.MediaFile;
+import com.scavettapps.organizer.core.repository.DuplicateMediaFilePathRepository;
+import com.scavettapps.organizer.core.repository.FileRepository;
+import com.scavettapps.organizer.scanner.FileScanningService;
 
 @RestController
 public class FileController {
-	
-	@Autowired
-	private FileRepository fileRepo;
-	
-	@Autowired
-	private FileScanningService fileScanningService;
-	
-	@RequestMapping("/file")
-	public long getTest() {
-		return fileRepo.count();
-	}
-	
-	@RequestMapping("/all")
-	public Response getAll() {
-		return new DataResponse(fileRepo.findAll());
-	}
-	
-	@RequestMapping("/scan")
-	public Response scan(@RequestParam String path) {
-		return new DataResponse(fileScanningService.scanLocationForFiles(path));
-	}
-	
-	@RequestMapping("/add")
-	public Response addTest() {
-		File test = new File(UUID.randomUUID().toString(), "name");
-		test = fileRepo.save(test);
-		return new DataResponse(test);
-	}
+
+   @Autowired
+   private FileRepository fileRepo;
+
+   @Autowired
+   private FileScanningService fileScanningService;
+   
+   @Autowired
+   private DuplicateMediaFilePathRepository duplicateMediaFilePathRepository;
+
+   @RequestMapping("/file")
+   public long getTest() {
+      return fileRepo.count();
+   }
+
+   @RequestMapping("/all")
+   public Response getAll() {
+      return new DataResponse(fileRepo.findAll());
+   }
+
+   @RequestMapping("/scan")
+   public Response scan(@RequestParam String path) throws InterruptedException, ExecutionException {
+      return new DataResponse(fileScanningService.scanLocationForFiles(path));
+   }
+
+   @RequestMapping("/add")
+   public Response addTest() {
+      MediaFile test = new MediaFile(UUID.randomUUID().toString(), "name");
+      test = fileRepo.save(test);
+      return new DataResponse(test);
+   }
+
+//   @RequestMapping("/file/folder")
+//   public Response findFilesInFolder(@RequestParam String folderName) {
+//      return new DataResponse(this.fileRepo.findAllByFolder_Path(folderName));
+//   }
+
+   @RequestMapping("/file/dupes")
+   public Response findDuplicates() {
+      return new DataResponse(this.duplicateMediaFilePathRepository.findAll());
+   }
+   
+   @RequestMapping("/file/dupes2")
+   public Response findDuplicates2() {
+      return new DataResponse(this.fileRepo.findAllByDuplicatePathsNotEmpty());
+   }
 
 }
