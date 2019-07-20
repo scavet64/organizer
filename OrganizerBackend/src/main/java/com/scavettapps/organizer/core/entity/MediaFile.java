@@ -36,6 +36,10 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    private String path;
    
    @NotNull
+   @Column(name = "ignored")
+   private boolean isIgnored;
+   
+   @NotNull
    @Column(name = "last_seen_date")
    private LocalDate lastSeenDate;
 
@@ -55,6 +59,7 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
       this.hash = hash;
       this.name = name;
       this.lastSeenDate = LocalDate.now();
+      isIgnored = false;
    }
 
    public MediaFile(String hash, String name, long size, String path) {
@@ -64,10 +69,13 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
       this.size = size;
       this.path = path;
       this.lastSeenDate = LocalDate.now();
+      isIgnored = false;
    }
 
    public MediaFile() {
       super();
+      this.lastSeenDate = LocalDate.now();
+      isIgnored = false;
    }
    
    public boolean addDuplicatePath(DuplicateMediaFilePath dupe) {
@@ -140,6 +148,14 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
 
    public void setDuplicatePaths(Set<DuplicateMediaFilePath> duplicatePaths) {
       this.duplicatePaths = duplicatePaths;
+   }
+
+   public boolean isIsIgnored() {
+      return isIgnored;
+   }
+
+   public void setIsIgnored(boolean isIgnored) {
+      this.isIgnored = isIgnored;
    }
 
    @Override

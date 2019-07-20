@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Tags</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark" class="ion-padding">
+
+  <div style="margin-top:50px;" class='content-margins'>
+    <ion-text >
+      List of known tags for media
+    </ion-text>
+  </div>
+
+  <ion-item color='primary' class='content-margins rounded'>
+    <ion-icon slot="start" name='search'></ion-icon>
+    <ion-input>
+
+    </ion-input>
+    <ion-button (click)="onClick()" slot='end'>
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <ion-list color="dark" class='content-margins rounded'>
+    <ion-item>
+      <ion-chip slot='start'>Testing</ion-chip>
+      <ion-button (click)="onClick()" slot='end'>
+          <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
+        </ion-button>
+      <ion-button (click)="onClick()" slot='end'>
+        <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
+      </ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <ion-text>
+          testing
+        </ion-text>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <ion-text>
+          testing
+        </ion-text>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <ion-text>
+          testing
+        </ion-text>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        <ion-text>
+          testing
+        </ion-text>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

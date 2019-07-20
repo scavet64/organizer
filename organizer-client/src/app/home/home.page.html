@@ -9,8 +9,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <ion-card class="welcome-card">
+<ion-content color="dark" class="ion-padding">
+  <!-- <ion-card class="welcome-card">
       <ion-img src="/assets/shapes.svg"></ion-img>
       <ion-card-header>
         <ion-card-subtitle>Get Started</ion-card-subtitle>
@@ -40,5 +40,54 @@
         <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
         <ion-label>Theme Your App</ion-label>
       </ion-item>
-    </ion-list>
+    </ion-list> -->
+
+  <ion-text style="margin:15px;">Folders</ion-text>
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let file of tempFolders" size=6>
+        <ion-item>
+          <ion-icon name="folder" color="light" slot="start"></ion-icon>
+          <ion-button style="text-transform: none" expand='block'>
+            {{file.folderName}}
+          </ion-button>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col *ngFor="let file of rootFiles">
+        <ion-card style="padding: 0; width: 500px; height: 415px;" color="primary">
+          <ion-card-header
+            style="height: 75px; text-align: center; display: flex; align-items: center; justify-content: center">
+            <ion-card-subtitle>{{file.name}}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content style="padding: 0 !important;">
+            <video class="video-style" controls preload="metadata" oncontextmenu="return false;"
+              controlsList="nodownload" #videoPlayer style="width: 500px; height: 280px; margin:auto">
+              <source [src]="getVideoUrl(file)" type="video/mp4" />
+              Browser not supported
+            </video>
+            
+            <ion-item class="ion-no-padding" style="height: 50; margin:0; padding-left:3px; padding-right:3px;" color="primary" lines="none">
+              <ion-button slot='end' (click)="hideMedia(file)">
+                <ion-icon name="trash" color="danger" slot="icon-only" ></ion-icon>
+              </ion-button>
+
+              <ion-chip color="success">Cool Tag</ion-chip>
+
+            </ion-item>
+
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+
+  </ion-grid>
+
+
+
 </ion-content>

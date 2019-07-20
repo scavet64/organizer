@@ -1,8 +1,6 @@
 package com.scavettapps.organizer.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,13 +8,13 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.sun.istack.NotNull;
+import java.io.File;
 import java.util.stream.Collectors;
 
 @Entity
@@ -26,6 +24,10 @@ public class Folder extends AbstractPersistableEntity<Long> {
    @NotNull
    @Column(name = "path")
    private String path;
+   
+   @NotNull
+   @Column(name = "ignored")
+   private boolean isIgnored;
 
    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
    private Set<Folder> folders;
@@ -36,18 +38,21 @@ public class Folder extends AbstractPersistableEntity<Long> {
    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
    @JsonIgnore
    private Folder folder;
+   
 
    public Folder(String path) {
       super();
       this.path = path;
-      this.folders = new HashSet<Folder>();
-      this.files = new HashSet<MediaFile>();
+      this.folders = new HashSet<>();
+      this.files = new HashSet<>();
+      this.isIgnored = false;
    }
 
    public Folder() {
       super();
-      this.folders = new HashSet<Folder>();
-      this.files = new HashSet<MediaFile>();
+      this.folders = new HashSet<>();
+      this.files = new HashSet<>();
+      this.isIgnored = false;
    }
    
    public boolean doesFileExist(MediaFile file) {
@@ -75,7 +80,14 @@ public class Folder extends AbstractPersistableEntity<Long> {
       }
       return parentPath;
    }
-
+   
+   /**
+    * @return the name of the folder.
+    */
+   public String getFolderName() {
+      File folderFile = new File(this.path);
+      return folderFile.getName();
+   }
 
    public String getPath() {
       return path;
@@ -107,6 +119,14 @@ public class Folder extends AbstractPersistableEntity<Long> {
 
    public void setFolder(Folder folder) {
       this.folder = folder;
+   }
+
+   public boolean isIsIgnored() {
+      return isIgnored;
+   }
+
+   public void setIsIgnored(boolean isIgnored) {
+      this.isIgnored = isIgnored;
    }
 
    @Override
