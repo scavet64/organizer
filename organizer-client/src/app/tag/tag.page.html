@@ -7,58 +7,50 @@
 <ion-content color="dark" class="ion-padding">
 
   <div style="margin-top:50px;" class='content-margins'>
-    <ion-text >
+    <ion-text>
       List of known tags for media
     </ion-text>
   </div>
+  <ion-grid class="content-margins ion-no-padding">
+    <ion-row class="ion-no-padding" style="margin-bottom: 10px">
+      <ion-col size="10">
+        <ion-item color='primary' class='rounded' style="height:100%">
+          <ion-icon slot="start" name='search'></ion-icon>
+          <ion-input>
 
-  <ion-item color='primary' class='content-margins rounded'>
-    <ion-icon slot="start" name='search'></ion-icon>
-    <ion-input>
-
-    </ion-input>
-    <ion-button (click)="onClick()" slot='end'>
-      <ion-icon slot="icon-only" name="close"></ion-icon>
-    </ion-button>
-  </ion-item>
-
-  <ion-list color="dark" class='content-margins rounded'>
-    <ion-item>
-      <ion-chip slot='start'>Testing</ion-chip>
-      <ion-button (click)="onClick()" slot='end'>
-          <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
+          </ion-input>
+          <ion-button (click)="onClick()" slot='end'>
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-col>
+      <ion-col size="2" class="">
+        <ion-button (click)="onClick()" style="height:100%; width: 100%;" class="ion-no-margin">
+          New
+          <ion-icon slot="start" name="add" color='light'></ion-icon>
         </ion-button>
-      <ion-button (click)="onClick()" slot='end'>
-        <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
-      </ion-button>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <ion-text>
-          testing
-        </ion-text>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <ion-text>
-          testing
-        </ion-text>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <ion-text>
-          testing
-        </ion-text>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        <ion-text>
-          testing
-        </ion-text>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <!-- Tag List -->
+    <ion-row class="ion-no-padding">
+      <ion-col size="12">
+        <ion-list color="dark" class='rounded' style="width: 100%">
+          <ion-item *ngFor="let tag of tags">
+            <ion-chip slot='start' color="dark" style="background-color: rgba(255, 255, 255, 0.096); color: white">
+            {{tag.name}}
+            </ion-chip>
+            <ion-item slot='end'>
+              <ion-button (click)="onClick()">
+                <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
+              </ion-button>
+              <ion-button (click)="onClick()">
+                <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
