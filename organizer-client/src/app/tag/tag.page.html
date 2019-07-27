@@ -16,7 +16,7 @@
       <ion-col size="10">
         <ion-item color='primary' class='rounded' style="height:100%">
           <ion-icon slot="start" name='search'></ion-icon>
-          <ion-input clearInput [value]='searchBox' >
+          <ion-input clearInput [value]='searchBox'>
 
           </ion-input>
         </ion-item>
@@ -35,24 +35,25 @@
         <ion-list color="dark" class='rounded' style="width: 100%">
           <ion-item *ngFor="let tag of tags">
             <div style="width: 200px">
-                <ion-chip slot='start' color="dark" [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor">
-                    {{tag.name}}
-                    </ion-chip>
+              <ion-chip slot='start' color="dark" [style.background-color]="tag.backgroundColor"
+                [style.color]="tag.textColor">
+                {{tag.name}}
+              </ion-chip>
             </div>
-            
+
             <div style="align-content: center">
-                <ion-text *ngIf="tag.description" style="font-size: .95rem">
-                    {{tag.description}}
-                </ion-text>
-                <br>
-                <ion-text style="font-size: .75rem ">
-                    Videos with this tag
-                </ion-text>
+              <ion-text *ngIf="tag.description" style="font-size: .95rem">
+                {{tag.description}}
+              </ion-text>
+              <br>
+              <ion-text style="font-size: .75rem ">
+                Videos with this tag
+              </ion-text>
             </div>
-            
+
             <ion-item slot='end'>
               <ion-button (click)="editClick(tag)">
-                <ion-icon slot="icon-only" name="create" color='light' ></ion-icon>
+                <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
               </ion-button>
               <ion-button (click)="deleteClick(tag)">
                 <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
