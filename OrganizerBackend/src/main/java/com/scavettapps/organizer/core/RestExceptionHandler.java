@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.scavettapps.organizer.controller;
+package com.scavettapps.organizer.core;
 
-import com.scavettapps.organizer.controller.response.ErrorResponse;
+import com.scavettapps.organizer.core.response.ErrorResponse;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +33,13 @@ public class RestExceptionHandler {
 
    @ExceptionHandler(value = { EntityNotFoundException.class })
    public ResponseEntity entityNotFoundException(EntityNotFoundException ex, WebRequest request) {
-      LOGGER.debug("handling DomainObjectNotFoundException...");
+      LOGGER.debug("handling EntityNotFoundException...");
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getLocalizedMessage()));
+   }
+   
+   @ExceptionHandler(value = { EntityAlreadyExistsException.class })
+   public ResponseEntity entityAlreadyExistsException(EntityAlreadyExistsException ex, WebRequest request) {
+      LOGGER.debug("handling EntityAlreadyExistsException...");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getLocalizedMessage()));
    }
 }

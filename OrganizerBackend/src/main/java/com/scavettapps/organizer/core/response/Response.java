@@ -1,4 +1,4 @@
-package com.scavettapps.organizer.controller.response;
+package com.scavettapps.organizer.core.response;
 
 import org.springframework.beans.factory.annotation.Value;
 

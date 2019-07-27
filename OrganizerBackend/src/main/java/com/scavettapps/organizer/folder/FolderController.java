@@ -1,15 +1,13 @@
-package com.scavettapps.organizer.controller;
+package com.scavettapps.organizer.folder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.scavettapps.organizer.controller.response.DataResponse;
-import com.scavettapps.organizer.controller.response.ErrorResponse;
-import com.scavettapps.organizer.controller.response.Response;
-import com.scavettapps.organizer.core.entity.Folder;
-import com.scavettapps.organizer.core.repository.FolderRepository;
+import com.scavettapps.organizer.core.response.DataResponse;
+import com.scavettapps.organizer.core.response.ErrorResponse;
+import com.scavettapps.organizer.core.response.Response;
 import java.util.HashMap;
 import java.util.Map;
 

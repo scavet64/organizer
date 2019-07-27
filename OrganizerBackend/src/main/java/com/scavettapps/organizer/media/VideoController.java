@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.scavettapps.organizer.controller;
+package com.scavettapps.organizer.media;
 
-import com.scavettapps.organizer.core.service.MediaFileService;
 import com.scavettapps.organizer.media.ResourceService;
 import com.sun.swing.internal.plaf.metal.resources.metal;
 import java.io.FileNotFoundException;

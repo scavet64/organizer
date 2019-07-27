@@ -1,5 +1,6 @@
-package com.scavettapps.organizer.core.entity;
+package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.tag.Tag;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
+import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
 import com.sun.istack.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;

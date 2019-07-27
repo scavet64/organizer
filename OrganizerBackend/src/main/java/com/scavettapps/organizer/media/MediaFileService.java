@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.scavettapps.organizer.core.service;
+package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.core.EntityNotFoundException;
-import com.scavettapps.organizer.core.entity.MediaFile;
-import com.scavettapps.organizer.core.repository.FileRepository;
+import com.scavettapps.organizer.media.MediaFile;
+import com.scavettapps.organizer.media.FileRepository;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;

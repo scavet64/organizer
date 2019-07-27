@@ -1,4 +1,4 @@
-package com.scavettapps.organizer.core.repository;
+package com.scavettapps.organizer.media;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.scavettapps.organizer.core.entity.MediaFile;
+import com.scavettapps.organizer.media.MediaFile;
 
 @Repository
 public interface FileRepository extends JpaRepository<MediaFile, String> {

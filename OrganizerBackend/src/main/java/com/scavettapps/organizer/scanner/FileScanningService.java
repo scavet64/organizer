@@ -25,11 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.scavettapps.organizer.core.entity.Folder;
-import com.scavettapps.organizer.core.entity.MediaFile;
+import com.scavettapps.organizer.folder.Folder;
+import com.scavettapps.organizer.media.MediaFile;
 import com.scavettapps.organizer.hashing.IHashService;
-import com.scavettapps.organizer.core.repository.FileRepository;
-import com.scavettapps.organizer.core.repository.FolderRepository;
+import com.scavettapps.organizer.media.FileRepository;
+import com.scavettapps.organizer.folder.FolderRepository;
 import com.scavettapps.organizer.core.repository.ScanLocationRepository;
 import java.util.Arrays;
 import java.util.stream.Collectors;

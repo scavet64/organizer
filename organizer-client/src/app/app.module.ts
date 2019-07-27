@@ -10,15 +10,27 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceTreeComponent } from './home/resource-tree/resource-tree.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { CreateEditPage } from './tag/create-edit/create-edit.page';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [
+    CreateEditPage,
+    AppComponent
+  ],
+  entryComponents: [
+  ],
   imports: [
     BrowserModule,
+    FormsModule,
+    ColorPickerModule,
+    ReactiveFormsModule,
     HttpClientModule,
     IonicModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    SweetAlert2Module
   ],
   providers: [
     StatusBar,

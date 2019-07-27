@@ -16,16 +16,13 @@
       <ion-col size="10">
         <ion-item color='primary' class='rounded' style="height:100%">
           <ion-icon slot="start" name='search'></ion-icon>
-          <ion-input>
+          <ion-input clearInput [value]='searchBox' >
 
           </ion-input>
-          <ion-button (click)="onClick()" slot='end'>
-            <ion-icon slot="icon-only" name="close"></ion-icon>
-          </ion-button>
         </ion-item>
       </ion-col>
       <ion-col size="2" class="">
-        <ion-button (click)="onClick()" style="height:100%; width: 100%;" class="ion-no-margin">
+        <ion-button (click)="createNew()" style="height:100%; width: 100%;" class="ion-no-margin">
           New
           <ion-icon slot="start" name="add" color='light'></ion-icon>
         </ion-button>
@@ -37,14 +34,27 @@
       <ion-col size="12">
         <ion-list color="dark" class='rounded' style="width: 100%">
           <ion-item *ngFor="let tag of tags">
-            <ion-chip slot='start' color="dark" style="background-color: rgba(255, 255, 255, 0.096); color: white">
-            {{tag.name}}
-            </ion-chip>
+            <div style="width: 200px">
+                <ion-chip slot='start' color="dark" [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor">
+                    {{tag.name}}
+                    </ion-chip>
+            </div>
+            
+            <div style="align-content: center">
+                <ion-text *ngIf="tag.description" style="font-size: .95rem">
+                    {{tag.description}}
+                </ion-text>
+                <br>
+                <ion-text style="font-size: .75rem ">
+                    Videos with this tag
+                </ion-text>
+            </div>
+            
             <ion-item slot='end'>
-              <ion-button (click)="onClick()">
-                <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
+              <ion-button (click)="editClick(tag)">
+                <ion-icon slot="icon-only" name="create" color='light' ></ion-icon>
               </ion-button>
-              <ion-button (click)="onClick()">
+              <ion-button (click)="deleteClick(tag)">
                 <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
               </ion-button>
             </ion-item>

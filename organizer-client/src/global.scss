@@ -15,3 +15,16 @@
       max-width: 100px !important
     }
   }
+
+  .my-custom-modal-css .modal-wrapper {
+    height: 40%;
+    position: absolute; 
+    display: block;  
+    overflow: visible;
+ }
+
+ .content-margins {
+  margin-left: 20%; 
+  margin-right: 20%; 
+  margin-bottom: 20px;
+}

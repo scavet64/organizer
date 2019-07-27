@@ -1,6 +1,8 @@
-package com.scavettapps.organizer.core.entity;
+package com.scavettapps.organizer.folder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
+import com.scavettapps.organizer.media.MediaFile;
 import java.util.HashSet;
 import java.util.Set;
 

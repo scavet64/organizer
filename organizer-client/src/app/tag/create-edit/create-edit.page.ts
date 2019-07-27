@@ -1,0 +1,98 @@
+import { Component, OnInit } from '@angular/core';
+import { TagService } from '../tag.service';
+import { ToastController, ModalController, NavController } from '@ionic/angular';
+import { NgForm } from '@angular/forms';
+import { TagModel } from '../tagModel';
+import { NavigationExtras, Route, ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-create',
+  templateUrl: './create-edit.page.html',
+  styleUrls: ['./create-edit.page.scss'],
+})
+export class CreateEditPage implements OnInit {
+
+  mode: string;
+
+  currentName = '';
+  description: string;
+  backgroundColor = this.getRandomColor();
+  textColor = this.getRandomColor();
+  selectedColor: string;
+
+  constructor(
+    private tagService: TagService,
+    private toastController: ToastController,
+    private modalController: ModalController,
+    private navCtrl: NavController,
+    private route: ActivatedRoute
+    ) { }
+
+  ngOnInit() {}
+
+  ionViewWillEnter() {
+    this.route.queryParams.subscribe(params => {
+      this.mode = params["m"];
+  });
+    // this.route.queryParams.subscribe(params => {
+    //   const newTag = JSON.parse(params["createdTag"]);
+    //   if (newTag) {
+    //     this.tags.push(newTag);
+    //   }
+    // });
+  }
+
+  onSubmit(form: NgForm) {
+    var tag = new TagModel(
+      this.currentName,
+      this.description,
+      this.backgroundColor,
+      this.textColor
+      );
+    console.log(tag);
+    console.log(form);
+    this.tagService.createNewTag(tag).subscribe(res => {
+      console.log(res.data);
+      this.toastController.create({
+        message: 'Successfully Create New Tag.',
+        duration: 5000,
+        color: 'success'
+      }).then((toast) => {
+        toast.present();
+      });
+
+      const navigationExtras: NavigationExtras = {
+        queryParams: {
+            createdTag: JSON.stringify(res.data)
+        }
+      };
+      this.navCtrl.navigateBack(['tag'], navigationExtras);
+    }, (err) => {
+      this.toastController.create({
+        message: `Error creating new tag: ${err.error.error}`,
+        color: 'danger',
+        buttons: [
+          {
+            text: 'Done',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          }
+        ]
+      }).then((toast) => {
+        toast.present();
+      });
+    });
+  }
+
+  getRandomColor(): string {
+    var color = Math.floor(0x1000000 * Math.random()).toString(16);
+    return '#' + ('000000' + color).slice(-6);
+  }
+
+  cancelClick() {
+    this.navCtrl.navigateBack(['tag']);
+  }
+
+}
