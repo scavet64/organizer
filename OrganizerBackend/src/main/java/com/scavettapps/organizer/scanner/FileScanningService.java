@@ -25,11 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.scavettapps.organizer.core.entity.Folder;
-import com.scavettapps.organizer.core.entity.MediaFile;
+import com.scavettapps.organizer.folder.Folder;
+import com.scavettapps.organizer.media.MediaFile;
 import com.scavettapps.organizer.hashing.IHashService;
-import com.scavettapps.organizer.core.repository.FileRepository;
-import com.scavettapps.organizer.core.repository.FolderRepository;
+import com.scavettapps.organizer.media.FileRepository;
+import com.scavettapps.organizer.folder.FolderRepository;
 import com.scavettapps.organizer.core.repository.ScanLocationRepository;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -58,7 +58,8 @@ public class FileScanningService {
    public Folder scanLocationForFiles(String path) throws InterruptedException,
            ExecutionException {
 
-      Set<MediaFile> addedFiles = new HashSet<>();
+      Set<MediaFile> addedFiles = Collections.synchronizedSet(new HashSet<>());
+      
 
       // Create the initial folder based on the passed in path. IF it already exists. get it.
       File scanningPathFile = new File(path);
@@ -172,7 +173,7 @@ public class FileScanningService {
                // Process the file
                MediaFile processedFile = processFile(file);
 
-               //Does this file already exist somewhere else in this current scannig session?
+               //Does this file already exist somewhere else in this current scanning session?
                MediaFile previousFile = scannedFiles.stream()
                        .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(processedFile.getHash())))
                        .collect(Collectors.toList()).stream().findFirst().orElse(null);
@@ -187,14 +188,6 @@ public class FileScanningService {
                   currentFolder.addFile(processedFile);
                   scannedFiles.add(processedFile);
                }
-               
-//               if (!currentFolder.addFile(processedFile)) {
-//                  //TODO: Throw into a duplicates table possibly
-//                  MediaFile originalFile = currentFolder.getFile(processedFile.getHash());
-//                  originalFile.addDuplicatePath(
-//                          new DuplicateMediaFilePath(processedFile.getPath())
-//                  );
-//               }
             } catch (AlreadyExistsException ex) {
                logger.info("file already existed and is recorded. Skipping");
             }

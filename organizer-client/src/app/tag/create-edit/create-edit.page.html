@@ -1,0 +1,77 @@
+  <!-- <ion-header>
+    <ion-toolbar>
+      <ion-title>Create a new Tag</ion-title>
+    </ion-toolbar>
+  </ion-header> -->
+
+  <ion-content color="dark" class="ion-padding">
+
+
+
+    <div class=''>
+
+
+
+      <div class="ion-text-center" class="title">
+        <span>{{title}}</span>
+        <span>
+            <ion-chip *ngIf="tag.name !== ''" [style.color]="tag.textColor" [style.background-color]="tag.backgroundColor">
+                {{tag.name}}
+              </ion-chip>
+    
+              <ion-chip *ngIf="tag.name === ''" [style.color]="tag.textColor" [style.background-color]="tag.backgroundColor">
+                Example
+              </ion-chip>
+        </span>
+      </div>
+
+      <form #create="ngForm" (ngSubmit)="onSubmit(create)">
+
+        <!-- <div class="ion-margin" style="align-content: center; text-align: center">
+          <ion-chip *ngIf="currentName !== ''" [style.color]="textColor" [style.background-color]="backgroundColor">
+            {{currentName}}
+          </ion-chip>
+
+          <ion-chip *ngIf="currentName === ''" [style.color]="textColor" [style.background-color]="backgroundColor">
+            Example
+          </ion-chip>
+        </div> -->
+
+        <ion-item class="ion-margin">
+          <ion-label position="floating" class="labels">Name</ion-label>
+          <ion-input name="Name" type="text" [(ngModel)]="tag.name" required></ion-input>
+        </ion-item>
+
+        <ion-item class="ion-margin">
+          <ion-label position="floating" class="labels">Description</ion-label>
+          <ion-input name="Description" type="text" [(ngModel)]="tag.description"></ion-input>
+        </ion-item>
+
+        <ion-item class="ion-margin">
+          <ion-label position="floating" class="labels">Text Color</ion-label>
+          <ion-input name="textColor" type="text" [(ngModel)]="tag.textColor" required [cpPosition]="'top'"
+            [cpPositionOffset]="'0%'" [cpPositionRelativeToArrow]="false" [(colorPicker)]="tag.textColor"
+            [value]="tag.textColor">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="ion-margin">
+          <ion-label position="floating" class="labels">Background Color</ion-label>
+          <ion-input name="backgroundColor" type="text" [(ngModel)]="tag.backgroundColor" required [cpPosition]="'top'"
+            [cpPositionOffset]="'0%'" [cpPositionRelativeToArrow]="false" [(colorPicker)]="tag.backgroundColor"
+            [value]="tag.backgroundColor" [cpWidth]="'230'" [cpAlphaChannel]="'disabled'"></ion-input>
+        </ion-item>
+
+        <ion-item class="ion-margin" color="primary">
+          <ion-button slot="end" type="submit" color="secondary" expand="block" [disabled]="!create.valid">
+            {{buttonText}}
+          </ion-button>
+          <ion-button slot="start" (click)="cancelClick()" color="secondary" expand="block">
+            Cancel
+          </ion-button>
+        </ion-item>
+
+
+      </form>
+    </div>
+  </ion-content>

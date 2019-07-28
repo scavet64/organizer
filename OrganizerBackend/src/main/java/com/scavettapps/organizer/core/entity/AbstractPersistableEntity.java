@@ -14,9 +14,9 @@ public abstract class AbstractPersistableEntity<ID> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private ID id;
-
-    @Version
-    private Long version;
+//
+//    @Version
+//    private Long version;
 
     /**
      * @return the id
@@ -32,18 +32,18 @@ public abstract class AbstractPersistableEntity<ID> implements Serializable {
         this.id = id;
     }
 
-    /**
-     * @return the version
-     */
-    public Long getVersion() {
-        return version;
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersion(Long version) {
-        this.version = version;
-    }
+//    /**
+//     * @return the version
+//     */
+//    public Long getVersion() {
+//        return version;
+//    }
+//
+//    /**
+//     * @param version the version to set
+//     */
+//    public void setVersion(Long version) {
+//        this.version = version;
+//    }
 
 }

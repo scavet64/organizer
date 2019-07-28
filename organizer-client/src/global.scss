@@ -9,3 +9,38 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+@media only screen and (min-width: 992px) {
+    .sideMenu {
+      max-width: 100px !important
+    }
+  }
+
+  .my-custom-modal-css .modal-wrapper {
+    // height: 100%;
+    // width: 100%;
+    // opacity: .4 !important;
+    // position: absolute; 
+    // display: flex;  
+    // overflow: visible !important;
+ }
+
+ .content-margins {
+  margin-left: 20%; 
+  margin-right: 20%; 
+  margin-bottom: 20px;
+}
+
+.modal-wrapper {
+  overflow: visible !important;
+}
+.ion-page {
+  overflow: visible !important;
+}
+.alert-wrapper {
+  color: black !important;
+}
+
+.alert {
+  --background: #1E1E1E;
+}
