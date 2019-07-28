@@ -8,6 +8,7 @@ package com.scavettapps.organizer.tag;
 import com.scavettapps.organizer.core.EntityAlreadyExistsException;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.util.Collection;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,26 @@ public class TagService {
       }
       
       return tagRepository.save(newTag);
+   }
+   
+   @Transactional
+   public Tag editTag(Tag editedTag) {
+      
+      //check if tag exists
+      tagRepository.findById(editedTag.getId()).ifPresent((tag) -> {
+         // Tag with this ID exists
+         this.tagRepository.findByName(editedTag.getName()).ifPresent((tagWithName) -> {
+            // Tag with this name exists. Check to make sure that the ID's match.
+            // If not then there will be a conflict with two different tags having the same name
+            if(!tagWithName.getId().equals(tag.getId())) {
+               throw new EntityAlreadyExistsException(
+                   "Tag already exists with name: " + tagWithName.getName()
+               );
+            }
+         });
+      });
+      
+      return tagRepository.save(editedTag);
    }
    
    public Tag getTagByName(String name) {

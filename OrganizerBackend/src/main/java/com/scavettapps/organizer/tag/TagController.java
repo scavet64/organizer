@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,18 @@ public class TagController {
        @RequestBody Tag newTag
    ) {
       newTag = tagService.addNewTag(newTag);
+
+      return new ResponseEntity<>(
+          new DataResponse(newTag),
+          HttpStatus.OK
+      );
+   }
+   
+   @PutMapping("/edit")
+   public ResponseEntity<Response> editTag(
+       @RequestBody Tag newTag
+   ) {
+      newTag = tagService.editTag(newTag);
 
       return new ResponseEntity<>(
           new DataResponse(newTag),

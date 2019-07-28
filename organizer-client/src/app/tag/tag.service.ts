@@ -33,4 +33,10 @@ export class TagService {
     .post<Response<any>>(`${environment.baseURL}tag/create`, tag)
     .pipe(timeout(10000));
   }
+
+  public editTag(tag: TagModel): Observable<Response<any>>  {
+    return this.http
+    .put<Response<any>>(`${environment.baseURL}tag/edit`, tag)
+    .pipe(timeout(10000));
+  }
 }

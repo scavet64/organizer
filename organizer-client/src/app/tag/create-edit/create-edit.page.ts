@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { TagService } from '../tag.service';
 import { ToastController, ModalController, NavController } from '@ionic/angular';
 import { NgForm } from '@angular/forms';
@@ -12,12 +12,13 @@ import { NavigationExtras, Route, ActivatedRoute } from '@angular/router';
 })
 export class CreateEditPage implements OnInit {
 
+  //Properties
   mode: string;
+  tag: TagModel;
 
-  currentName = '';
-  description: string;
-  backgroundColor = this.getRandomColor();
-  textColor = this.getRandomColor();
+  title: string;
+  buttonText: string;
+
   selectedColor: string;
 
   constructor(
@@ -31,59 +32,72 @@ export class CreateEditPage implements OnInit {
   ngOnInit() {}
 
   ionViewWillEnter() {
-    this.route.queryParams.subscribe(params => {
-      this.mode = params["m"];
-  });
-    // this.route.queryParams.subscribe(params => {
-    //   const newTag = JSON.parse(params["createdTag"]);
-    //   if (newTag) {
-    //     this.tags.push(newTag);
-    //   }
-    // });
+    if (this.mode === 'edit') {
+      this.title = 'Edit: ';
+      this.buttonText = 'edit';
+    } else {
+      this.title = 'Create: ';
+      this.buttonText = 'create';
+    }
+
+    console.log(this.tag);
+    if (!this.tag) {
+      this.tag = new TagModel(
+        '',
+        undefined,
+        this.getRandomColor(),
+        this.getRandomColor()
+      );
+    }
   }
 
   onSubmit(form: NgForm) {
-    var tag = new TagModel(
-      this.currentName,
-      this.description,
-      this.backgroundColor,
-      this.textColor
-      );
-    console.log(tag);
+    // var tag = new TagModel(
+    //   this.currentName,
+    //   this.description,
+    //   this.backgroundColor,
+    //   this.textColor
+    //   );
+    console.log(this.tag);
     console.log(form);
-    this.tagService.createNewTag(tag).subscribe(res => {
-      console.log(res.data);
-      this.toastController.create({
-        message: 'Successfully Create New Tag.',
-        duration: 5000,
-        color: 'success'
-      }).then((toast) => {
-        toast.present();
-      });
+    // this.modalController.dismiss({
+    //   data: this.tag
+    // });
+    this.modalController.dismiss(this.tag);
 
-      const navigationExtras: NavigationExtras = {
-        queryParams: {
-            createdTag: JSON.stringify(res.data)
-        }
-      };
-      this.navCtrl.navigateBack(['tag'], navigationExtras);
-    }, (err) => {
-      this.toastController.create({
-        message: `Error creating new tag: ${err.error.error}`,
-        color: 'danger',
-        buttons: [
-          {
-            text: 'Done',
-            role: 'cancel',
-            handler: () => {
-              console.log('Cancel clicked');
-            }
-          }
-        ]
-      }).then((toast) => {
-        toast.present();
-      });
-    });
+    // this.tagService.createNewTag(this.tag).subscribe(res => {
+    //   console.log(res.data);
+    //   this.toastController.create({
+    //     message: 'Successfully Create New Tag.',
+    //     duration: 5000,
+    //     color: 'success'
+    //   }).then((toast) => {
+    //     toast.present();
+    //   });
+
+    //   const navigationExtras: NavigationExtras = {
+    //     queryParams: {
+    //         createdTag: JSON.stringify(res.data)
+    //     }
+    //   };
+      
+    // }, (err) => {
+    //   this.toastController.create({
+    //     message: `Error creating new tag: ${err.error.error}`,
+    //     color: 'danger',
+    //     buttons: [
+    //       {
+    //         text: 'Done',
+    //         role: 'cancel',
+    //         handler: () => {
+    //           console.log('Cancel clicked');
+    //         }
+    //       }
+    //     ]
+    //   }).then((toast) => {
+    //     toast.present();
+    //   });
+    // });
   }
 
   getRandomColor(): string {
@@ -92,7 +106,7 @@ export class CreateEditPage implements OnInit {
   }
 
   cancelClick() {
-    this.navCtrl.navigateBack(['tag']);
+    this.modalController.dismiss();
   }
 
 }

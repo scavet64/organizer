@@ -31,37 +31,15 @@ export class TagPage {
     });
   }
 
-  // Maybe just use a modal
-  createNew() {
-    const navigationExtras: NavigationExtras = {
-      queryParams: {
-        m: 'create'
-      }
-    };
-    this.navCtrl.navigateForward(['tag/modification'], navigationExtras);
-  }
-
-  // Maybe just use a modal
-  editClick(tag: TagModel) {
-    const navigationExtras: NavigationExtras = {
-      queryParams: {
-        m: 'edit'
-      }
-    };
-    this.navCtrl.navigateForward(['tag/modification'], navigationExtras);
-  }
-
   deleteClick(tag: TagModel) {
-
     this.alertController.create(
       {
-        header: 'Are you sure?',
-        message: `Are you sure you want to delete ${tag.name}? This action is not reversible.`,
+        message: `Are you sure you want to delete "${tag.name}"? This action is irreversible.`,
         buttons: [
           {
             text: 'No',
             role: 'cancel',
-            cssClass: 'secondary',
+            cssClass: 'alert',
             handler: (blah) => {
               console.log('Confirm Cancel: blah');
             }
@@ -84,20 +62,58 @@ export class TagPage {
     });
   }
 
-  // async presentModal() {
-  //   const modal = await this.modalController.create({
-  //     component: NewtagComponent,
-  //     cssClass: 'my-custom-modal-css'
-  //   });
-  //   await modal.present();
+  async editTag(tagToEdit: TagModel) {
 
-  //   modal.onDidDismiss()
-  //     .then((data) => {
-  //       const tag = data['data']; // Here's your selected user!
-  //       if (tag !== undefined) {
-  //         this.tags.push(tag);
-  //       }
-  //   });
-  //}
+    const clonedTag = {...tagToEdit};
+
+    const modal = await this.modalController.create({
+      component: CreateEditPage,
+      cssClass: 'my-custom-modal-css',
+      componentProps: {
+        tag: clonedTag,
+        mode: 'edit'
+      }
+    });
+    await modal.present();
+
+    modal.onDidDismiss()
+      .then((data) => {
+        const tag = data.data;
+        // If the tag was edited.
+        if (tag) {
+          this.tagService.editTag(tag).subscribe(res => {
+            const editedTag = res.data;
+            this.toastingService.showSuccessToast(`Successfully edited Tag!`);
+            tagToEdit.backgroundColor = editedTag.backgroundColor;
+            tagToEdit.name = editedTag.nam;
+            tagToEdit.id = editedTag.id;
+            tagToEdit.name = editedTag.name;
+            tagToEdit.textColor = editedTag.textColor;
+          }, (err) => {
+            this.toastingService.showPersistentErrorToast(`Could not edit tag successfully: ${err.error.error}`);
+          });
+        }
+      });
+  }
+
+  async createTag() {
+    const modal = await this.modalController.create({
+      component: CreateEditPage,
+      cssClass: 'my-custom-modal-css',
+      componentProps: {
+        mode: 'create'
+      }
+    });
+    await modal.present();
+
+    modal.onDidDismiss()
+      .then((data) => {
+        const tag = data['data']; // Here's your selected user!
+        console.log(tag);
+        if (tag) {
+          this.tags.push(tag);
+        }
+    });
+  }
 
 }

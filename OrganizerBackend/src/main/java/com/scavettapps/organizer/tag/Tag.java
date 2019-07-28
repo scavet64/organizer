@@ -3,6 +3,7 @@ package com.scavettapps.organizer.tag;
 import com.scavettapps.organizer.core.entity.AbstractAuditableEntity;
 import com.scavettapps.organizer.core.entity.User;
 import java.util.Date;
+import javax.persistence.Column;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,12 +15,13 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "Tags", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
+@Table(name = "Tags")
 
 public class Tag extends AbstractAuditableEntity<User, Long> {
 
    @NotNull
    @NotEmpty
+   @Column(unique=true)
    private String name;
 
    private String description;
