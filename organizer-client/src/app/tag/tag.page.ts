@@ -5,6 +5,7 @@ import { ModalController, NavController, ToastController, AlertController } from
 import { ActivatedRoute, NavigationExtras } from "@angular/router";
 import { CreateEditPage } from './create-edit/create-edit.page';
 import { ToastingService } from '../toasting.service';
+import { FilterPipe} from './filter.pipe';
 
 @Component({
   selector: 'app-tag',
@@ -84,6 +85,8 @@ export class TagPage {
           this.tagService.editTag(tag).subscribe(res => {
             const editedTag = res.data;
             this.toastingService.showSuccessToast(`Successfully edited Tag!`);
+
+            // Edit the tag already inside the table using the returned data
             tagToEdit.backgroundColor = editedTag.backgroundColor;
             tagToEdit.name = editedTag.nam;
             tagToEdit.id = editedTag.id;
@@ -108,10 +111,14 @@ export class TagPage {
 
     modal.onDidDismiss()
       .then((data) => {
-        const tag = data['data']; // Here's your selected user!
-        console.log(tag);
+        const tag = data.data;
         if (tag) {
-          this.tags.push(tag);
+          this.tagService.createNewTag(tag).subscribe(res => {
+            this.toastingService.showSuccessToast('Successfully created new tag!');
+            this.tags.push(res.data); // Push new tag into the existing table
+          }, (err) => {
+            this.toastingService.showPersistentErrorToast(`Could not create tag: ${err.error.error}`);
+          });
         }
     });
   }
