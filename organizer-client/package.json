@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^8.1.3",
     "@angular/common": "^7.2.2",
     "@angular/core": "^7.2.2",
     "@angular/forms": "^7.2.2",
@@ -26,6 +27,7 @@
     "@ionic/angular": "^4.1.0",
     "@sweetalert2/ngx-sweetalert2": "^5.1.0",
     "core-js": "^2.5.4",
+    "ionic-tooltips": "^4.0.0-beta.0",
     "ngx-color-picker": "^8.1.0",
     "rxjs": "~6.5.1",
     "sweetalert2": "^8.14.0",

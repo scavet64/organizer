@@ -16,31 +16,49 @@
     }
   }
 
-  .my-custom-modal-css .modal-wrapper {
-    // height: 100%;
-    // width: 100%;
-    // opacity: .4 !important;
-    // position: absolute; 
-    // display: flex;  
-    // overflow: visible !important;
- }
-
  .content-margins {
   margin-left: 20%; 
   margin-right: 20%; 
   margin-bottom: 20px;
 }
 
+// This was to make sure that the color picker was not cut off from the modal window.
 .modal-wrapper {
   overflow: visible !important;
 }
 .ion-page {
   overflow: visible !important;
 }
+
+// Overrides alert css classes to include some custom changes.
 .alert-wrapper {
   color: black !important;
 }
-
 .alert {
   --background: #1E1E1E;
+}
+
+
+// This is for the pop over to modify tags.
+.tags-popover {
+  --width: 300px;
+  --height: 440px;
+}
+
+
+// Custom Scrollbar stuff
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  margin: 5px;
+  background-color: #999;
+  -webkit-border-radius: 5px;
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  height: 5px;
+  display: block;
 }

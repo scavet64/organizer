@@ -1,0 +1,33 @@
+.fixed[scrollx=true], div[scrolly=true] {
+    position: relative;
+    overflow: hidden;
+  
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
+  .fixed[scrollx=true] {
+    overflow-x: auto;
+  }
+  
+  .fixed[scrolly=true] {
+    overflow-y: auto;
+  }
+
+  .header input{
+    --padding-top: 100px
+  }
+
+  .inputBox {
+      border-radius: 5px;
+      --background: var(--ion-color-primary, #f00) !important;
+      --padding-top:0px;
+      --padding-bottom:0px;
+  }
+  .checkbox {
+    --background: var(--ion-color-primary, #f00) !important;
+    //--border-color: var(--ion-color-primary, #f00) !important;
+    --border-width: 1px;
+    margin-right: 15px;
+  }

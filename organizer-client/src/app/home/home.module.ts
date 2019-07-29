@@ -7,10 +7,12 @@ import { RouterModule } from '@angular/router';
 import { HomePage } from './home.page';
 import { ResourceTreeComponent } from './resource-tree/resource-tree.component';
 import { CoreModule } from '../common/core.module';
+import { TooltipsModule } from 'ionic-tooltips';
 
 @NgModule({
   imports: [
     CommonModule,
+    TooltipsModule,
     CoreModule,
     FormsModule,
     IonicModule,
