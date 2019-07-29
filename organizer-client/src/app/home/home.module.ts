@@ -6,10 +6,12 @@ import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
 import { ResourceTreeComponent } from './resource-tree/resource-tree.component';
+import { CoreModule } from '../common/core.module';
 
 @NgModule({
   imports: [
     CommonModule,
+    CoreModule,
     FormsModule,
     IonicModule,
     RouterModule.forChild([

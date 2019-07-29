@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { TagPage } from './tag.page';
 import { FilterPipe } from './filter.pipe';
+import { CoreModule } from '../common/core.module';
 
 const routes: Routes = [
   {
@@ -17,11 +18,12 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
+    CoreModule,
     CommonModule,
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [TagPage, FilterPipe]
+  declarations: [TagPage]
 })
 export class TagPageModule {}

@@ -4,6 +4,7 @@ export class TagModel {
     description: string;
     backgroundColor: string;
     textColor: string;
+    selected?: boolean;
 
     constructor(name: string, description: string, backgroundColor: string, textColor: string) {
         this.name = name;

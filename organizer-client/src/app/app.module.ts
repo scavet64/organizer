@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CreateEditPage } from './tag/create-edit/create-edit.page';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { CoreModule } from './common/core.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
   entryComponents: [
   ],
   imports: [
+    CoreModule,
     BrowserModule,
     FormsModule,
     ColorPickerModule,
