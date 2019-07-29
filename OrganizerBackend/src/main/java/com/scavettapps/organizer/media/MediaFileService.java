@@ -8,9 +8,13 @@ package com.scavettapps.organizer.media;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.media.MediaFile;
 import com.scavettapps.organizer.media.FileRepository;
+import com.scavettapps.organizer.tag.Tag;
+import com.scavettapps.organizer.tag.TagRepository;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
+import java.util.Collection;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -25,6 +29,8 @@ public class MediaFileService {
    
    @Autowired
    private FileRepository fileRepository;
+   @Autowired
+   private TagRepository tagRepository;
    
    public MediaFile getMediaFile(String hash) { 
       return fileRepository.findByHash(hash).orElseThrow(() -> new EntityNotFoundException());
@@ -52,5 +58,47 @@ public class MediaFileService {
       } catch (MalformedURLException ex) {
          throw new FileNotFoundException("Malformed URL Exception: " + file);
       }
+   }
+   
+   public MediaFile addTagToMediaFile(long mediaId, long tagId) {
+      if (mediaId < 0 || tagId < 0) {
+         throw new IllegalArgumentException("Ids cannot be negative");
+      }
+      
+      // Find the media file
+      MediaFile file = fileRepository.findById(mediaId).orElseThrow();
+      
+      // Find the Tag and add it.
+      Tag tag = tagRepository.findById(tagId).orElseThrow();
+      file.addTag(tag);
+      
+      return fileRepository.save(file);
+   }
+   
+   /**
+    * TODO: This could be made a little more efficient so that it does not reach out to the database
+    * so much, but since this is meant to be local/in memory for now, it is not as big of a deal.
+    * @param mediaId
+    * @param tags
+    * @return 
+    */
+   @Transactional
+   public MediaFile addTagToMediaFile(long mediaId, Collection<Long> tags) {
+      if (mediaId < 0) {
+         throw new IllegalArgumentException("Ids cannot be negative");
+      }
+      
+      // Find the media file
+      MediaFile file = fileRepository.findById(mediaId).orElseThrow();
+      
+      file.getTags().clear();
+      
+      for (Long tagId: tags) {
+         // Find the Tag and add it to the file.
+         Tag tag = tagRepository.findById(tagId).orElseThrow();
+         file.addTag(tag);
+      }
+      
+      return fileRepository.save(file);
    }
 }

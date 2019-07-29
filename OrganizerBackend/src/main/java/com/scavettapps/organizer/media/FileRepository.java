@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.scavettapps.organizer.media.MediaFile;
 
 @Repository
-public interface FileRepository extends JpaRepository<MediaFile, String> {
+public interface FileRepository extends JpaRepository<MediaFile, Long> {
 
    Optional<MediaFile> findByNameAndSize(String name, long size);
 

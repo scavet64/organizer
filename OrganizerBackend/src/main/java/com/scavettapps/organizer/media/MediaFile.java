@@ -81,6 +81,10 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
       isIgnored = false;
    }
    
+   public boolean addTag(Tag tag) {
+      return this.tags.add(tag);
+   }
+   
    public boolean addDuplicatePath(DuplicateMediaFilePath dupe) {
       return duplicatePaths.add(dupe);
    }

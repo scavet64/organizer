@@ -5,7 +5,10 @@
  */
 package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.core.response.DataResponse;
+import com.scavettapps.organizer.core.response.Response;
 import com.scavettapps.organizer.media.ResourceService;
+import com.scavettapps.organizer.tag.Tag;
 import com.sun.swing.internal.plaf.metal.resources.metal;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,6 +26,10 @@ import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,7 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @author vstro
  */
 @RestController
-public class VideoController {
+@RequestMapping("/media")
+public class MediaController {
 
    @Autowired
    private MediaFileService mediaFileService;
@@ -40,12 +48,28 @@ public class VideoController {
     * @param fileID the file ID corresponding to the video
     * @return returns the video as a resource stream
     */
-   @GetMapping("/media/{fileID}/full")
+   @GetMapping("/{fileID}/full")
    public @ResponseBody
    Resource getFullVideo(@PathVariable String fileID)
            throws FileNotFoundException {
 
       Resource fileResource = mediaFileService.loadFileAsResource(fileID);
       return fileResource;
+   }
+   
+   @PutMapping("/tags")
+   public ResponseEntity<Response> updateTagsForMedia(
+       @RequestBody @Validated AddTagRequest request
+   ) {
+      
+      MediaFile updatedFile = mediaFileService.addTagToMediaFile(
+          request.getMediaId(), 
+          request.getTagIds()
+      );
+
+      return new ResponseEntity<>(
+          new DataResponse(updatedFile),
+          HttpStatus.OK
+      );
    }
 }
