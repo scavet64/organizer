@@ -39,6 +39,10 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    private String path;
    
    @NotNull
+   @Column(name = "mimetype")
+   private String mimetype;
+   
+   @NotNull
    @Column(name = "ignored")
    private boolean isIgnored;
    
@@ -65,12 +69,13 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
       isIgnored = false;
    }
 
-   public MediaFile(String hash, String name, long size, String path) {
+   public MediaFile(String hash, String name, long size, String path, String mimetype) {
       super();
       this.hash = hash;
       this.name = name;
       this.size = size;
       this.path = path;
+      this.mimetype = mimetype;
       this.lastSeenDate = LocalDate.now();
       isIgnored = false;
    }
@@ -155,6 +160,14 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
 
    public void setDuplicatePaths(Set<DuplicateMediaFilePath> duplicatePaths) {
       this.duplicatePaths = duplicatePaths;
+   }
+
+   public String getMimetype() {
+      return mimetype;
+   }
+
+   public void setMimetype(String mimetype) {
+      this.mimetype = mimetype;
    }
 
    public boolean isIsIgnored() {

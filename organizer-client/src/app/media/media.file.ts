@@ -7,4 +7,5 @@ export interface MediaFile {
     size: BigInteger;
     path: string;
     tags: TagModel[];
+    mimetype: string;
 }

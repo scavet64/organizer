@@ -33,11 +33,13 @@
             <ion-card-subtitle>{{file.name}}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content style="padding: 0 !important;">
-            <video class="video-style" controls preload="metadata" oncontextmenu="return false;"
+            <video *ngIf="file.mimetype.includes('video')" class="video-style" controls preload="metadata" oncontextmenu="return false;"
               controlsList="nodownload" #videoPlayer style="width: 500px; height: 280px; margin:auto">
               <source [src]="getVideoUrl(file)" type="video/mp4" />
               Browser not supported
             </video>
+            
+            <ion-img *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)" style="width: 500px; height: 280px; margin:auto"></ion-img>
             
             <ion-item class="ion-no-padding" style="height: 100; margin:0; padding-left:3px; padding-right:3px;" color="primary" lines="none">
               <div slot='end'>

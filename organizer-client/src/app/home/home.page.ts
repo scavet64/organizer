@@ -41,13 +41,6 @@ export class HomePage implements OnInit {
       this.tempFolders = this.rootFolders[0].folders;
       this.rootFiles = this.rootFolders[0].files;
       console.log(this.tempFolders);
-      // const file = res;
-      // const reader = new FileReader();
-      // reader.readAsDataURL(file);
-      // reader.onloadend = (e) => {
-      //   const image = reader.result;
-      //   this.videoDoc.setThumbnailUrl(this.sanitizer.bypassSecurityTrustUrl(image.toString()));
-      // };
     }, (err) => {
       console.log(`Could not get root folder`);
     });
@@ -63,7 +56,7 @@ export class HomePage implements OnInit {
     const popover = await this.popoverController.create({
       component: AddTagComponent,
       componentProps: {
-        mediasTags: JSON.parse(JSON.stringify( mediaFile.tags)),  // Send in a cloned version so edits are not reflected
+        mediasTags: JSON.parse(JSON.stringify(mediaFile.tags)),  // Send in a cloned version so edits are not reflected
         knownTags: this.knownTags
       },
       cssClass: 'tags-popover',
@@ -91,36 +84,6 @@ export class HomePage implements OnInit {
 
   public getVideoUrl(file: MediaFile): string {
     return this.mediaFileService.getVideoStreamURL(file);
-  }
-
-  public addTag(file: MediaFile) {
-
-    // const modal = await this.modalController.create({
-    //   component: AddTagComponent,
-    //   cssClass: 'my-custom-modal-css'
-    // });
-    // await modal.present();
-
-    // modal.onDidDismiss()
-    //   .then((data) => {
-    //     const tag = data.data;
-    //     // If the tag was edited.
-    //     if (tag) {
-    //       this.tagService.editTag(tag).subscribe(res => {
-    //         const editedTag = res.data;
-    //         this.toastingService.showSuccessToast(`Successfully edited Tag!`);
-
-    //         // Edit the tag already inside the table using the returned data
-    //         tagToEdit.backgroundColor = editedTag.backgroundColor;
-    //         tagToEdit.name = editedTag.nam;
-    //         tagToEdit.id = editedTag.id;
-    //         tagToEdit.name = editedTag.name;
-    //         tagToEdit.textColor = editedTag.textColor;
-    //       }, (err) => {
-    //         this.toastingService.showPersistentErrorToast(`Could not edit tag successfully: ${err.error.error}`);
-    //       });
-    //     }
-    //   });
   }
 
   public hideMedia(file: MediaFile) {
