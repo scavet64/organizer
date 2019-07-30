@@ -37,7 +37,8 @@ import java.util.stream.Collectors;
 @Service
 public class FileScanningService {
 
-   public static final int NUMBER_THREADS = 4;
+   //TODO: Look into increasing this. I am seeing odd errors with this multi threaded
+   public static final int NUMBER_THREADS = 1;
 
    private Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -65,6 +65,7 @@ public class TagService {
       tagRepository.deleteAll();
    }
    
+   @Transactional
    public boolean deleteTagById(long id) {
       int deleted = tagRepository.deleteById(id);
       return deleted > 0;

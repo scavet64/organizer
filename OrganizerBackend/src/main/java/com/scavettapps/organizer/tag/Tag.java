@@ -1,7 +1,10 @@
 package com.scavettapps.organizer.tag;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scavettapps.organizer.core.entity.AbstractAuditableEntity;
 import com.scavettapps.organizer.core.entity.User;
+import com.scavettapps.organizer.media.MediaFile;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Column;
 
@@ -9,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
@@ -33,6 +38,10 @@ public class Tag extends AbstractAuditableEntity<User, Long> {
    @NotNull
    @NotEmpty
    private String textColor;
+   
+   @JsonIgnore
+   @ManyToMany(mappedBy = "tags")
+   private Collection<MediaFile> mediaFiles;
 
    public String getName() {
       return name;
