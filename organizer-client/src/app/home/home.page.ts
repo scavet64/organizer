@@ -6,6 +6,9 @@ import { Folder } from '../folders/folder';
 import { MediaServiceService } from '../media/media-service.service';
 import { ToastController, ModalController, PopoverController } from '@ionic/angular';
 import { AddTagComponent } from './add-tag/add-tag.component';
+import { TagModel } from '../tag/tagModel';
+import { TagService } from '../tag/tag.service';
+import { ToastingService } from '../toasting.service';
 
 @Component({
   selector: 'app-home',
@@ -19,12 +22,15 @@ export class HomePage implements OnInit {
   rootFolders: Folder[];
   tempFolders: Folder[];
   rootFiles: MediaFile[];
+  knownTags: TagModel[];
 
   constructor(
     private folderService: FolderService,
+    private tagService: TagService,
     private mediaFileService: MediaServiceService,
     private modalController: ModalController,
     public toastController: ToastController,
+    private toastingController: ToastingService,
     public popoverController: PopoverController
   ) {}
 
@@ -42,6 +48,14 @@ export class HomePage implements OnInit {
       //   const image = reader.result;
       //   this.videoDoc.setThumbnailUrl(this.sanitizer.bypassSecurityTrustUrl(image.toString()));
       // };
+    }, (err) => {
+      console.log(`Could not get root folder`);
+    });
+
+    this.tagService.getAllTags().subscribe(res => {
+      this.knownTags = res.data;
+    }, (err) => {
+      console.log(`Could not get tags`);
     });
   }
 
@@ -49,13 +63,30 @@ export class HomePage implements OnInit {
     const popover = await this.popoverController.create({
       component: AddTagComponent,
       componentProps: {
-        taggedMedia: mediaFile
+        mediasTags: JSON.parse(JSON.stringify( mediaFile.tags)),  // Send in a cloned version so edits are not reflected
+        knownTags: this.knownTags
       },
       cssClass: 'tags-popover',
       event: ev,
       translucent: true
     });
-    return await popover.present();
+    await popover.present();
+
+    popover.onDidDismiss()
+      .then((data) => {
+        const updatedTags = data.data;
+        if (updatedTags) {
+          this.mediaFileService.updateMediaFileTags(mediaFile.id, updatedTags).subscribe(res => {
+
+            mediaFile.tags = res.data.tags;
+
+            this.toastingController.showSuccessToast(`Successfully updated tags`);
+          }, (err) => {
+            console.log(`Could not update tags: ${err.error.error}`);
+            this.toastingController.showPersistentErrorToast(`Could not update tags: ${err.error.error}`);
+          });
+        }
+      });
   }
 
   public getVideoUrl(file: MediaFile): string {

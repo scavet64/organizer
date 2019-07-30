@@ -13,10 +13,10 @@
   <ion-text style="margin:15px;">Folders</ion-text>
   <ion-grid>
     <ion-row>
-      <ion-col *ngFor="let file of tempFolders" size=6>
+      <ion-col *ngFor="let file of tempFolders" size=4>
         <ion-item>
           <ion-icon name="folder" color="light" slot="start"></ion-icon>
-          <ion-button style="text-transform: none" expand='block' [tooltip]="'asdasdas'" positionH="left" arrow="true">
+          <ion-button style="text-transform: none" expand='block'>
             {{file.folderName}}
           </ion-button>
         </ion-item>

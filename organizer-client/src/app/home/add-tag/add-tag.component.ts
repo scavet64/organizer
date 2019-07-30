@@ -5,6 +5,7 @@ import { FilterPipe } from 'src/app/tag/filter.pipe';
 import { TruncationPipe } from 'src/app/truncation.pipe';
 import { MediaFile } from 'src/app/media/media.file';
 import { TooltipController, TooltipBox } from 'ionic-tooltips';
+import { PopoverController } from '@ionic/angular';
 
 
 @Component({
@@ -16,29 +17,49 @@ export class AddTagComponent implements OnInit {
 
   temp2: TooltipBox;
   temp: TooltipController;
-  tags: TagModel[];
   searchBox: string;
-  @Input() public taggedMedia: MediaFile;
+
+  @Input() public knownTags: TagModel[];
+  //@Input() public taggedMedia: MediaFile;
+  // The mediafiles tags
+  @Input() public mediasTags: TagModel[];
 
   constructor(
-    private tagService: TagService
-  ) {}
+    private tagService: TagService,
+    private popoverController: PopoverController
+  ) {
+  }
 
   ngOnInit() {
-
-    console.log(this.taggedMedia.id);
-    this.tagService.getAllTags().subscribe(res => {
-      this.tags = res.data;
-
-      this.tags.forEach(tag => {
-        if (this.taggedMedia.tags.includes(tag)) {
-          tag.selected = true;
-        }
-      });
-
-    }, (err) => {
-      console.log(`Could not get tags`);
+    console.log(this.mediasTags);
+    console.log(this.knownTags);
+    this.knownTags.forEach(tag => {
+      if (this.mediasTags.find(x => x.id === tag.id)) {
+        tag.selected = true;
+      } else {
+        tag.selected = false;
+      }
     });
+  }
+
+  tagClicked(tag: TagModel) {
+    console.log('testing click');
+    if (this.mediasTags.find(x => x.id === tag.id)) {
+      this.mediasTags = this.mediasTags.filter(obj => obj.id !== tag.id);
+      console.log('tag removed');
+    } else {
+      this.mediasTags.push(tag);
+      console.log('tag added');
+    }
+  }
+
+  save() {
+    console.log(this.mediasTags);
+    this.popoverController.dismiss(this.mediasTags);
+  }
+
+  cancel() {
+    this.popoverController.dismiss();
   }
 
 }
