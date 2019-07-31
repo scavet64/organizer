@@ -3,21 +3,41 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+
     <ion-title>
-      Home
+      <ion-button *ngIf="currentFolder" (click)="backButton()">
+        test
+      </ion-button>
+      Browse Libraries
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content color="dark" class="ion-padding">
+<ion-content *ngIf="!currentFolder" color="dark" class="ion-padding">
+  <ion-text style="margin:15px;">Libraries</ion-text>
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let rootFolder of rootFolders" size=4>
+        <ion-item>
+          <ion-icon name="folder" color="light" slot="start"></ion-icon>
+          <ion-button style="text-transform: none" expand='block' (click)="folderClicked(rootFolder)">
+            {{rootFolder.folderName}}
+          </ion-button>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-content *ngIf="currentFolder" color="dark" class="ion-padding">
   <ion-text style="margin:15px;">Folders</ion-text>
   <ion-grid>
     <ion-row>
-      <ion-col *ngFor="let file of tempFolders" size=4>
+      <ion-col *ngFor="let folder of currentFolder.folders" size=4>
         <ion-item>
           <ion-icon name="folder" color="light" slot="start"></ion-icon>
           <ion-button style="text-transform: none" expand='block'>
-            {{file.folderName}}
+            {{folder.folderName}}
           </ion-button>
         </ion-item>
       </ion-col>
@@ -26,34 +46,39 @@
 
   <ion-grid>
     <ion-row class="ion-justify-content-center">
-      <ion-col *ngFor="let file of rootFiles">
+      <ion-col *ngFor="let file of currentFolder.files">
         <ion-card style="padding: 0; width: 500px; height: 465px;" color="primary">
           <ion-card-header
             style="height: 75px; text-align: center; display: flex; align-items: center; justify-content: center">
             <ion-card-subtitle>{{file.name}}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content style="padding: 0 !important;">
-            <video *ngIf="file.mimetype.includes('video')" class="video-style" controls preload="metadata" oncontextmenu="return false;"
-              controlsList="nodownload" #videoPlayer style="width: 500px; height: 280px; margin:auto">
+            <video *ngIf="file.mimetype.includes('video')" class="video-style" controls preload="metadata"
+              oncontextmenu="return false;" controlsList="nodownload" #videoPlayer
+              style="width: 500px; height: 280px; margin:auto">
               <source [src]="getVideoUrl(file)" type="video/mp4" />
               Browser not supported
             </video>
-            
-            <ion-img *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)" style="width: 500px; height: 280px; margin:auto"></ion-img>
-            
-            <ion-item class="ion-no-padding" style="height: 100; margin:0; padding-left:3px; padding-right:3px;" color="primary" lines="none">
+
+            <ion-img *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)"
+              style="width: 500px; height: 280px; margin:auto"></ion-img>
+
+            <ion-item class="ion-no-padding" style="height: 100; margin:0; padding-left:3px; padding-right:3px;"
+              color="primary" lines="none">
               <div slot='end'>
-                  <ion-button slot='end' (click)="presentPopover($event, file)">
-                      <ion-icon name="pricetags" color="light" slot="icon-only" ></ion-icon>
-                    </ion-button>
+                <ion-button slot='end' (click)="presentPopover($event, file)">
+                  <ion-icon name="pricetags" color="light" slot="icon-only"></ion-icon>
+                </ion-button>
                 <ion-button slot='end' (click)="hideMedia(file)">
-                  <ion-icon name="trash" color="light" slot="icon-only" ></ion-icon>
+                  <ion-icon name="trash" color="light" slot="icon-only"></ion-icon>
                 </ion-button>
               </div>
-              
+
               <div style="overflow-x: scroll; height: 100px; overflow-y: hidden">
-                <ion-chip color="success" *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor" [tooltip]="tag.name.length > truncationLimit ? tag.name : ''" positionH="left" arrow="true">
-                    {{ tag.name | truncation: truncationLimit }}
+                <ion-chip color="success" *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor"
+                  [style.color]="tag.textColor" [tooltip]="tag.name.length > truncationLimit ? tag.name : ''"
+                  positionH="left" arrow="true">
+                  {{ tag.name | truncation: truncationLimit }}
                 </ion-chip>
 
                 <!-- TODO: Delete -->
@@ -65,8 +90,6 @@
                 <ion-chip color="success">Cool Default Tag</ion-chip>
                 <ion-chip color="success">Cool Default Tag</ion-chip>
               </div>
-
-              
             </ion-item>
 
           </ion-card-content>

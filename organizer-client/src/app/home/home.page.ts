@@ -18,11 +18,11 @@ import { ToastingService } from '../toasting.service';
 export class HomePage implements OnInit {
 
   public truncationLimit = 20;
+  knownTags: TagModel[];
 
   rootFolders: Folder[];
-  tempFolders: Folder[];
-  rootFiles: MediaFile[];
-  knownTags: TagModel[];
+  currentFolder: Folder;
+  previousFolders: Folder[] = new Array();
 
   constructor(
     private folderService: FolderService,
@@ -38,9 +38,6 @@ export class HomePage implements OnInit {
     this.folderService.getRootFolder().subscribe(res => {
       console.log(res);
       this.rootFolders = res.data.Folders;
-      this.tempFolders = this.rootFolders[0].folders;
-      this.rootFiles = this.rootFolders[0].files;
-      console.log(this.tempFolders);
     }, (err) => {
       console.log(`Could not get root folder`);
     });
@@ -50,6 +47,19 @@ export class HomePage implements OnInit {
     }, (err) => {
       console.log(`Could not get tags`);
     });
+  }
+
+  folderClicked(folder: Folder) {
+    console.log(folder);
+    if (this.currentFolder) {
+      this.previousFolders.push(this.currentFolder);
+    }
+    this.currentFolder = folder;
+  }
+
+  public backButton() {
+    console.log("back clicked");
+    this.currentFolder = this.previousFolders.pop();
   }
 
   async presentPopover(ev: any, mediaFile: MediaFile) {
@@ -97,5 +107,4 @@ export class HomePage implements OnInit {
     });
     //this.mediaFileService.setMediaFileAsHidden(hash).
   }
-
 }
