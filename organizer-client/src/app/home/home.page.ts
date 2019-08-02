@@ -17,10 +17,13 @@ import { ToastingService } from '../toasting.service';
 })
 export class HomePage implements OnInit {
 
+  public stepZoom = 1;
+  public minZoom = 2;
+  public maxZoom = 12;
   public truncationLimit = 20;
-  public mediaColumnSize = 5;
-  knownTags: TagModel[];
+  public mediaColumnSize = 4;
 
+  knownTags: TagModel[];
   rootFolders: Folder[];
   currentFolder: Folder;
   previousFolders: Folder[] = new Array();
@@ -30,9 +33,9 @@ export class HomePage implements OnInit {
     private tagService: TagService,
     private mediaFileService: MediaServiceService,
     private modalController: ModalController,
-    public toastController: ToastController,
+    private toastController: ToastController,
     private toastingController: ToastingService,
-    public popoverController: PopoverController
+    private popoverController: PopoverController
   ) { }
 
   ngOnInit(): void {
@@ -131,5 +134,11 @@ export class HomePage implements OnInit {
     console.log(this.previousFolders);
 
     this.currentFolder = simp;
+  }
+
+  public changeZoom(newSize: number) {
+    if (newSize >= this.minZoom && newSize <= this.maxZoom) {
+      this.mediaColumnSize = newSize;
+    }
   }
 }

@@ -2,30 +2,43 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-      <ion-button *ngIf="currentFolder" (click)="backButton()" fill="block">
+      <ion-button *ngIf="currentFolder" (click)="backButton()" fill="clear">
         <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
 
     <ion-title *ngIf="!currentFolder">Browse Libraries</ion-title>
     <ion-title *ngIf="currentFolder">
-      <span style="display: flex">
-        <div *ngFor="let folder of previousFolders" style="display: flex; text-align: center" (click)="navigateToFolder(folder)">
-          <ion-button fill="clear" color="light">
-              {{folder.folderName}}
-          </ion-button>
-          <ion-icon name="arrow-dropright" style="margin-top: 12px;"></ion-icon>
-        </div>
+      <ion-item>
+          <div *ngFor="let folder of previousFolders" style="display: flex; text-align: center" (click)="navigateToFolder(folder)">
+              <ion-button fill="clear" color="light">
+                  {{folder.folderName}}
+              </ion-button>
+              <ion-icon name="arrow-dropright" style="margin-top: 12px;"></ion-icon>
+          </div>
+          <div style="display: flex; text-align: center">
+              <ion-button fill="clear" color="light">
+                  {{currentFolder.folderName}}
+              </ion-button>
+          </div>
 
-        <ion-button fill="clear" color="light">
-          {{currentFolder.folderName}}
-        </ion-button>
-      </span>
+          <ion-item slot="end" style="width: 250px">
+              <ion-range [min]="minZoom" [max]="maxZoom" [step]="stepZoom" snaps="true" color="light" [(ngModel)]="mediaColumnSize">
+                <ion-button slot="start" fill="clear" color="light" (click)="changeZoom(mediaColumnSize - stepZoom)">
+                    <ion-icon slot="icon-only" name="remove"></ion-icon>
+                </ion-button>
+                <ion-button slot="end" fill="clear" color="light" (click)="changeZoom(mediaColumnSize + stepZoom)">
+                    <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-range>
+          </ion-item>
 
+      </ion-item>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
+<!-- Root folders list -->
 <ion-content *ngIf="!currentFolder" color="dark" class="ion-padding">
   <ion-text style="margin:15px;">Libraries</ion-text>
   <ion-grid>
@@ -42,6 +55,7 @@
   </ion-grid>
 </ion-content>
 
+<!-- Main browsing section -->
 <ion-content *ngIf="currentFolder" color="dark" class="fixed" style="padding: 10;">
   <div style="overflow: scroll; height: 100%;">
     <ion-grid class="ion-padding">
