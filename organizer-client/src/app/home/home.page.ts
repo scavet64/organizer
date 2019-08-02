@@ -5,7 +5,7 @@ import { FolderService } from '../folders/folder-service';
 import { Folder } from '../folders/folder';
 import { MediaServiceService } from '../media/media-service.service';
 import { ToastController, ModalController, PopoverController } from '@ionic/angular';
-import { AddTagComponent } from './add-tag/add-tag.component';
+import { MediaTagsComponent } from '../media-tags/media-tags.component';
 import { TagModel } from '../tag/tagModel';
 import { TagService } from '../tag/tag.service';
 import { ToastingService } from '../toasting.service';
@@ -32,7 +32,6 @@ export class HomePage implements OnInit {
     private folderService: FolderService,
     private tagService: TagService,
     private mediaFileService: MediaServiceService,
-    private modalController: ModalController,
     private toastController: ToastController,
     private toastingController: ToastingService,
     private popoverController: PopoverController
@@ -72,7 +71,7 @@ export class HomePage implements OnInit {
 
   async presentPopover(ev: any, mediaFile: MediaFile) {
     const popover = await this.popoverController.create({
-      component: AddTagComponent,
+      component: MediaTagsComponent,
       componentProps: {
         mediasTags: JSON.parse(JSON.stringify(mediaFile.tags)),  // Send in a cloned version so edits are not reflected
         knownTags: this.knownTags

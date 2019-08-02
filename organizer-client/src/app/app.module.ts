@@ -14,7 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CreateEditPage } from './tag/create-edit/create-edit.page';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
-import { AddTagComponent } from './home/add-tag/add-tag.component';
+import { MediaTagsComponent } from './media-tags/media-tags.component';
 import { HomePage } from './home/home.page';
 import { FilterPipe } from './tag/filter.pipe';
 import { CoreModule } from './common/core.module';
@@ -26,10 +26,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   declarations: [
     CreateEditPage,
     AppComponent,
-    AddTagComponent
+    MediaTagsComponent
   ],
   entryComponents: [
-    AddTagComponent
+    MediaTagsComponent
   ],
   imports: [
     CoreModule,

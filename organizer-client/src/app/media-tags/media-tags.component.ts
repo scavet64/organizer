@@ -10,10 +10,10 @@ import { PopoverController } from '@ionic/angular';
 
 @Component({
   selector: 'app-add-tag',
-  templateUrl: './add-tag.component.html',
-  styleUrls: ['./add-tag.component.scss'],
+  templateUrl: './media-tags.component.html',
+  styleUrls: ['./media-tags.component.scss'],
 })
-export class AddTagComponent implements OnInit {
+export class MediaTagsComponent implements OnInit {
 
   temp2: TooltipBox;
   temp: TooltipController;

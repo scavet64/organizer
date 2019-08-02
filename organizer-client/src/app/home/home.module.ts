@@ -23,6 +23,9 @@ import { TooltipsModule } from 'ionic-tooltips';
       }
     ])
   ],
-  declarations: [HomePage, ResourceTreeComponent]
+  declarations: [
+    HomePage,
+    ResourceTreeComponent
+  ]
 })
 export class HomePageModule {}
