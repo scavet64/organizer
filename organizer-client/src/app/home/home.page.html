@@ -57,7 +57,7 @@
   </ion-grid>
 </ion-content>
 
-<!-- Main browsing section -->
+<!-- Main browsing section: Card View -->
 <ion-content *ngIf="currentFolder && !isListView" color="dark" class="fixed" style="padding: 10;">
   <div style="overflow: scroll; height: 100%;">
     <ion-grid class="ion-padding">
@@ -130,7 +130,7 @@
   </div>
 </ion-content>
 
-<!-- Main browsing section -->
+<!-- Main browsing section: List view -->
 <ion-content *ngIf="currentFolder && isListView" color="dark" class="fixed" style="padding: 10;">
   <div style="overflow: scroll; height: 100%;">
     <ion-grid class="ion-no-padding" style="margin: 50px">
@@ -143,67 +143,54 @@
         </ion-col>
       </ion-row>
 
-      <!-- Tag List -->
+      <!-- Media File List -->
       <ion-row class="ion-no-padding">
         <ion-col size="12">
           <ion-list color="dark" class='rounded' style="width: 100%">
-            <ion-item *ngFor="let file of currentFolder.files | filter : searchBox">
-              <div style="padding: 10px; display: flex; text-align: center">
-                <!-- Thumbnail would be nice -->
+            <ion-item *ngFor="let file of currentFolder.files | mediaFilter : searchBox">
 
-                <video *ngIf="file.mimetype.includes('video')" class="video-style" preload="metadata"
-                  oncontextmenu="return false;" #videoPlayer style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px;">
-                  <source [src]="getVideoUrl(file)" type="video/mp4" />
-                  Browser not supported
-                </video>
+              <!-- Thumbnail would be nice -->
 
-                <ion-img *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)"
-                style="object-fit: cover; min-width: 10%; width: 10%;"></ion-img>
+              <video slot="start" *ngIf="file.mimetype.includes('video')" controls controlsList="nodownload" class="video-style" preload="metadata" 
+                oncontextmenu="return false;" #videoPlayer
+                style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px;">
+                <source [src]="getVideoUrl(file)" type="video/mp4" />
+                Browser not supported
+              </video>
 
-                <!-- File name -->
-                <div style="padding: 10px">
-                  <ion-text style="font-size: .9rem; display:flex; text-align: justify;">
-                    {{file.name}}
-                  </ion-text>
+              <ion-img slot="start" *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)"
+                style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px">
+              </ion-img>
 
-                  <br>
+              <!-- File name -->
+              <div style="padding: 10px">
+                <ion-text style="font-size: .9rem; display:flex; text-align: justify;">
+                  {{file.name}}
+                </ion-text>
 
-                  <!-- Tags -->
-                  <ion-chip color="success" *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor"
-                    [style.color]="tag.textColor" [tooltip]="tag.name.length > truncationLimit ? tag.name : ''"
-                    positionH="left" arrow="true">
-                    {{ tag.name | truncation: truncationLimit }}
-                  </ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                  <ion-chip color="success">Cool Tag</ion-chip>
-                </div>
+                <br>
 
-
-
-
+                <!-- Tags -->
+                <ion-chip color="success" *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor"
+                  [style.color]="tag.textColor" [tooltip]="tag.name.length > truncationLimit ? tag.name : ''"
+                  positionH="left" arrow="true">
+                  {{ tag.name | truncation: truncationLimit }}
+                </ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
+                <ion-chip color="success">Cool Tag</ion-chip>
               </div>
 
-              <!-- <div style="align-content: center">
-                      <ion-text *ngIf="tag.description" style="font-size: .95rem">
-                        {{tag.description}}
-                      </ion-text>
-                      <br>
-                      <ion-text style="font-size: .75rem ">
-                        Videos with this tag
-                      </ion-text>
-                    </div> -->
-
-              <ion-item slot='end'>
-                <ion-button (click)="editTag(tag)">
-                  <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
+              <ion-item slot='end' style="margin-right: 5px;">
+                <ion-button (click)="presentPopover($event, file)">
+                  <ion-icon name="pricetags" color="light" slot="icon-only"></ion-icon>
                 </ion-button>
-                <ion-button (click)="deleteClick(tag)">
-                  <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
+                <ion-button (click)="hideMedia(file)">
+                  <ion-icon name="trash" color="light" slot="icon-only"></ion-icon>
                 </ion-button>
               </ion-item>
             </ion-item>

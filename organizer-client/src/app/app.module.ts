@@ -21,6 +21,7 @@ import { CoreModule } from './common/core.module';
 import { TruncationPipe } from './truncation.pipe';
 import { TooltipsModule } from 'ionic-tooltips';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MediaFilterPipe } from './media/media-filter.pipe';
 
 @NgModule({
   declarations: [
