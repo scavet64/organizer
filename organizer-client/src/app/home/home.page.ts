@@ -18,6 +18,7 @@ import { ToastingService } from '../toasting.service';
 export class HomePage implements OnInit {
 
   public truncationLimit = 20;
+  public mediaColumnSize = 5;
   knownTags: TagModel[];
 
   rootFolders: Folder[];
@@ -32,18 +33,22 @@ export class HomePage implements OnInit {
     public toastController: ToastController,
     private toastingController: ToastingService,
     public popoverController: PopoverController
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.folderService.getRootFolder().subscribe(res => {
       console.log(res);
       this.rootFolders = res.data.Folders;
+
+      //TODO: DEBUG CODE REMOVE THIS. JUST FOR EASY QUICK REFRESHES
+      this.currentFolder = this.rootFolders[0];
     }, (err) => {
       console.log(`Could not get root folder`);
     });
 
     this.tagService.getAllTags().subscribe(res => {
       this.knownTags = res.data;
+      console.log(this.knownTags);
     }, (err) => {
       console.log(`Could not get tags`);
     });
@@ -106,5 +111,25 @@ export class HomePage implements OnInit {
       toast.present();
     });
     //this.mediaFileService.setMediaFileAsHidden(hash).
+  }
+
+  public navigateToFolder(folder: Folder) {
+    let simp: Folder;
+    let found = false;
+    console.log("previous folders Array:");
+    console.log(this.previousFolders);
+    while (!found && this.previousFolders.length > 0) {
+      simp = this.previousFolders.pop();
+      console.log(simp);
+      if (simp.id === folder.id) {
+        console.log("found");
+        found = true;
+      }
+    }
+
+    console.log("previous folders Array After:");
+    console.log(this.previousFolders);
+
+    this.currentFolder = simp;
   }
 }

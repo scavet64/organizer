@@ -1,20 +1,3 @@
-.fixed[scrollx=true], div[scrolly=true] {
-    position: relative;
-    overflow: hidden;
-  
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  
-  .fixed[scrollx=true] {
-    overflow-x: auto;
-  }
-  
-  .fixed[scrolly=true] {
-    overflow-y: auto;
-  }
-
   .header input{
     --padding-top: 100px
   }
