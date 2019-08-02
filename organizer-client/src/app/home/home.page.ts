@@ -23,6 +23,9 @@ export class HomePage implements OnInit {
   public truncationLimit = 20;
   public mediaColumnSize = 4;
 
+  public isListView = true;
+  public searchBox: string;
+
   knownTags: TagModel[];
   rootFolders: Folder[];
   currentFolder: Folder;

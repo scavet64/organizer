@@ -10,28 +10,30 @@
     <ion-title *ngIf="!currentFolder">Browse Libraries</ion-title>
     <ion-title *ngIf="currentFolder">
       <ion-item style="height: 55px">
-          <div *ngFor="let folder of previousFolders" style="display: flex; text-align: center" (click)="navigateToFolder(folder)">
-              <ion-button fill="clear" color="light">
-                  {{folder.folderName}}
-              </ion-button>
-              <ion-icon name="arrow-dropright" style="margin-top: 10px;"></ion-icon>
-          </div>
-          <div style="display: flex; text-align: center">
-              <ion-button fill="clear" color="light">
-                  {{currentFolder.folderName}}
-              </ion-button>
-          </div>
+        <div *ngFor="let folder of previousFolders" style="display: flex; text-align: center"
+          (click)="navigateToFolder(folder)">
+          <ion-button fill="clear" color="light">
+            {{folder.folderName}}
+          </ion-button>
+          <ion-icon name="arrow-dropright" style="margin-top: 10px;"></ion-icon>
+        </div>
+        <div style="display: flex; text-align: center">
+          <ion-button fill="clear" color="light">
+            {{currentFolder.folderName}}
+          </ion-button>
+        </div>
 
-          <ion-item slot="end" style="width: 250px">
-              <ion-range [min]="minZoom" [max]="maxZoom" [step]="stepZoom" snaps="true" color="light" [(ngModel)]="mediaColumnSize">
-                <ion-button slot="start" fill="clear" color="light" (click)="changeZoom(mediaColumnSize - stepZoom)">
-                    <ion-icon slot="icon-only" name="remove"></ion-icon>
-                </ion-button>
-                <ion-button slot="end" fill="clear" color="light" (click)="changeZoom(mediaColumnSize + stepZoom)">
-                    <ion-icon slot="icon-only" name="add"></ion-icon>
-                </ion-button>
-              </ion-range>
-          </ion-item>
+        <ion-item slot="end" style="width: 250px">
+          <ion-range [min]="minZoom" [max]="maxZoom" [step]="stepZoom" snaps="true" color="light"
+            [(ngModel)]="mediaColumnSize">
+            <ion-button slot="start" fill="clear" color="light" (click)="changeZoom(mediaColumnSize - stepZoom)">
+              <ion-icon slot="icon-only" name="remove"></ion-icon>
+            </ion-button>
+            <ion-button slot="end" fill="clear" color="light" (click)="changeZoom(mediaColumnSize + stepZoom)">
+              <ion-icon slot="icon-only" name="add"></ion-icon>
+            </ion-button>
+          </ion-range>
+        </ion-item>
 
       </ion-item>
     </ion-title>
@@ -56,7 +58,7 @@
 </ion-content>
 
 <!-- Main browsing section -->
-<ion-content *ngIf="currentFolder" color="dark" class="fixed" style="padding: 10;">
+<ion-content *ngIf="currentFolder && !isListView" color="dark" class="fixed" style="padding: 10;">
   <div style="overflow: scroll; height: 100%;">
     <ion-grid class="ion-padding">
       <ion-row>
@@ -122,6 +124,90 @@
               </ion-item>
             </ion-card-content>
           </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>
+
+<!-- Main browsing section -->
+<ion-content *ngIf="currentFolder && isListView" color="dark" class="fixed" style="padding: 10;">
+  <div style="overflow: scroll; height: 100%;">
+    <ion-grid class="ion-no-padding" style="margin: 50px">
+      <ion-row class="ion-no-padding" style="margin-bottom: 10px">
+        <ion-col size="12">
+          <ion-item color='primary' class='rounded' style="height:100%">
+            <ion-icon slot="start" name='search'></ion-icon>
+            <ion-input clearInput [(ngModel)]='searchBox'></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <!-- Tag List -->
+      <ion-row class="ion-no-padding">
+        <ion-col size="12">
+          <ion-list color="dark" class='rounded' style="width: 100%">
+            <ion-item *ngFor="let file of currentFolder.files | filter : searchBox">
+              <div style="padding: 10px; display: flex; text-align: center">
+                <!-- Thumbnail would be nice -->
+
+                <video *ngIf="file.mimetype.includes('video')" class="video-style" preload="metadata"
+                  oncontextmenu="return false;" #videoPlayer style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px;">
+                  <source [src]="getVideoUrl(file)" type="video/mp4" />
+                  Browser not supported
+                </video>
+
+                <ion-img *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)"
+                style="object-fit: cover; min-width: 10%; width: 10%;"></ion-img>
+
+                <!-- File name -->
+                <div style="padding: 10px">
+                  <ion-text style="font-size: .9rem; display:flex; text-align: justify;">
+                    {{file.name}}
+                  </ion-text>
+
+                  <br>
+
+                  <!-- Tags -->
+                  <ion-chip color="success" *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor"
+                    [style.color]="tag.textColor" [tooltip]="tag.name.length > truncationLimit ? tag.name : ''"
+                    positionH="left" arrow="true">
+                    {{ tag.name | truncation: truncationLimit }}
+                  </ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                  <ion-chip color="success">Cool Tag</ion-chip>
+                </div>
+
+
+
+
+              </div>
+
+              <!-- <div style="align-content: center">
+                      <ion-text *ngIf="tag.description" style="font-size: .95rem">
+                        {{tag.description}}
+                      </ion-text>
+                      <br>
+                      <ion-text style="font-size: .75rem ">
+                        Videos with this tag
+                      </ion-text>
+                    </div> -->
+
+              <ion-item slot='end'>
+                <ion-button (click)="editTag(tag)">
+                  <ion-icon slot="icon-only" name="create" color='light'></ion-icon>
+                </ion-button>
+                <ion-button (click)="deleteClick(tag)">
+                  <ion-icon slot="icon-only" name="trash" color='light'></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-item>
+          </ion-list>
         </ion-col>
       </ion-row>
     </ion-grid>
