@@ -40,6 +40,7 @@ public class FileScanningService {
 
    //TODO: Look into increasing this. I am seeing odd errors with this multi threaded
    public static final int NUMBER_THREADS = 1;
+   private static Folder workingFolder;
 
    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -64,13 +65,12 @@ public class FileScanningService {
 
       // Create the initial folder based on the passed in path. IF it already exists. get it.
       File scanningPathFile = new File(path);
-      Folder initialFolder = folderRepository.findByPath(scanningPathFile.getPath()).orElse(null);
-      if (initialFolder == null) {
+      workingFolder = folderRepository.findByPath(scanningPathFile.getPath()).orElse(null);
+      if (workingFolder == null) {
          // new folder
-         initialFolder = new Folder(scanningPathFile.getPath());
+         workingFolder = new Folder(scanningPathFile.getPath());
       }
-      Folder tempFolder = initialFolder;
-
+      
       //Get the list of files to work with
       List<File> filesInLocation = Arrays.asList(scanningPathFile.listFiles());
 
@@ -86,7 +86,7 @@ public class FileScanningService {
                try {
                   recurseDirectory(
                       partitionedList.toArray(new File[partitionedList.size()]),
-                      tempFolder,
+                      workingFolder,
                       addedFiles);
                } catch (IOException e) {
                   e.printStackTrace();
@@ -105,9 +105,9 @@ public class FileScanningService {
 
       logger.info("Joined off threads");
 
-      this.folderRepository.save(initialFolder);
+      this.folderRepository.save(workingFolder);
 
-      return initialFolder;
+      return workingFolder;
    }
 
    @Transactional
@@ -146,7 +146,7 @@ public class FileScanningService {
       } else {
          String mimeType = URLConnection.guessContentTypeFromName(file.getName());
          logger.info(
-             "new file added - hash: " + existingFile.getHash() + " name: " + existingFile.getName() + " mimetype: " + mimeType
+             "existing file based on name and size - hash: " + existingFile.getHash() + " name: " + existingFile.getName() + " mimetype: " + mimeType
          );
          existingFile.updateLastSeen();
          this.fileRepository.save(existingFile);
@@ -167,14 +167,15 @@ public class FileScanningService {
       logger.info("Now Entering: " + currentFolder.getPath());
       for (File file : files) {
          if (file.isDirectory()) {
-            // go deeper...
+            // Do we have this file already?
             Folder scanFolder = folderRepository.findByPath(file.getPath()).orElse(null);
             if (scanFolder == null) {
-               // new folder
+               // new folder. Set it up for the first time
                scanFolder = new Folder(file.getPath());
             }
-            scanFolder.setFolder(currentFolder);
-            currentFolder.getFolders().add(scanFolder);
+            scanFolder.setFolder(currentFolder); // Parent folder
+            currentFolder.addFolder(scanFolder); // Add this folder to the current folder's list
+            // go deeper...
             recurseDirectory(file.listFiles(), scanFolder, scannedFiles);
          } else {
             try {

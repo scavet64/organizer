@@ -26,7 +26,7 @@ public class Folder extends AbstractPersistableEntity<Long> {
    @NotNull
    @Column(name = "path")
    private String path;
-   
+
    @NotNull
    @Column(name = "ignored")
    private boolean isIgnored;
@@ -40,7 +40,6 @@ public class Folder extends AbstractPersistableEntity<Long> {
    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
    @JsonIgnore
    private Folder folder;
-   
 
    public Folder(String path) {
       super();
@@ -56,23 +55,66 @@ public class Folder extends AbstractPersistableEntity<Long> {
       this.files = new HashSet<>();
       this.isIgnored = false;
    }
+
+   /**
+    * Adds a folder to this list of folders.
+    * This was done because of the way that the scanning services was implemented. Eventually I 
+    * would like to go back and fix it so that maybe this code would be unneeded I can just use the
+    * built in functions of the set. Since the folder object that is passed in to this 
+    * @param folder
+    * @return 
+    */
+   public boolean addFolder(Folder folder) {
+
+      if (this.folders.isEmpty()) {
+         return this.folders.add(folder);
+      } else {
+         //Search for the folder using the path.
+         Folder existingFolder = folders.stream()
+             .filter(mediaFile -> (mediaFile.getPath().equalsIgnoreCase(folder.getPath())))
+             .collect(Collectors.toList()).get(0);
+
+         if (existingFolder == null) {
+            return this.folders.add(folder);
+         } else {
+            // Need to replace this object with the new one
+            this.folders.remove(existingFolder);
+            return this.folders.add(folder);
+         }
+      }
+   }
    
+   public Folder getFolder(String path) {
+      if (this.folders.isEmpty()) {
+         return null;
+      }
+      
+      return folders.stream()
+          .filter(mediaFile -> (mediaFile.getPath().equalsIgnoreCase(path)))
+          .collect(Collectors.toList()).get(0);
+   }
+
    public boolean doesFileExist(MediaFile file) {
       return files.contains(file);
    }
-   
+
    public boolean addFile(MediaFile file) {
       return files.add(file);
    }
-   
+
    public MediaFile getFile(String hash) {
+      if (this.files.isEmpty()) {
+         return null;
+      }
+      
       return files.stream()
-              .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(hash)))
-              .collect(Collectors.toList()).get(0);
+          .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(hash)))
+          .collect(Collectors.toList()).get(0);
    }
-   
+
    /**
     * This is meant for the JSON return to prevent stack overflow
+    *
     * @return the path of the parent.
     */
    public String getParentPath() {
@@ -82,7 +124,7 @@ public class Folder extends AbstractPersistableEntity<Long> {
       }
       return parentPath;
    }
-   
+
    /**
     * @return the name of the folder.
     */
