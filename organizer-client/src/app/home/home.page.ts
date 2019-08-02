@@ -4,7 +4,7 @@ import { MediaFile } from '../media/media.file';
 import { FolderService } from '../folders/folder-service';
 import { Folder } from '../folders/folder';
 import { MediaServiceService } from '../media/media-service.service';
-import { ToastController, ModalController, PopoverController } from '@ionic/angular';
+import { ToastController, ModalController, PopoverController, Platform } from '@ionic/angular';
 import { MediaTagsComponent } from '../media-tags/media-tags.component';
 import { TagModel } from '../tag/tagModel';
 import { TagService } from '../tag/tag.service';
@@ -35,7 +35,7 @@ export class HomePage implements OnInit {
     private toastController: ToastController,
     private toastingController: ToastingService,
     private popoverController: PopoverController
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.folderService.getRootFolder().subscribe(res => {

@@ -9,12 +9,12 @@
 
     <ion-title *ngIf="!currentFolder">Browse Libraries</ion-title>
     <ion-title *ngIf="currentFolder">
-      <ion-item>
+      <ion-item style="height: 55px">
           <div *ngFor="let folder of previousFolders" style="display: flex; text-align: center" (click)="navigateToFolder(folder)">
               <ion-button fill="clear" color="light">
                   {{folder.folderName}}
               </ion-button>
-              <ion-icon name="arrow-dropright" style="margin-top: 12px;"></ion-icon>
+              <ion-icon name="arrow-dropright" style="margin-top: 10px;"></ion-icon>
           </div>
           <div style="display: flex; text-align: center">
               <ion-button fill="clear" color="light">
