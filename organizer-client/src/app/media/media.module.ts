@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { MediaPage } from './media.page';
 import { CoreModule } from '../common/core.module';
+import { MaterialModule } from '../material.module';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     CoreModule,
     FormsModule,
     IonicModule,
+    MaterialModule,
     RouterModule.forChild(routes)
   ],
   declarations: [MediaPage]
