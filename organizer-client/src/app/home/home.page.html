@@ -96,8 +96,8 @@
       <!-- Card View -->
       <ion-row *ngIf="!isListView" class="ion-justify-content-center">
         <ion-col *ngFor="let file of currentFolder.files | mediaFilter : searchBox" [sizeXl]="sizeXl" [sizeLg]="sizeLg" [sizeMd]="sizeMd"
-          [sizeSm]="sizeSm" [sizeXs]="sizeXs">
-          <app-card-item [knownTags]="knownTags" [file]="file"></app-card-item>
+          [sizeSm]="sizeSm" [sizeXs]="sizeXs" >
+          <app-card-item [knownTags]="knownTags" [file]="file" style="width: 100%"></app-card-item>
         </ion-col>
       </ion-row>
 

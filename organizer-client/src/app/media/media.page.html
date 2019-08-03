@@ -6,11 +6,16 @@
 
 <ion-content *ngIf="pageResponse" color="dark" class="fixed" style="padding: 10;">
   <div style="overflow: scroll; height: 100%;">
-    <mat-paginator [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
-      [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </mat-paginator>
     <!-- Search Bar -->
     <ion-grid class="ion-no-padding" style="margin: 50px">
+      <ion-row>
+        <ion-col size="12">
+          <mat-paginator [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+            [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+          </mat-paginator>
+        </ion-col>
+      </ion-row>
+
       <ion-row class="ion-no-padding" style="margin-bottom: 10px">
         <ion-col size="12">
           <ion-item color='primary' class='rounded' style="height:100%">
@@ -33,15 +38,19 @@
         <ion-col size="12">
           <ion-list color="dark" class='rounded' style="width: 100%">
             <ion-item *ngFor="let file of pageResponse.content" [lines]="'full'">
-              <app-list-item [knownTags]="knownTags" [file]="file"></app-list-item>
+              <app-list-item [knownTags]="knownTags" [file]="file" style="width: 100%"></app-list-item>
             </ion-item>
           </ion-list>
         </ion-col>
       </ion-row>
-    </ion-grid>
 
-    <mat-paginator [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
-      [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </mat-paginator>
+      <ion-row>
+          <ion-col size="12">
+            <mat-paginator [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+              [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+            </mat-paginator>
+          </ion-col>
+        </ion-row>
+    </ion-grid>
   </div>
 </ion-content>
