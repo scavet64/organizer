@@ -19,6 +19,11 @@ export class AppComponent {
       title: 'Tags',
       url: '/tag',
       icon: 'pricetags'
+    },
+    {
+      title: 'Media',
+      url: '/media',
+      icon: 'videocam'
     }
   ];
 
