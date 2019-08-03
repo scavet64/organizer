@@ -7,6 +7,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { timeout } from 'rxjs/operators';
 import { TagModel } from '../tag/tagModel';
 import { PageRequest } from '../common/PageRequest';
+import { MediaSearchRequest } from './media-search-request';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,14 @@ export class MediaServiceService {
   public getMediaPages(pageNumber: number) {
     const data = new PageRequest(pageNumber).toHttpParams();
     return this.http
-      .get<Response<any>>(`${environment.baseURL}media`, { params: data})
+      .get<Response<any>>(`${environment.baseURL}media`, { params: data })
+      .pipe(timeout(10000));
+  }
+
+  public getMediaPagesSearch(pageNumber: number, name: string, tags: TagModel[]) {
+    const data = new MediaSearchRequest(pageNumber, name, tags).toHttpParams();
+    return this.http
+      .get<Response<any>>(`${environment.baseURL}media`, { params: data })
       .pipe(timeout(10000));
   }
 }

@@ -24,6 +24,7 @@ export class MediaPage implements OnInit {
   pageResponse: PaginationResponse<MediaFile>;
   knownTags: TagModel[];
   isListView = true;
+  searchBox: string;
 
   constructor(
     private mediaFileService: MediaServiceService,
@@ -53,6 +54,13 @@ export class MediaPage implements OnInit {
     console.log(event.pageIndex);
     this.mediaFileService.getMediaPages(event.pageIndex).subscribe(res => {
       this.pageResponse = res.data;
+    });
+  }
+
+  search() {
+    this.mediaFileService.getMediaPagesSearch(0, this.searchBox, null).subscribe(res => {
+      this.pageResponse = res.data;
+      console.log(this.pageResponse);
     });
   }
 
