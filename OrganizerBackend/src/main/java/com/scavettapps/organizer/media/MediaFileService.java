@@ -124,11 +124,11 @@ public class MediaFileService {
          for (Tag tag : params.getTags()) {
             if (specs == null) {
                specs = Specification.where(
-                   mediaFileSpecification.getTagAttributeContains("id", tag.getName())
+                   mediaFileSpecification.getTagAttributeContains("name", "eq:" + tag.getName())
                );
             } else {
                specs = specs.and(
-                   mediaFileSpecification.getTagAttributeContains("id", tag.getName())
+                   mediaFileSpecification.getTagAttributeContains("name", "eq:" + tag.getName())
                );
             }
          }
