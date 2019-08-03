@@ -133,6 +133,20 @@
 <!-- Main browsing section: List view -->
 <ion-content *ngIf="currentFolder && isListView" color="dark" class="fixed" style="padding: 10;">
   <div style="overflow: scroll; height: 100%;">
+
+    <!-- Folder List -->
+    <ion-grid class="ion-no-padding" style="margin: 50px">
+      <ion-row>
+        <ion-col *ngFor="let folder of currentFolder.folders" size=3>
+          <ion-button style="text-transform: none" expand='block' (click)="folderClicked(folder)">
+            {{folder.folderName}}
+            <ion-icon name="folder" color="light" slot="start"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Search Bar -->
     <ion-grid class="ion-no-padding" style="margin: 50px">
       <ion-row class="ion-no-padding" style="margin-bottom: 10px">
         <ion-col size="12">
@@ -151,8 +165,8 @@
 
               <!-- Thumbnail would be nice -->
 
-              <video slot="start" *ngIf="file.mimetype.includes('video')" controls controlsList="nodownload" class="video-style" preload="metadata" 
-                oncontextmenu="return false;" #videoPlayer
+              <video slot="start" *ngIf="file.mimetype.includes('video')" class="video-style" preload="metadata"
+                (click)="showFullscreen(file)" oncontextmenu="return false;" #videoPlayer
                 style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px;">
                 <source [src]="getVideoUrl(file)" type="video/mp4" />
                 Browser not supported

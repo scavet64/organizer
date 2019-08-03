@@ -30,6 +30,11 @@
   overflow: visible !important;
 }
 
+.videoplayer {
+  --width: 85%;
+  --height: 85%;
+}
+
 // Overrides alert css classes to include some custom changes.
 .alert-wrapper {
   color: black !important;

@@ -9,6 +9,7 @@ import { MediaTagsComponent } from '../media-tags/media-tags.component';
 import { TagModel } from '../tag/tagModel';
 import { TagService } from '../tag/tag.service';
 import { ToastingService } from '../toasting.service';
+import { VideoplayerComponent } from '../media/videoplayer/videoplayer.component';
 
 @Component({
   selector: 'app-home',
@@ -35,6 +36,7 @@ export class HomePage implements OnInit {
     private folderService: FolderService,
     private tagService: TagService,
     private mediaFileService: MediaServiceService,
+    private modalController: ModalController,
     private toastController: ToastController,
     private toastingController: ToastingService,
     private popoverController: PopoverController
@@ -100,6 +102,17 @@ export class HomePage implements OnInit {
           });
         }
       });
+  }
+
+  async showFullscreen(toShow: MediaFile) {
+    const popover = await this.modalController.create({
+      component: VideoplayerComponent,
+      componentProps: {
+        mediaFile: toShow
+      },
+      cssClass: 'videoplayer'
+    });
+    await popover.present();
   }
 
   public getVideoUrl(file: MediaFile): string {
