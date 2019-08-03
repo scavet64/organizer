@@ -18,11 +18,22 @@ import { VideoplayerComponent } from '../media/videoplayer/videoplayer.component
 })
 export class HomePage implements OnInit {
 
+  readonly IMAGE_PNG = 'image/png';
   public stepZoom = 1;
   public minZoom = 2;
   public maxZoom = 12;
   public truncationLimit = 20;
   public mediaColumnSize = 4;
+
+  sliderLevel = 2;
+
+  sizeXl = 4;
+  sizeLg = 6;
+  sizeMd = 8;
+  sizeSm = 10;
+  sizeXs = 12;
+
+  private sizeArray = [this.sizeXl, this.sizeLg, this.sizeMd, this.sizeSm, this.sizeXs];
 
   public isListView = true;
   public searchBox: string;
@@ -155,5 +166,38 @@ export class HomePage implements OnInit {
     if (newSize >= this.minZoom && newSize <= this.maxZoom) {
       this.mediaColumnSize = newSize;
     }
+  }
+
+  public decreaseZoom() {
+    this.sizeArray.forEach(element => {
+      if (element > 0) {
+        element = element - this.stepZoom;
+      }
+    });
+
+    this.sizeXl = this.sizeXl - this.stepZoom;
+    this.sizeLg = this.sizeLg - this.stepZoom;
+    this.sizeMd = this.sizeMd - this.stepZoom;
+    this.sizeSm = this.sizeSm - this.stepZoom;
+    this.sizeXs = this.sizeXs - this.stepZoom;
+  }
+
+  public increaseZoom() {
+
+    this.sizeArray.forEach(element => {
+      if (element < 12) {
+        element = element + this.stepZoom;
+      }
+    });
+
+    this.sizeXl = this.sizeXl + this.stepZoom;
+    this.sizeLg = this.sizeLg + this.stepZoom;
+    this.sizeMd = this.sizeMd + this.stepZoom;
+    this.sizeSm = this.sizeSm + this.stepZoom;
+    this.sizeXs = this.sizeXs + this.stepZoom;
+  }
+
+  public setListMode(isList: boolean) {
+    this.isListView = isList;
   }
 }
