@@ -6,8 +6,6 @@
 package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.core.EntityNotFoundException;
-import com.scavettapps.organizer.media.MediaFile;
-import com.scavettapps.organizer.media.FileRepository;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
 import java.io.File;
@@ -18,6 +16,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,13 +27,15 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MediaFileService {
-   
+
    @Autowired
    private FileRepository fileRepository;
    @Autowired
    private TagRepository tagRepository;
-   
-   public MediaFile getMediaFile(String hash) { 
+   @Autowired
+   private MediaFileSpecification mediaFileSpecification;
+
+   public MediaFile getMediaFile(String hash) {
       return fileRepository.findByHash(hash).orElseThrow(() -> new EntityNotFoundException());
    }
 
@@ -45,9 +48,9 @@ public class MediaFileService {
     * @throws EntityNotFoundException if the hash is not found
     */
    public Resource loadFileAsResource(String hash) throws FileNotFoundException {
-      
+
       MediaFile file = getMediaFile(hash);
-      
+
       try {
          Resource resource = new UrlResource(new File(file.getPath()).toURI());
          if (resource.exists()) {
@@ -59,46 +62,78 @@ public class MediaFileService {
          throw new FileNotFoundException("Malformed URL Exception: " + file);
       }
    }
-   
+
    public MediaFile addTagToMediaFile(long mediaId, long tagId) {
       if (mediaId < 0 || tagId < 0) {
          throw new IllegalArgumentException("Ids cannot be negative");
       }
-      
+
       // Find the media file
       MediaFile file = fileRepository.findById(mediaId).orElseThrow();
-      
+
       // Find the Tag and add it.
       Tag tag = tagRepository.findById(tagId).orElseThrow();
       file.addTag(tag);
-      
+
       return fileRepository.save(file);
    }
-   
+
    /**
     * TODO: This could be made a little more efficient so that it does not reach out to the database
     * so much, but since this is meant to be local/in memory for now, it is not as big of a deal.
+    *
     * @param mediaId
     * @param tags
-    * @return 
+    * @return
     */
    @Transactional
    public MediaFile addTagToMediaFile(long mediaId, Collection<Long> tags) {
       if (mediaId < 0) {
          throw new IllegalArgumentException("Ids cannot be negative");
       }
-      
+
       // Find the media file
       MediaFile file = fileRepository.findById(mediaId).orElseThrow();
-      
+
       file.getTags().clear();
-      
-      for (Long tagId: tags) {
+
+      for (Long tagId : tags) {
          // Find the Tag and add it to the file.
          Tag tag = tagRepository.findById(tagId).orElseThrow();
          file.addTag(tag);
       }
-      
+
       return fileRepository.save(file);
+   }
+
+   @Transactional
+   public Page<MediaFile> getPageOfMediaFiles(Pageable page, MediaFileRequest mediaFileRequest) {
+      return this.fileRepository.findAll(getDefaultSpecification(mediaFileRequest), page);
+   }
+
+   private Specification<MediaFile> getDefaultSpecification(MediaFileRequest params) {
+      // Exposed attributes in API spec do not need to be same as Database table column names.
+      Specification<MediaFile> specs = null;
+      if (params.getName() != null) {
+         specs = Specification.where(mediaFileSpecification.getStringTypeSpecification(
+             "name",
+             params.getName())
+         );
+      }
+      if (params.getTags() != null) {
+         for (Tag tag : params.getTags()) {
+            if (specs == null) {
+               specs = Specification.where(
+                   mediaFileSpecification.getTagAttributeContains("id", tag.getName())
+               );
+            } else {
+               specs = specs.and(
+                   mediaFileSpecification.getTagAttributeContains("id", tag.getName())
+               );
+            }
+         }
+      }
+
+      return specs;
    }
 }

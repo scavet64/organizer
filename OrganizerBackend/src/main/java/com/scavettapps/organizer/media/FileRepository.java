@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.scavettapps.organizer.media.MediaFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 @Repository
 public interface FileRepository extends JpaRepository<MediaFile, Long> {
@@ -18,5 +21,7 @@ public interface FileRepository extends JpaRepository<MediaFile, Long> {
 //   List<MediaFile> findAllByFolder_Path(String folderPath);
    
    List<MediaFile> findAllByDuplicatePathsNotEmpty();
+   
+   Page<MediaFile> findAll(Specification<MediaFile> specs, Pageable page);
 
 }

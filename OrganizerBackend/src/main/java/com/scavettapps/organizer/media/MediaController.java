@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.core.io.support.ResourceRegion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
@@ -71,5 +73,14 @@ public class MediaController {
           new DataResponse(updatedFile),
           HttpStatus.OK
       );
+   }
+   
+   @GetMapping
+   public ResponseEntity<Response> findMedia(
+       Pageable pageable,
+       MediaFileRequest request
+   ) {
+      Page<MediaFile> mediaPage = this.mediaFileService.getPageOfMediaFiles(pageable, request);
+      return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
    }
 }
