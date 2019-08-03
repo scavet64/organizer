@@ -14,7 +14,8 @@ const routes: Routes = [
   },
   { path: 'tag', loadChildren: './tag/tag.module#TagPageModule' },
   { path: 'tag/modification', component: CreateEditPage },
-  { path: 'create', loadChildren: './tag/create-edit/create-edit.module#CreatePageModule' }
+  { path: 'create', loadChildren: './tag/create-edit/create-edit.module#CreatePageModule' },  { path: 'media', loadChildren: './media/media.module#MediaPageModule' }
+
 ];
 
 @NgModule({

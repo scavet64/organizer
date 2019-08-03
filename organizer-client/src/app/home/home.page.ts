@@ -9,6 +9,8 @@ import { MediaTagsComponent } from '../media-tags/media-tags.component';
 import { TagModel } from '../tag/tagModel';
 import { TagService } from '../tag/tag.service';
 import { ToastingService } from '../toasting.service';
+import { VideoplayerComponent } from '../media/videoplayer/videoplayer.component';
+import { CardItemComponent } from '../media/card-item/card-item.component';
 
 @Component({
   selector: 'app-home',
@@ -17,11 +19,25 @@ import { ToastingService } from '../toasting.service';
 })
 export class HomePage implements OnInit {
 
+  readonly IMAGE_PNG = 'image/png';
   public stepZoom = 1;
   public minZoom = 2;
   public maxZoom = 12;
   public truncationLimit = 20;
   public mediaColumnSize = 4;
+
+  sliderLevel = 2;
+
+  sizeXl = 4;
+  sizeLg = 6;
+  sizeMd = 8;
+  sizeSm = 10;
+  sizeXs = 12;
+
+  private sizeArray = [this.sizeXl, this.sizeLg, this.sizeMd, this.sizeSm, this.sizeXs];
+
+  public isListView = true;
+  public searchBox: string;
 
   knownTags: TagModel[];
   rootFolders: Folder[];
@@ -32,6 +48,7 @@ export class HomePage implements OnInit {
     private folderService: FolderService,
     private tagService: TagService,
     private mediaFileService: MediaServiceService,
+    private modalController: ModalController,
     private toastController: ToastController,
     private toastingController: ToastingService,
     private popoverController: PopoverController
@@ -67,40 +84,6 @@ export class HomePage implements OnInit {
   public backButton() {
     console.log("back clicked");
     this.currentFolder = this.previousFolders.pop();
-  }
-
-  async presentPopover(ev: any, mediaFile: MediaFile) {
-    const popover = await this.popoverController.create({
-      component: MediaTagsComponent,
-      componentProps: {
-        mediasTags: JSON.parse(JSON.stringify(mediaFile.tags)),  // Send in a cloned version so edits are not reflected
-        knownTags: this.knownTags
-      },
-      cssClass: 'tags-popover',
-      event: ev,
-      translucent: true
-    });
-    await popover.present();
-
-    popover.onDidDismiss()
-      .then((data) => {
-        const updatedTags = data.data;
-        if (updatedTags) {
-          this.mediaFileService.updateMediaFileTags(mediaFile.id, updatedTags).subscribe(res => {
-
-            mediaFile.tags = res.data.tags;
-
-            this.toastingController.showSuccessToast(`Successfully updated tags`);
-          }, (err) => {
-            console.log(`Could not update tags: ${err.error.error}`);
-            this.toastingController.showPersistentErrorToast(`Could not update tags: ${err.error.error}`);
-          });
-        }
-      });
-  }
-
-  public getVideoUrl(file: MediaFile): string {
-    return this.mediaFileService.getVideoStreamURL(file);
   }
 
   public hideMedia(file: MediaFile) {
@@ -139,5 +122,38 @@ export class HomePage implements OnInit {
     if (newSize >= this.minZoom && newSize <= this.maxZoom) {
       this.mediaColumnSize = newSize;
     }
+  }
+
+  public decreaseZoom() {
+    this.sizeArray.forEach(element => {
+      if (element > 0) {
+        element = element - this.stepZoom;
+      }
+    });
+
+    this.sizeXl = this.sizeXl - this.stepZoom;
+    this.sizeLg = this.sizeLg - this.stepZoom;
+    this.sizeMd = this.sizeMd - this.stepZoom;
+    this.sizeSm = this.sizeSm - this.stepZoom;
+    this.sizeXs = this.sizeXs - this.stepZoom;
+  }
+
+  public increaseZoom() {
+
+    this.sizeArray.forEach(element => {
+      if (element < 12) {
+        element = element + this.stepZoom;
+      }
+    });
+
+    this.sizeXl = this.sizeXl + this.stepZoom;
+    this.sizeLg = this.sizeLg + this.stepZoom;
+    this.sizeMd = this.sizeMd + this.stepZoom;
+    this.sizeSm = this.sizeSm + this.stepZoom;
+    this.sizeXs = this.sizeXs + this.stepZoom;
+  }
+
+  public setListMode(isList: boolean) {
+    this.isListView = isList;
   }
 }

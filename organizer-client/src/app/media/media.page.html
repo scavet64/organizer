@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>View All Media</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="pageResponse" color="dark" class="fixed" style="padding: 10;">
+  <div style="overflow: scroll; height: 100%;">
+    <mat-paginator [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+      [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </mat-paginator>
+    <!-- Search Bar -->
+    <ion-grid class="ion-no-padding" style="margin: 50px">
+      <ion-row class="ion-no-padding" style="margin-bottom: 10px">
+        <ion-col size="12">
+          <ion-item color='primary' class='rounded' style="height:100%">
+            <ion-icon slot="start" name='search'></ion-icon>
+            <ion-input clearInput [(ngModel)]='searchBox'></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <!-- Card View -->
+      <ion-row *ngIf="!isListView" class="ion-justify-content-center">
+        <ion-col *ngFor="let file of pageResponse.content" [sizeXl]="sizeXl" [sizeLg]="sizeLg" [sizeMd]="sizeMd"
+          [sizeSm]="sizeSm" [sizeXs]="sizeXs">
+          <app-card-item [knownTags]="knownTags" [file]="file"></app-card-item>
+        </ion-col>
+      </ion-row>
+
+      <!-- Media File List -->
+      <ion-row *ngIf="isListView" class="ion-no-padding">
+        <ion-col size="12">
+          <ion-list color="dark" class='rounded' style="width: 100%">
+            <ion-item *ngFor="let file of pageResponse.content" [lines]="'full'">
+              <app-list-item [knownTags]="knownTags" [file]="file"></app-list-item>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <mat-paginator [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+      [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+    </mat-paginator>
+  </div>
+</ion-content>

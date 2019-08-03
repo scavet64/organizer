@@ -30,6 +30,13 @@
   overflow: visible !important;
 }
 
+//////////////////////////////////////////////////////
+
+.videoplayer {
+  --width: 85%;
+  --height: 85%;
+}
+
 // Overrides alert css classes to include some custom changes.
 .alert-wrapper {
   color: black !important;
@@ -39,14 +46,21 @@
 }
 
 
-// This is for the pop over to modify tags.
+////// This is for the pop over to modify tags. //////
+
 .tags-popover {
   --width: 300px;
   --height: 440px;
 }
 
+//////////////// Custom Paginator ////////////////////
 
-// Custom Scrollbar stuff
+.mat-paginator {
+  background: transparent;
+  color: white;
+}
+
+/////////////// Custom Scrollbar stuff ///////////////
 
 .fixed[scrollx=true], div[scrolly=true] {
   position: relative;
@@ -80,3 +94,5 @@
   height: 5px;
   display: block;
 }
+
+//////////////////////////////////////////////////////

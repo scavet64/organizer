@@ -21,15 +21,19 @@ import { CoreModule } from './common/core.module';
 import { TruncationPipe } from './truncation.pipe';
 import { TooltipsModule } from 'ionic-tooltips';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MediaFilterPipe } from './media/media-filter.pipe';
+import { VideoplayerComponent } from './media/videoplayer/videoplayer.component';
 
 @NgModule({
   declarations: [
     CreateEditPage,
     AppComponent,
-    MediaTagsComponent
+    MediaTagsComponent,
+    VideoplayerComponent
   ],
   entryComponents: [
-    MediaTagsComponent
+    MediaTagsComponent,
+    VideoplayerComponent
   ],
   imports: [
     CoreModule,
