@@ -7,7 +7,6 @@ package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
-import com.scavettapps.organizer.media.ResourceService;
 import com.scavettapps.organizer.tag.Tag;
 import com.sun.swing.internal.plaf.metal.resources.metal;
 import java.io.FileNotFoundException;
@@ -55,9 +54,24 @@ public class MediaController {
    Resource getFullVideo(@PathVariable String fileID)
            throws FileNotFoundException {
 
-      Resource fileResource = mediaFileService.loadFileAsResource(fileID);
+      Resource fileResource = mediaFileService.loadFileAsResource2(fileID);
       return fileResource;
    }
+   
+//   /**
+//    *
+//    * @param fileID the file ID corresponding to the video
+//    * @return returns the video as a resource stream
+//    */
+//   @GetMapping("/{fileID}/full2")
+//   public @ResponseBody
+//   Resource getFullVideo2(@PathVariable String fileID)
+//           throws FileNotFoundException {
+//      
+//
+//      Resource fileResource = mediaFileService.loadFileAsResource(fileID);
+//      return fileResource;
+//   }
    
    @PutMapping("/tags")
    public ResponseEntity<Response> updateTagsForMedia(

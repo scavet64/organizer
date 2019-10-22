@@ -29,3 +29,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+OrganizerBackend/src/main/resources/static/

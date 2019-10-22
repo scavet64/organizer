@@ -5,16 +5,16 @@
     </ion-card-header>
     <ion-card-content style="padding: 0 !important;">
       <div>
-        <video *ngIf="file.mimetype.includes('video')" class="video-style" controls preload="metadata"
+        <video *ngIf="true" class="video-style" controls preload="metadata"
           oncontextmenu="return false;" controlsList="nodownload" #videoPlayer style="object-fit: cover; min-width: 100%; width: 100%;
           height: 100%;
           min-height: 100%;">
-          <source [src]="getVideoUrl(file)" type="video/mp4" />
+          <source [src]="getVideoUrl(file)" />
           Browser not supported
         </video>
       </div>
 
-      <ion-img *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)"
+      <ion-img *ngIf="file.mimetype && file.mimetype.includes('image')" [src]="getVideoUrl(file)"
         style="object-fit: cover; margin:auto"></ion-img>
 
       <ion-item class="ion-no-padding" style="height: 100; margin:0; padding-left:3px; padding-right:3px;"

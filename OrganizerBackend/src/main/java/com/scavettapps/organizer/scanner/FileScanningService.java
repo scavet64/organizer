@@ -122,7 +122,10 @@ public class FileScanningService {
          existingFile = this.fileRepository.findByHash(hash).orElse(null);
          if (existingFile == null) {
             // Hash not found in database. Create the new media file object
-            String mimetype = URLConnection.guessContentTypeFromName(file.getName());
+            String mimetype;
+            try (FileInputStream stream = new FileInputStream(file)) {
+               mimetype = URLConnection.guessContentTypeFromStream(stream);
+            }
 
             MediaFile newFile = new MediaFile(
                 hash,

@@ -1,13 +1,13 @@
 <ion-item>
   <!-- Thumbnail would be nice -->
-  <video slot="start" *ngIf="file.mimetype.includes('video')" class="video-style" preload="metadata"
+  <video slot="start" *ngIf="file.mimetype && file.mimetype.includes('video')" class="video-style" preload="metadata"
     (click)="showFullscreen(file)" oncontextmenu="return false;" #videoPlayer
     style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px;">
-    <source [src]="getVideoUrl(file)" type="video/mp4" />
+    <source [src]="getVideoUrl(file)" />
     Browser not supported
   </video>
 
-  <ion-img slot="start" *ngIf="file.mimetype.includes('image')" [src]="getVideoUrl(file)"
+  <ion-img slot="start" *ngIf="file.mimetype && file.mimetype.includes('image')" [src]="getVideoUrl(file)"
     style="object-fit: cover; min-width: 10%; width: 10%; height: 100%; min-height: 100%; margin-right: 5px">
   </ion-img>
 
@@ -24,13 +24,13 @@
       [style.color]="tag.textColor">
       {{ tag.name | truncation }}
     </ion-chip>
+    <!-- <ion-chip color="success">Cool Tag</ion-chip>
     <ion-chip color="success">Cool Tag</ion-chip>
     <ion-chip color="success">Cool Tag</ion-chip>
     <ion-chip color="success">Cool Tag</ion-chip>
     <ion-chip color="success">Cool Tag</ion-chip>
     <ion-chip color="success">Cool Tag</ion-chip>
-    <ion-chip color="success">Cool Tag</ion-chip>
-    <ion-chip color="success">Cool Tag</ion-chip>
+    <ion-chip color="success">Cool Tag</ion-chip> -->
   </div>
 
   <ion-item slot='end' style="margin-right: 5px;">

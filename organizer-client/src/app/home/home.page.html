@@ -106,7 +106,7 @@
         <ion-col size="12">
           <ion-list color="dark" class='rounded' style="width: 100%">
             <ion-item *ngFor="let file of currentFolder.files | mediaFilter : searchBox" [lines]="'full'">
-              <app-list-item [knownTags]="knownTags" [file]="file"></app-list-item>
+              <app-list-item [knownTags]="knownTags" [file]="file" style="width: 100%"></app-list-item>
             </ion-item>
           </ion-list>
         </ion-col>
