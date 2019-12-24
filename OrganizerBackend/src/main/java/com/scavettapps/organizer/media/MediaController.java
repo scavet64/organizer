@@ -7,26 +7,17 @@ package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
-import com.scavettapps.organizer.tag.Tag;
-import com.sun.swing.internal.plaf.metal.resources.metal;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,15 +40,16 @@ public class MediaController {
     * @param fileID the file ID corresponding to the video
     * @return returns the video as a resource stream
     */
-   @GetMapping("/{fileID}/full")
+   @GetMapping(value = "/{fileID}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
-   Resource getFullVideo(@PathVariable String fileID)
-           throws FileNotFoundException {
+   ResponseEntity<Resource> getFullVideo(@PathVariable String fileID)
+       throws FileNotFoundException {
 
-      Resource fileResource = mediaFileService.loadFileAsResource2(fileID);
-      return fileResource;
+      Resource fileResource = mediaFileService.loadFileAsResource(fileID);
+      ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(fileResource);
+      return resp;
    }
-   
+
 //   /**
 //    *
 //    * @param fileID the file ID corresponding to the video
@@ -72,14 +64,13 @@ public class MediaController {
 //      Resource fileResource = mediaFileService.loadFileAsResource(fileID);
 //      return fileResource;
 //   }
-   
    @PutMapping("/tags")
    public ResponseEntity<Response> updateTagsForMedia(
        @RequestBody @Validated AddTagRequest request
    ) {
-      
+
       MediaFile updatedFile = mediaFileService.addTagToMediaFile(
-          request.getMediaId(), 
+          request.getMediaId(),
           request.getTagIds()
       );
 
@@ -88,7 +79,7 @@ public class MediaController {
           HttpStatus.OK
       );
    }
-   
+
    @GetMapping
    public ResponseEntity<Response> findMedia(
        Pageable pageable,

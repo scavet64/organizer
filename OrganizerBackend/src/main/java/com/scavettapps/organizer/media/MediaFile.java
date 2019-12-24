@@ -17,11 +17,13 @@ import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
 import com.sun.istack.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 @Table(name = "files", uniqueConstraints = @UniqueConstraint(columnNames = {"hash"}))
 public class MediaFile extends AbstractPersistableEntity<Long> {
-
+   
    @NotNull
    @Column(name = "hash")
    private String hash;
@@ -49,11 +51,6 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    @NotNull
    @Column(name = "last_seen_date")
    private LocalDate lastSeenDate;
-
-//   @JsonIgnore
-//   @NotNull
-//   @ManyToOne()
-//   private Folder folder;
 
    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
    private Set<Tag> tags = new HashSet<>();

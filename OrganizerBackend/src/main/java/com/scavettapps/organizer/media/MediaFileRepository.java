@@ -6,13 +6,12 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.scavettapps.organizer.media.MediaFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 @Repository
-public interface FileRepository extends JpaRepository<MediaFile, Long> {
+public interface MediaFileRepository extends JpaRepository<MediaFile, Long> {
 
    Optional<MediaFile> findByNameAndSize(String name, long size);
 

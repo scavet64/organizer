@@ -8,35 +8,24 @@ package com.scavettapps.organizer.media;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
+import com.scavettapps.organizer.transcoding.ITranscodingService;
+import com.scavettapps.organizer.transcoding.TranscodingException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.transaction.Transactional;
-import net.bramp.ffmpeg.FFmpeg;
-import net.bramp.ffmpeg.FFmpegExecutor;
-import net.bramp.ffmpeg.FFprobe;
-import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ws.schild.jave.AudioAttributes;
-import ws.schild.jave.Encoder;
-import ws.schild.jave.EncoderException;
-import ws.schild.jave.EncodingAttributes;
-import ws.schild.jave.MultimediaObject;
-import ws.schild.jave.VideoAttributes;
-import ws.schild.jave.VideoSize;
 
 /**
  *
@@ -45,15 +34,34 @@ import ws.schild.jave.VideoSize;
 @Service
 public class MediaFileService {
 
-   @Autowired
-   private FileRepository fileRepository;
-   @Autowired
-   private TagRepository tagRepository;
-   @Autowired
-   private MediaFileSpecification mediaFileSpecification;
+   private final MediaFileRepository mediaFileRepository;
+   private final MediaFileSpecification mediaFileSpecification;
+   private final TagRepository tagRepository;
+   private final ITranscodingService transcodingService;
 
-   public MediaFile getMediaFile(String hash) {
-      return fileRepository.findByHash(hash).orElseThrow(() -> new EntityNotFoundException());
+   @Autowired
+   public MediaFileService(
+       MediaFileRepository mediaFileRepository, 
+       MediaFileSpecification mediaFileSpecification, 
+       TagRepository tagRepository,
+       @Qualifier("bramp") ITranscodingService transcodingService
+   ) {
+      this.mediaFileRepository = mediaFileRepository;
+      this.mediaFileSpecification = mediaFileSpecification;
+      this.tagRepository = tagRepository;
+      this.transcodingService = transcodingService;
+   }
+
+   public Optional<MediaFile> getMediaFile(String hash) {
+      return this.mediaFileRepository.findByHash(hash);
+   }
+   
+   public Optional<MediaFile> getMediaFile(String fileName, long size) {
+      return this.mediaFileRepository.findByNameAndSize(fileName, size);
+   }
+   
+   public MediaFile saveMediaFile(MediaFile file) {
+      return this.mediaFileRepository.save(file);
    }
 
    /**
@@ -66,7 +74,7 @@ public class MediaFileService {
     */
    public Resource loadFileAsResource(String hash) throws FileNotFoundException {
 
-      MediaFile file = getMediaFile(hash);
+      MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
 
       try {
          Resource resource = new UrlResource(new File(file.getPath()).toURI());
@@ -90,12 +98,12 @@ public class MediaFileService {
     */
    public Resource loadFileAsResource2(String hash) throws FileNotFoundException {
 
-      MediaFile file = getMediaFile(hash);
+      MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
 
       try {
          File target;
          if (file.getName().toLowerCase().endsWith(".avi")) {
-            target = transcodeFile2(file);
+            target = transcodingService.transcodeMediaFile(file);
          } else {
             target = new File(file.getPath());
          }
@@ -106,99 +114,14 @@ public class MediaFileService {
          } else {
             throw new FileNotFoundException("File not found: " + file);
          }
-      } catch (IllegalArgumentException ex) {
+      } catch (MalformedURLException ex) {
          Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
          throw new FileNotFoundException("Malformed URL Exception: " + file);
-      } catch (EncoderException ex) {
+      } catch (TranscodingException ex) {
          Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
-         throw new FileNotFoundException("Malformed URL Exception: " + file);
-      } catch (IOException ex) {
-         Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
-         throw new FileNotFoundException("Malformed URL Exception: " + file);
+         throw new FileNotFoundException("Transcoding Exception: " + file);
       }
    }
-
-   private File transcodeFile(MediaFile file) throws IOException, EncoderException {
-      File folder = new File("C:/temp/");
-      if (!folder.exists()) {
-         folder.mkdirs();
-      }
-      File source = new File(file.getPath());
-      File target = Paths.get(folder.getAbsolutePath(), file.getName()).toFile();
-      AudioAttributes audio = new AudioAttributes();
-      audio.setCodec("eac3");
-      audio.setBitRate(97000);
-      audio.setSamplingRate(48000);
-      audio.setChannels(2);
-      VideoAttributes video = new VideoAttributes();
-      video.setCodec("mpeg4");
-      video.setBitRate(1500000);
-      video.setFrameRate(30);
-      video.setSize(new VideoSize(320, 240));
-      EncodingAttributes attrs = new EncodingAttributes();
-      attrs.setFormat("mp4");
-      attrs.setVideoAttributes(video);
-      attrs.setAudioAttributes(audio);
-      Encoder encoder = new Encoder();
-      encoder.encode(new MultimediaObject(source), target, attrs);
-
-      return target;
-   }
-
-   private File transcodeFile2(MediaFile file) throws IOException, EncoderException {
-      File folder = new File("C:/temp/");
-      if (!folder.exists()) {
-         folder.mkdirs();
-      }
-      File source = new File(file.getPath());
-      File target = Paths.get(folder.getAbsolutePath(), file.getName()).toFile();
-      FFmpeg ffmpeg = new FFmpeg(getFileFromResources("ffmpeg.exe").getPath());
-      FFprobe ffprobe = new FFprobe(getFileFromResources("ffprobe.exe").getPath());
-
-      FFmpegBuilder builder = new FFmpegBuilder()
-          .setInput(source.getAbsolutePath()) // Filename, or a FFmpegProbeResult
-          .overrideOutputFiles(true) // Override the output if it exists
-
-          .addOutput(target.getAbsolutePath()) // Filename for the destination
-          .setFormat("mp4") // Format is inferred from filename, or can be set
-          //.setTargetSize(250_000) // Aim for a 250KB file
-
-          .disableSubtitle() // No subtiles
-
-//          .setAudioChannels(1) // Mono audio
-//          .setAudioCodec("aac") // using the aac codec
-//          .setAudioSampleRate(48_000) // at 48KHz
-//          .setAudioBitRate(32768) // at 32 kbit/s
-
-          .setVideoCodec("libx264") // Video using x264
-
-          .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
-          .done();
-
-      FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-
-// Run a one-pass encode
-      executor.createJob(builder).run();
-
-// Or run a two-pass encode (which is better quality at the cost of being slower)
-      //executor.createTwoPassJob(builder).run();
-
-      return target;
-   }
-   
-   // get file from classpath, resources folder
-    private File getFileFromResources(String fileName) {
-
-        ClassLoader classLoader = getClass().getClassLoader();
-
-        URL resource = classLoader.getResource(fileName);
-        if (resource == null) {
-            throw new IllegalArgumentException("file is not found!");
-        } else {
-            return new File(resource.getFile());
-        }
-
-    }
 
    public MediaFile addTagToMediaFile(long mediaId, long tagId) {
       if (mediaId < 0 || tagId < 0) {
@@ -206,13 +129,13 @@ public class MediaFileService {
       }
 
       // Find the media file
-      MediaFile file = fileRepository.findById(mediaId).orElseThrow();
+      MediaFile file = mediaFileRepository.findById(mediaId).orElseThrow();
 
       // Find the Tag and add it.
       Tag tag = tagRepository.findById(tagId).orElseThrow();
       file.addTag(tag);
 
-      return fileRepository.save(file);
+      return mediaFileRepository.save(file);
    }
 
    /**
@@ -230,7 +153,7 @@ public class MediaFileService {
       }
 
       // Find the media file
-      MediaFile file = fileRepository.findById(mediaId).orElseThrow();
+      MediaFile file = mediaFileRepository.findById(mediaId).orElseThrow();
 
       file.getTags().clear();
 
@@ -240,12 +163,12 @@ public class MediaFileService {
          file.addTag(tag);
       }
 
-      return fileRepository.save(file);
+      return mediaFileRepository.save(file);
    }
 
    @Transactional
    public Page<MediaFile> getPageOfMediaFiles(Pageable page, MediaFileRequest mediaFileRequest) {
-      return this.fileRepository.findAll(getDefaultSpecification(mediaFileRequest), page);
+      return this.mediaFileRepository.findAll(getDefaultSpecification(mediaFileRequest), page);
    }
 
    private Specification<MediaFile> getDefaultSpecification(MediaFileRequest params) {

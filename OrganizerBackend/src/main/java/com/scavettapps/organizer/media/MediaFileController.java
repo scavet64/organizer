@@ -16,10 +16,10 @@ import com.scavettapps.organizer.core.repository.DuplicateMediaFilePathRepositor
 import com.scavettapps.organizer.scanner.FileScanningService;
 
 @RestController
-public class FileController {
+public class MediaFileController {
 
    @Autowired
-   private FileRepository fileRepo;
+   private MediaFileRepository fileRepo;
 
    @Autowired
    private FileScanningService fileScanningService;

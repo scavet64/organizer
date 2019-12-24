@@ -2,60 +2,56 @@ package com.scavettapps.organizer.scanner;
 
 import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.scavettapps.organizer.folder.Folder;
 import com.scavettapps.organizer.media.MediaFile;
 import com.scavettapps.organizer.hashing.IHashService;
-import com.scavettapps.organizer.media.FileRepository;
-import com.scavettapps.organizer.folder.FolderRepository;
-import com.scavettapps.organizer.core.repository.ScanLocationRepository;
+import com.scavettapps.organizer.folder.FolderService;
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import com.scavettapps.organizer.media.MediaFileService;
 
 @Service
 public class FileScanningService {
 
+   private static final Logger LOGGER = LoggerFactory.getLogger(FileScanningService.class);
+   
    //TODO: Look into increasing this. I am seeing odd errors with this multi threaded
-   public static final int NUMBER_THREADS = 1;
+   private static final int NUMBER_THREADS = 1;
+   
    private static Folder workingFolder;
 
-   private Logger logger = LoggerFactory.getLogger(this.getClass());
+   private final FolderService folderService;
+   private final IHashService quickHash;
+   private final MediaFileService mediaFileService;
+   private final ScanLocationSevice scanLocationService;
 
-   @Autowired
-   private ScanLocationRepository scanLocationRepository;
-
-   @Autowired
-   private FileRepository fileRepository;
-
-   @Autowired
-   private FolderRepository folderRepository;
-
-   @Autowired
-   @Qualifier("QuickHash")
-   private IHashService hashingService;
+   public FileScanningService(
+       FolderService folderService, 
+       @Qualifier("QuickHash") IHashService quickHash, 
+       MediaFileService mediaFileService, 
+       ScanLocationSevice scanLocationService) {
+      this.folderService = folderService;
+      this.quickHash = quickHash;
+      this.mediaFileService = mediaFileService;
+      this.scanLocationService = scanLocationService;
+   }
 
    @Transactional
    public Folder scanLocationForFiles(String path) throws InterruptedException,
@@ -65,12 +61,12 @@ public class FileScanningService {
 
       // Create the initial folder based on the passed in path. IF it already exists. get it.
       File scanningPathFile = new File(path);
-      workingFolder = folderRepository.findByPath(scanningPathFile.getPath()).orElse(null);
+      workingFolder = folderService.findFolderByPath(scanningPathFile.getPath());
       if (workingFolder == null) {
          // new folder
          workingFolder = new Folder(scanningPathFile.getPath());
       }
-      
+
       //Get the list of files to work with
       List<File> filesInLocation = Arrays.asList(scanningPathFile.listFiles());
 
@@ -97,15 +93,15 @@ public class FileScanningService {
          threads.add(t);
       }
 
-      logger.info("Kicked off threads");
+      LOGGER.info("Kicked off threads");
 
       for (Thread treadToJoin : threads) {
          treadToJoin.join();
       }
 
-      logger.info("Joined off threads");
+      LOGGER.info("Joined off threads");
 
-      this.folderRepository.save(workingFolder);
+      this.folderService.saveFolder(workingFolder);
 
       return workingFolder;
    }
@@ -114,18 +110,15 @@ public class FileScanningService {
    private MediaFile processFile(File file) throws AlreadyExistsException, IOException {
 
       // Check to see if we know this file using name and size
-      MediaFile existingFile = this.fileRepository.findByNameAndSize(file.getName(), file.length()).orElse(null);
+      MediaFile existingFile = this.mediaFileService.getMediaFile(file.getName(), file.length()).orElse(null);
       if (existingFile == null) {
 
          // Could not find the file in the database without hashing. Get hash and check using that.
-         String hash = hashingService.getHash(file);
-         existingFile = this.fileRepository.findByHash(hash).orElse(null);
+         String hash = quickHash.getHash(file);
+         existingFile = this.mediaFileService.getMediaFile(hash).orElse(null);
          if (existingFile == null) {
             // Hash not found in database. Create the new media file object
-            String mimetype;
-            try (FileInputStream stream = new FileInputStream(file)) {
-               mimetype = URLConnection.guessContentTypeFromStream(stream);
-            }
+            String mimetype = URLConnection.guessContentTypeFromName(file.getName());
 
             MediaFile newFile = new MediaFile(
                 hash,
@@ -134,12 +127,12 @@ public class FileScanningService {
                 file.getPath(),
                 mimetype
             );
-            logger.info(
+            LOGGER.info(
                 "new file added - hash: " + newFile.getHash() + " name: " + newFile.getName() + " mimetype: " + mimetype
             );
             return newFile;
          } else {
-            logger.error(
+            LOGGER.error(
                 "file hash already existed file added - hash: "
                 + hash
                 + " name: "
@@ -148,11 +141,11 @@ public class FileScanningService {
          }
       } else {
          String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-         logger.info(
+         LOGGER.info(
              "existing file based on name and size - hash: " + existingFile.getHash() + " name: " + existingFile.getName() + " mimetype: " + mimeType
          );
          existingFile.updateLastSeen();
-         this.fileRepository.save(existingFile);
+         this.mediaFileService.saveMediaFile(existingFile);
          throw new AlreadyExistsException("file already existed");
       }
    }
@@ -167,11 +160,11 @@ public class FileScanningService {
    @Transactional
    public void recurseDirectory(File[] files, Folder currentFolder, Set<MediaFile> scannedFiles)
        throws IOException {
-      logger.info("Now Entering: " + currentFolder.getPath());
+      LOGGER.info("Now Entering: " + currentFolder.getPath());
       for (File file : files) {
          if (file.isDirectory()) {
             // Do we have this file already?
-            Folder scanFolder = folderRepository.findByPath(file.getPath()).orElse(null);
+            Folder scanFolder = folderService.findFolderByPath(file.getPath());
             if (scanFolder == null) {
                // new folder. Set it up for the first time
                scanFolder = new Folder(file.getPath());
@@ -188,22 +181,26 @@ public class FileScanningService {
                //Does this file already exist somewhere else in this current scanning session?
                MediaFile previousFile = scannedFiles.stream()
                    .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(processedFile.getHash())))
-                   .collect(Collectors.toList()).stream().findFirst().orElse(null);
+                   .collect(Collectors.toList())
+                   .stream()
+                   .findFirst()
+                   .orElse(null);
 
                // If this file was found, add to its duplicate file list
                if (previousFile != null) {
-                  logger.info("duplicate hash found!");
+                  LOGGER.warn("duplicate hash found during this scanning session!");
                   previousFile.addDuplicatePath(
                       new DuplicateMediaFilePath(processedFile.getPath())
                   );
-               } else {
+               } else {                  
                   currentFolder.addFile(processedFile);
                   scannedFiles.add(processedFile);
                }
             } catch (AlreadyExistsException ex) {
-               logger.info("file already existed and is recorded. Skipping");
+               LOGGER.info("file already existed and is recorded. Skipping");
             }
          }
       }
+      // End of a directory search.
    }
 }
