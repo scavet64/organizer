@@ -1,0 +1,30 @@
+.content-container {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #1E1E1E;
+}
+
+.sidenav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+}
+
+// Disabling the side border that comes with the side drawer
+.mat-drawer-side {
+  border-right: 0;
+}
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #252526;
+  color: white;
+}
