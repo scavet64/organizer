@@ -19,13 +19,21 @@ import {
 } from "@angular/material";
 import { HeaderComponent } from './header/header.component';
 import { MainviewComponent } from './mainview/mainview.component';
+import { TagsComponent } from './tags/tags.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ScanLocationsComponent } from './scan-locations/scan-locations.component';
+import { MediaComponent } from './media/media.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SidenavComponent,
     HeaderComponent,
-    MainviewComponent
+    MainviewComponent,
+    TagsComponent,
+    DashboardComponent,
+    ScanLocationsComponent,
+    MediaComponent
   ],
   imports: [
     BrowserModule,

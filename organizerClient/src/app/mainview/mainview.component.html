@@ -1,5 +1,5 @@
-<div class="header-container">
-  <app-header></app-header>
+<div class="header-container mat-elevation-z3">
+  <app-header ></app-header >
 </div>
 <mat-sidenav-container class="content-container">
   <mat-sidenav #sidenav mode="side" opened class="sidenav">
@@ -7,7 +7,6 @@
   </mat-sidenav>
   <mat-sidenav-content #content>
     <div class="main-content">
-      main
       <router-outlet></router-outlet>
     </div>
   </mat-sidenav-content>
