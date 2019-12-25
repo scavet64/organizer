@@ -15,7 +15,22 @@ import {
   MatSidenavModule,
   MatTableModule,
   MatGridListModule,
-  MatCardModule
+  MatCardModule,
+  MatMenuModule,
+  MatProgressSpinnerModule,
+  MatDividerModule,
+  MatChipsModule,
+  MatAutocompleteModule,
+  MatPaginatorModule,
+  MatTooltipModule,
+  MatCheckboxModule,
+  MatProgressBarModule,
+  MatTabsModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatExpansionModule,
+  MatDialogModule,
+  MatSnackBarModule
 } from "@angular/material";
 import { HeaderComponent } from './header/header.component';
 import { MainviewComponent } from './mainview/mainview.component';
@@ -23,6 +38,9 @@ import { TagsComponent } from './tags/tags.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ScanLocationsComponent } from './scan-locations/scan-locations.component';
 import { MediaComponent } from './media/media.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FilterPipe } from './tags/filter.pipe';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -33,22 +51,40 @@ import { MediaComponent } from './media/media.component';
     TagsComponent,
     DashboardComponent,
     ScanLocationsComponent,
-    MediaComponent
+    MediaComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatListModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatGridListModule,
     MatCardModule,
-    MatTableModule
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    MatChipsModule,
+    MatListModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatCheckboxModule,
+    MatProgressBarModule,
+    MatTabsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatExpansionModule,
+    MatDialogModule,
+    MatSidenavModule,
+    MatSnackBarModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
