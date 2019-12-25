@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TagModel } from './tagModel';
 import { TagService } from './tag.service';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { CreateEditComponent } from './create-edit/create-edit.component';
 
 @Component({
   selector: 'app-tags',
@@ -15,12 +16,13 @@ export class TagsComponent implements OnInit {
   tags: TagModel[];
   dataSource: MatTableDataSource<TagModel>;
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
+    private dialog: MatDialog,
     private tagService: TagService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.tagService.getAllTags().subscribe(res => {
@@ -42,6 +44,16 @@ export class TagsComponent implements OnInit {
   }
 
   deleteClick(tag: TagModel) {
+
+    const dialogRef = this.dialog.open(CreateEditComponent, {
+      width: '500px',
+      data: tag
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+
     // this.alertController.create(
     //   {
     //     message: `Are you sure you want to delete "${tag.name}"? This action is irreversible.`,
@@ -72,7 +84,36 @@ export class TagsComponent implements OnInit {
     // });
   }
 
-  async editTag(tagToEdit: TagModel) {
+  editTag(tagToEdit: TagModel) {
+
+    const clonedTag = { ...tagToEdit };
+
+    const dialogRef = this.dialog.open(CreateEditComponent, {
+      width: '500px',
+      data: clonedTag
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result);
+      const tag = result;
+      // If the tag was edited.
+      if (tag) {
+        this.tagService.editTag(tag).subscribe(res => {
+          const editedTag = res.data;
+          //this.toastingService.showSuccessToast(`Successfully edited Tag!`);
+
+          // Edit the tag already inside the table using the returned data
+          tagToEdit.backgroundColor = editedTag.backgroundColor;
+          tagToEdit.description = editedTag.description;
+          tagToEdit.id = editedTag.id;
+          tagToEdit.name = editedTag.name;
+          tagToEdit.textColor = editedTag.textColor;
+        }, (err) => {
+          //this.toastingService.showPersistentErrorToast(`Could not edit tag successfully: ${err.error.error}`);
+        });
+      }
+    });
 
     // const clonedTag = {...tagToEdit};
 

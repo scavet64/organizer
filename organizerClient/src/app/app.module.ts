@@ -41,6 +41,8 @@ import { MediaComponent } from './media/media.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FilterPipe } from './tags/filter.pipe';
 import { FormsModule } from '@angular/forms';
+import { CreateEditComponent } from './tags/create-edit/create-edit.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,8 @@ import { FormsModule } from '@angular/forms';
     DashboardComponent,
     ScanLocationsComponent,
     MediaComponent,
-    FilterPipe
+    FilterPipe,
+    CreateEditComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +87,11 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
-    MatGridListModule
+    MatGridListModule,
+    ColorPickerModule
+  ],
+  entryComponents: [
+    CreateEditComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
