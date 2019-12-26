@@ -43,6 +43,7 @@ import { FilterPipe } from './tags/filter.pipe';
 import { FormsModule } from '@angular/forms';
 import { CreateEditComponent } from './tags/create-edit/create-edit.component';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
     ScanLocationsComponent,
     MediaComponent,
     FilterPipe,
-    CreateEditComponent
+    CreateEditComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -91,7 +93,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
     ColorPickerModule
   ],
   entryComponents: [
-    CreateEditComponent
+    CreateEditComponent,
+    ConfirmDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

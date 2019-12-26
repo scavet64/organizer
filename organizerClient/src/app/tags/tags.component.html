@@ -43,12 +43,18 @@
     </mat-list-item>
   </mat-list> -->
 
-  <mat-form-field>
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-  </mat-form-field>
+  <div class="filter-wrapper">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+    <button mat-raised-button class="create-new-tag-button" (click)="createTag()">
+      <i class="fas fa-plus"></i> <span style="margin-left: 10px;">New</span>
+    </button>
+  </div>
+
 
   <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort>
+    <table mat-table [dataSource]="dataSource" matSort #table>
 
       <!-- ID Column -->
       <!-- <ng-container matColumnDef="id">

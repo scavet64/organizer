@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TagModel } from './tagModel';
 import { TagService } from './tag.service';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, MatTable } from '@angular/material';
 import { CreateEditComponent } from './create-edit/create-edit.component';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-tags',
@@ -16,6 +17,7 @@ export class TagsComponent implements OnInit {
   tags: TagModel[];
   dataSource: MatTableDataSource<TagModel>;
 
+  @ViewChild('table', { static: true }) table: MatTable<TagModel>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -45,43 +47,26 @@ export class TagsComponent implements OnInit {
 
   deleteClick(tag: TagModel) {
 
-    const dialogRef = this.dialog.open(CreateEditComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '500px',
-      data: tag
+      data: {
+        title: `Are you sure`,
+        message: `${tag.name} will be deleted`
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+      if (result) {
+        this.tagService.deleteTag(tag.id).subscribe(res => {
+          //this.toastingService.showSuccessToast('Successfully deleted Tag');
+          this.tags = this.tags.filter(obj => obj !== tag);
+          this.dataSource.data = this.tags; // Push new tag into the existing table
+        }, (err) => {
+          //this.toastingService.showPersistentErrorToast('Could not delete Tag');
+        });
+      }
     });
-
-    // this.alertController.create(
-    //   {
-    //     message: `Are you sure you want to delete "${tag.name}"? This action is irreversible.`,
-    //     buttons: [
-    //       {
-    //         text: 'No',
-    //         role: 'cancel',
-    //         cssClass: 'alert',
-    //         handler: (blah) => {
-    //           console.log('Confirm Cancel: blah');
-    //         }
-    //       }, {
-    //         text: 'Yes',
-    //         handler: () => {
-    //           console.log('Confirm Okay');
-    //           this.tagService.deleteTag(tag.id).subscribe(res => {
-    //             this.toastingService.showSuccessToast('Successfully deleted Tag');
-    //             this.tags = this.tags.filter(obj => obj !== tag);
-    //           }, (err) => {
-    //             this.toastingService.showPersistentErrorToast('Could not delete Tag');
-    //           });
-    //         }
-    //       }
-    //     ]
-    //   }
-    // ).then((alert) => {
-    //   alert.present();
-    // });
   }
 
   editTag(tagToEdit: TagModel) {
@@ -114,63 +99,30 @@ export class TagsComponent implements OnInit {
         });
       }
     });
-
-    // const clonedTag = {...tagToEdit};
-
-    // const modal = await this.modalController.create({
-    //   component: CreateEditPage,
-    //   cssClass: 'my-custom-modal-css',
-    //   componentProps: {
-    //     tag: clonedTag,
-    //     mode: 'edit'
-    //   }
-    // });
-    // await modal.present();
-
-    // modal.onDidDismiss()
-    //   .then((data) => {
-    //     const tag = data.data;
-    //     // If the tag was edited.
-    //     if (tag) {
-    //       this.tagService.editTag(tag).subscribe(res => {
-    //         const editedTag = res.data;
-    //         this.toastingService.showSuccessToast(`Successfully edited Tag!`);
-
-    //         // Edit the tag already inside the table using the returned data
-    //         tagToEdit.backgroundColor = editedTag.backgroundColor;
-    //         tagToEdit.name = editedTag.nam;
-    //         tagToEdit.id = editedTag.id;
-    //         tagToEdit.name = editedTag.name;
-    //         tagToEdit.textColor = editedTag.textColor;
-    //       }, (err) => {
-    //         this.toastingService.showPersistentErrorToast(`Could not edit tag successfully: ${err.error.error}`);
-    //       });
-    //     }
-    //   });
   }
 
   async createTag() {
-    // const modal = await this.modalController.create({
-    //   component: CreateEditPage,
-    //   cssClass: 'my-custom-modal-css',
-    //   componentProps: {
-    //     mode: 'create'
-    //   }
-    // });
-    // await modal.present();
 
-    // modal.onDidDismiss()
-    //   .then((data) => {
-    //     const tag = data.data;
-    //     if (tag) {
-    //       this.tagService.createNewTag(tag).subscribe(res => {
-    //         this.toastingService.showSuccessToast('Successfully created new tag!');
-    //         this.tags.push(res.data); // Push new tag into the existing table
-    //       }, (err) => {
-    //         this.toastingService.showPersistentErrorToast(`Could not create tag: ${err.error.error}`);
-    //       });
-    //     }
-    // });
+    const dialogRef = this.dialog.open(CreateEditComponent, {
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result);
+      const tag = result;
+      // If the tag was edited.
+      if (tag) {
+        this.tagService.createNewTag(tag).subscribe(res => {
+          //this.toastingService.showSuccessToast('Successfully created new tag!');
+          this.dataSource.data.push(res.data); // Push new tag into the existing table
+          this.table.renderRows();
+          this.paginator.length++;
+        }, (err) => {
+          //this.toastingService.showPersistentErrorToast(`Could not create tag: ${err.error.error}`);
+        });
+      }
+    });
   }
 
 }

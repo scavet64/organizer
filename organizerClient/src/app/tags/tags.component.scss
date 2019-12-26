@@ -11,6 +11,7 @@
 .modal-wrapper {
   overflow: visible !important;
 }
+
 .ion-page {
   overflow: visible !important;
 }
@@ -58,6 +59,17 @@ table {
   display: flex;
   justify-content: space-between;
 }
+
+.filter-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.create-new-tag-button {
+  height: 35px;
+  margin: 5px;
+}
+
 // .mat-column-Description {
 //   width: 100%;
 // }

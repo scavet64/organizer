@@ -36,9 +36,9 @@
       <mat-form-field class="form">
         <div class="color-input-wrapper">
           <input matInput placeholder="Text Color" name="textColor" type="text" [(ngModel)]="tag.textColor" required
-            [cpPosition]="'top'" [cpPositionOffset]="'0%'" [cpPositionRelativeToArrow]="false"
+            [cpPosition]="'bottom'" [cpPositionOffset]="'0%'" [cpPositionRelativeToArrow]="false"
             [(colorPicker)]="tag.textColor" [value]="tag.textColor">
-          <button mat-raised-button (click)="refreshTextColor($event)">
+          <button mat-raised-button (click)="refreshTextColor($event)" [matTooltip]="'Generate a new random color'">
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>
@@ -48,10 +48,10 @@
       <mat-form-field class="form">
         <div class="color-input-wrapper">
           <input matInput placeholder="Background Color" name="backgroundColor" type="text"
-            [(ngModel)]="tag.backgroundColor" required [cpPosition]="'top'" [cpPositionOffset]="'0%'"
+            [(ngModel)]="tag.backgroundColor" required [cpPosition]="'bottom'" [cpPositionOffset]="'0%'"
             [cpPositionRelativeToArrow]="false" [(colorPicker)]="tag.backgroundColor" [value]="tag.backgroundColor"
             [cpWidth]="'230'" [cpAlphaChannel]="'disabled'">
-          <button mat-raised-button (click)="refreshBackgroundColor($event)">
+          <button mat-raised-button (click)="refreshBackgroundColor($event)" [matTooltip]="'Generate a new random color'">
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>
@@ -63,7 +63,7 @@
         <button mat-raised-button type="submit" [disabled]="!create.valid">
           {{buttonText}}
         </button>
-        <button mat-raised-button (click)="onNoClick()">
+        <button mat-raised-button type="button" (click)="onNoClick()">
           Cancel
         </button>
       </div>
