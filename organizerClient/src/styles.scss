@@ -2,7 +2,10 @@
 @import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .alert-success {
   background: #77a764;
@@ -17,4 +20,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .alert-warning {
   background: #ffea9f;
   color: #666;
+}
+
+.organizer-tooltip {
+  white-space: pre-line;
+  word-break: break-all;
+  font-size: 0.75rem;
 }

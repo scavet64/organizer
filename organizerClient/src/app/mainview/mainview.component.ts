@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
+import { Constants } from '../common/constants';
 
 @Component({
   selector: 'app-mainview',
@@ -7,8 +8,8 @@ import { Component, OnInit, HostListener } from '@angular/core';
 })
 export class MainviewComponent implements OnInit {
 
-  MIN_WIDTH = 768;
-  innerWidth: number;
+  private MIN_WIDTH = Constants.MIN_WIDTH;
+  private innerWidth: number;
   isOpened: boolean;
 
   sideNavMode: string;

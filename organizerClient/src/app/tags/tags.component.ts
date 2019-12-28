@@ -1,22 +1,28 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { TagModel } from './tagModel';
 import { TagService } from './tag.service';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog, MatTable } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog, MatTable, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material';
 import { CreateEditComponent } from './create-edit/create-edit.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { AlertService } from '../alert/alert.service';
+import { tooltipDefaultOptions } from '../common/constants';
 
 @Component({
   selector: 'app-tags',
   templateUrl: './tags.component.html',
-  styleUrls: ['./tags.component.scss']
+  styleUrls: ['./tags.component.scss'],
+  providers: [
+    {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaultOptions}
+  ],
 })
 export class TagsComponent implements OnInit {
 
   displayedColumns: string[] = ['Tag', 'Description'];
   searchBox: string;
-  tags: TagModel[];
   dataSource: MatTableDataSource<TagModel>;
+  mobileView: boolean;
+
+  private tags: TagModel[];
 
   @ViewChild('table', { static: true }) table: MatTable<TagModel>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -28,6 +34,15 @@ export class TagsComponent implements OnInit {
     private tagService: TagService
   ) { }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.sizeCheck();
+  }
+
+  sizeCheck() {
+    this.mobileView = window.innerWidth < 1000;
+  }
+
   ngOnInit() {
     this.tagService.getAllTags().subscribe(res => {
       this.tags = res.data;
@@ -36,6 +51,7 @@ export class TagsComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+    this.sizeCheck();
   }
 
   applyFilter(filterValue: string) {
@@ -57,14 +73,13 @@ export class TagsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       if (result) {
         this.tagService.deleteTag(tag.id).subscribe(res => {
           this.alertService.success('Successfully deleted Tag');
           this.tags = this.tags.filter(obj => obj !== tag);
           this.dataSource.data = this.tags; // Push new tag into the existing table
         }, (err) => {
-          this.alertService.error('Could not delete Tag');
+          this.alertService.error(`Could not delete Tag: ${err.error.error}`);
         });
       }
     });
@@ -80,8 +95,6 @@ export class TagsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      console.log(result);
       const tag = result;
       // If the tag was edited.
       if (tag) {
@@ -96,7 +109,7 @@ export class TagsComponent implements OnInit {
           tagToEdit.name = editedTag.name;
           tagToEdit.textColor = editedTag.textColor;
         }, (err) => {
-          this.alertService.error(`Could not edit tag successfully: ${err.error.error}`);
+          this.alertService.error(`Could not edit tag: ${err.error.error}`);
         });
       }
     });
@@ -109,16 +122,12 @@ export class TagsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      console.log(result);
       const tag = result;
-      // If the tag was edited.
       if (tag) {
         this.tagService.createNewTag(tag).subscribe(res => {
           this.alertService.success(`Successfully created new Tag!`);
-          this.dataSource.data.push(res.data); // Push new tag into the existing table
-          this.table.renderRows();
-          this.paginator.length++;
+          this.tags.push(res.data);
+          this.dataSource.data = this.tags;
         }, (err) => {
           this.alertService.error(`Could not create tag: ${err.error.error}`);
         });
