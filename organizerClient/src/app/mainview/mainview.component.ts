@@ -1,5 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
-import { MediaMatcher } from '@angular/cdk/layout';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-mainview',
@@ -37,7 +36,4 @@ export class MainviewComponent implements OnInit {
       this.isOpened = true;
     }
   }
-
-
-
 }
