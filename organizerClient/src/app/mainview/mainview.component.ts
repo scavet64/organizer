@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-mainview',
@@ -7,9 +8,36 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainviewComponent implements OnInit {
 
-  constructor() { }
+  MIN_WIDTH = 768;
+  innerWidth: number;
+  isOpened: boolean;
+
+  sideNavMode: string;
+  DESKTOP_SIDENAV = 'side';
+  MOBILE_SIDENAV = 'over';
+
+  constructor() {}
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.sizeCheck();
+  }
 
   ngOnInit() {
+    this.sizeCheck();
   }
+
+  sizeCheck() {
+    this.innerWidth = window.innerWidth;
+    if (this.innerWidth < this.MIN_WIDTH) {
+      this.sideNavMode = this.MOBILE_SIDENAV;
+      this.isOpened = false;
+    } else {
+      this.sideNavMode = this.DESKTOP_SIDENAV;
+      this.isOpened = true;
+    }
+  }
+
+
 
 }
