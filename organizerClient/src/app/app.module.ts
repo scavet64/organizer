@@ -44,6 +44,7 @@ import { FormsModule } from '@angular/forms';
 import { CreateEditComponent } from './tags/create-edit/create-edit.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     MediaComponent,
     FilterPipe,
     CreateEditComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -93,6 +95,7 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     ColorPickerModule
   ],
   entryComponents: [
+    AlertComponent,
     CreateEditComponent,
     ConfirmDialogComponent
   ],

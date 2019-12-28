@@ -4,6 +4,7 @@ import { TagService } from './tag.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog, MatTable } from '@angular/material';
 import { CreateEditComponent } from './create-edit/create-edit.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { AlertService } from '../alert/alert.service';
 
 @Component({
   selector: 'app-tags',
@@ -22,6 +23,7 @@ export class TagsComponent implements OnInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
+    private alertService: AlertService,
     private dialog: MatDialog,
     private tagService: TagService
   ) { }
@@ -40,7 +42,6 @@ export class TagsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
-      console.log('page');
       this.dataSource.paginator.firstPage();
     }
   }
@@ -59,11 +60,11 @@ export class TagsComponent implements OnInit {
       console.log('The dialog was closed');
       if (result) {
         this.tagService.deleteTag(tag.id).subscribe(res => {
-          //this.toastingService.showSuccessToast('Successfully deleted Tag');
+          this.alertService.success('Successfully deleted Tag');
           this.tags = this.tags.filter(obj => obj !== tag);
           this.dataSource.data = this.tags; // Push new tag into the existing table
         }, (err) => {
-          //this.toastingService.showPersistentErrorToast('Could not delete Tag');
+          this.alertService.error('Could not delete Tag');
         });
       }
     });
@@ -86,7 +87,7 @@ export class TagsComponent implements OnInit {
       if (tag) {
         this.tagService.editTag(tag).subscribe(res => {
           const editedTag = res.data;
-          //this.toastingService.showSuccessToast(`Successfully edited Tag!`);
+          this.alertService.success(`Successfully edited Tag!`);
 
           // Edit the tag already inside the table using the returned data
           tagToEdit.backgroundColor = editedTag.backgroundColor;
@@ -95,7 +96,7 @@ export class TagsComponent implements OnInit {
           tagToEdit.name = editedTag.name;
           tagToEdit.textColor = editedTag.textColor;
         }, (err) => {
-          //this.toastingService.showPersistentErrorToast(`Could not edit tag successfully: ${err.error.error}`);
+          this.alertService.error(`Could not edit tag successfully: ${err.error.error}`);
         });
       }
     });
@@ -114,12 +115,12 @@ export class TagsComponent implements OnInit {
       // If the tag was edited.
       if (tag) {
         this.tagService.createNewTag(tag).subscribe(res => {
-          //this.toastingService.showSuccessToast('Successfully created new tag!');
+          this.alertService.success(`Successfully created new Tag!`);
           this.dataSource.data.push(res.data); // Push new tag into the existing table
           this.table.renderRows();
           this.paginator.length++;
         }, (err) => {
-          //this.toastingService.showPersistentErrorToast(`Could not create tag: ${err.error.error}`);
+          this.alertService.error(`Could not create tag: ${err.error.error}`);
         });
       }
     });

@@ -3,3 +3,18 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.alert-success {
+  background: #77a764;
+  color: white;
+}
+
+.alert-error {
+  background: #ae6772;
+  color: white;
+}
+
+.alert-warning {
+  background: #ffea9f;
+  color: #666;
+}
