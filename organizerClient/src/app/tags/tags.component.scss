@@ -4,7 +4,7 @@
   margin-bottom: 10px;
 }
 
-@media(max-width: 768px) {
+@media(max-width: 1000px) {
   .content-margins {
     margin-left: 3%;
     margin-right: 3%;
@@ -56,7 +56,7 @@ table {
 // }
 
 .mat-column-Tag {
-  //width: 200px;
+  width: 200px;
   min-width: 150px;
   max-width: 200px;
 }

@@ -1,8 +1,7 @@
 import { MatTooltipDefaultOptions } from '@angular/material';
 
 export class Constants {
-  public static MIN_WIDTH = 768;
-
+  public static MIN_WIDTH = 1000;
 }
 
 export const tooltipDefaultOptions: MatTooltipDefaultOptions = {

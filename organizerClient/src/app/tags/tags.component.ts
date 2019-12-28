@@ -5,7 +5,7 @@ import { MatTableDataSource, MatPaginator, MatSort, MatDialog, MatTable, MAT_TOO
 import { CreateEditComponent } from './create-edit/create-edit.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { AlertService } from '../alert/alert.service';
-import { tooltipDefaultOptions } from '../common/constants';
+import { tooltipDefaultOptions, Constants } from '../common/constants';
 
 @Component({
   selector: 'app-tags',
@@ -40,7 +40,7 @@ export class TagsComponent implements OnInit {
   }
 
   sizeCheck() {
-    this.mobileView = window.innerWidth < 1000;
+    this.mobileView = window.innerWidth < Constants.MIN_WIDTH;
   }
 
   ngOnInit() {
