@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class MediaFileRequest {
    private String name;
-   private List<Tag> tags;
+   private List<Long> tags;
 
    public String getName() {
       return name;
@@ -24,11 +24,11 @@ public class MediaFileRequest {
       this.name = name;
    }
 
-   public List<Tag> getTags() {
+   public List<Long> getTags() {
       return tags;
    }
 
-   public void setTags(List<Tag> tags) {
+   public void setTags(List<Long> tags) {
       this.tags = tags;
    }
    

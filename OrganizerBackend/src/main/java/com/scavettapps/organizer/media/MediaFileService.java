@@ -181,14 +181,14 @@ public class MediaFileService {
          );
       }
       if (params.getTags() != null) {
-         for (Tag tag : params.getTags()) {
+         for (Long tagId : params.getTags()) {
             if (specs == null) {
                specs = Specification.where(
-                   mediaFileSpecification.getTagAttributeContains("name", "eq:" + tag.getName())
+                   mediaFileSpecification.getTagAttributeEquals("id", tagId)
                );
             } else {
                specs = specs.and(
-                   mediaFileSpecification.getTagAttributeContains("name", "eq:" + tag.getName())
+                   mediaFileSpecification.getTagAttributeEquals("id", tagId)
                );
             }
          }
