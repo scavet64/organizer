@@ -9,7 +9,6 @@ import { TagModel } from '../tags/tagModel';
 import { PageRequest } from '../common/PageRequest';
 import { MediaSearchRequest } from './media-search-request';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +25,7 @@ export class MediaService {
   public setMediaFileAsHidden(hash: string): Observable<Response<any>> {
     return this.http
       .get<Response<any>>(`${environment.baseURL}media/hide/${hash}`)
-      .pipe(timeout(10000))
+      .pipe(timeout(10000));
   }
 
   public updateMediaFileTags(id: number, updatedTags: TagModel[]): Observable<Response<any>> {
