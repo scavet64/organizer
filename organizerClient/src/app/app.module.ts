@@ -40,11 +40,15 @@ import { ScanLocationsComponent } from './scan-locations/scan-locations.componen
 import { MediaComponent } from './media/media.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FilterPipe } from './tags/filter.pipe';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateEditComponent } from './tags/create-edit/create-edit.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { AlertComponent } from './alert/alert.component';
+import { MediaListItemComponent } from './media/media-list-item/media-list-item.component';
+import { TruncationPipe } from './common/truncation.pipe';
+import { MediaTagsComponent } from './media/media-tags/media-tags.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -59,12 +63,16 @@ import { AlertComponent } from './alert/alert.component';
     FilterPipe,
     CreateEditComponent,
     ConfirmDialogComponent,
-    AlertComponent
+    AlertComponent,
+    MediaListItemComponent,
+    TruncationPipe,
+    MediaTagsComponent
   ],
   imports: [
-    BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    ColorPickerModule,
     HttpClientModule,
     MatButtonModule,
     MatCardModule,
@@ -92,12 +100,14 @@ import { AlertComponent } from './alert/alert.component';
     MatInputModule,
     MatTableModule,
     MatGridListModule,
-    ColorPickerModule
+    NgbModule,
+    ReactiveFormsModule
   ],
   entryComponents: [
     AlertComponent,
     CreateEditComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    MediaTagsComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

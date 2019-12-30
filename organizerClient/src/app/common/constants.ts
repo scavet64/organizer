@@ -5,7 +5,7 @@ export class Constants {
 }
 
 export const tooltipDefaultOptions: MatTooltipDefaultOptions = {
-  showDelay: 750,
-  hideDelay: 1000000,
+  showDelay: 500,
+  hideDelay: 100,
   touchendHideDelay: 1000,
 };

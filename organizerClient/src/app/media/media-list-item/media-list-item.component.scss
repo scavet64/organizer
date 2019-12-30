@@ -1,0 +1,32 @@
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  background-color: #424242;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.thumbnail {
+  object-fit: cover;
+  // min-width: 10%;
+  // width: 10%;
+  // height: 100%;
+  // min-height: 100%;
+  margin-right: 5px;
+  border-radius: 10px;
+  height: 85px;
+}
+
+.content-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-container {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+}

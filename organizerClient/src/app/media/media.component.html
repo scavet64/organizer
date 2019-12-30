@@ -1,1 +1,60 @@
-<p>media works!</p>
+<div class="content-margins">
+  <div style="margin-top:50px;">
+    All Scanned Media
+  </div>
+
+  <div class="filter-wrapper">
+    <mat-form-field>
+      <input matInput [(ngModel)]="searchBox" placeholder="Filter by Name" (keyup.enter)="search()">
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field class="example-chip-list">
+      <mat-chip-list #chipList aria-label="Tag selection">
+        <mat-chip *ngFor="let tag of selectedTags" [selectable]="selectable"
+          [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor" [removable]="removable"
+          (removed)="remove(tag)">
+          {{tag.name}}
+          <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+        </mat-chip>
+        <input matInput placeholder="Filter by Tag" #chipInput [formControl]="tagControl" [matAutocomplete]="auto"
+          [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)">
+      </mat-chip-list>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let tag of filteredTags | async" [value]="tag" style="height: 2rem;">
+          <div style="display: flex; justify-content: flex-start; height: 2rem;">
+            <div [style.backgroundColor]="tag.backgroundColor"
+              style="height: 1rem; width: 1rem; border-radius: 3px; margin-top: auto; margin-bottom: auto; margin-right: 15px;">
+            </div>
+            <div class="auto-complete-tag-name">
+              {{tag.name}}
+            </div>
+          </div>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+  <div class="search-button-container">
+    <button mat-raised-button class="search-button" (click)="search()"
+      [matTooltip]="'Search for Media using Name and Tags'" matTooltipClass="organizer-tooltip">
+      <i class="fas fa-search"></i><span style="margin-left: 10px;">Search</span>
+    </button>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+    [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+  </mat-paginator>
+
+  <!-- List View -->
+  <div>
+    <app-media-list-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags" (tagsEdited)="updateMediaFilesTags($event)">
+    </app-media-list-item>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+    [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

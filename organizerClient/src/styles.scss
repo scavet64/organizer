@@ -1,5 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 @import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
+@import '../node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css';
+
+@import '~@angular/material/theming';
+@include mat-core();
+
+$organizer-primary: mat-palette($mat-pink);
+$organizer-accent: mat-palette($mat-pink, A200, A100, A400);
+$organizer-theme: mat-dark-theme($organizer-primary, $organizer-accent);
+
+@include angular-material-theme($organizer-theme);
 
 html, body { height: 100%; }
 body {
@@ -27,3 +37,55 @@ body {
   word-break: break-all;
   font-size: 0.75rem;
 }
+
+.button-spacer {
+  margin-right: 10px !important;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.ellipse-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block !important;
+}
+
+/////////////// Custom Scrollbar stuff ///////////////
+
+.fixed[scrollx=true], div[scrolly=true] {
+  position: relative;
+  overflow: hidden;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.fixed[scrollx=true] {
+  overflow-x: auto;
+}
+
+.fixed[scrolly=true] {
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  margin: 5px;
+  background-color: #999;
+  -webkit-border-radius: 5px;
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  height: 5px;
+  display: block;
+}
+
+//////////////////////////////////////////////////////

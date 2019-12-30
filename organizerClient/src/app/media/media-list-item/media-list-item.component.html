@@ -1,0 +1,32 @@
+<div class="wrapper">
+  <img src="https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg" class="thumbnail" />
+
+  <div class="content-wrapper">
+    <div style="padding: 10px">
+      <div style="font-size: .9rem; display:flex; text-align: justify;">
+        {{file.name}}
+      </div>
+
+      <br>
+
+      <!-- Tags -->
+      <mat-chip-list *ngIf="file.tags.length > 0">
+        <mat-chip *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor" style="max-width: 200px;" class="ellipse-text"
+          [style.color]="tag.textColor" [matTooltip]="tag.name" matTooltipClass="organizer-tooltip">
+          {{ tag.name }}
+        </mat-chip>
+      </mat-chip-list>
+      <div style="font-size: .9rem; display:flex; text-align: justify; font-style: italic;" *ngIf="file.tags.length === 0">
+        Media has no Tags
+      </div>
+    </div>
+    <div class="button-container">
+      <button mat-icon-button (click)="showTags()">
+        <i class="fas fa-tags"></i>
+      </button>
+      <button mat-icon-button>
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
