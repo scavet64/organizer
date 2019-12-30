@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 
 @Entity
 @Table(name = "files", uniqueConstraints = @UniqueConstraint(columnNames = {"hash"}))
@@ -53,6 +54,7 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    private LocalDate lastSeenDate;
 
    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+   @OrderBy("UPPER(name) ASC")
    private Set<Tag> tags = new HashSet<>();
    
    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
