@@ -37,8 +37,9 @@ public class ScanLocationSevice {
          } else if (!file.isDirectory()) {
             throw new IllegalScanningLocationException("Scanning path is not a valid directory");
          }
+      } else {
+         throw new IllegalScanningLocationException("Scanning path was not supplied");
       }
-      throw new IllegalScanningLocationException("Scanning path was not supplied");
    }
 
 }

@@ -8,6 +8,9 @@ package com.scavettapps.organizer.scanner;
 public class AddScanLocationRequest {
    private String path;
 
+   public AddScanLocationRequest() {
+   }
+
    public AddScanLocationRequest(String path) {
       this.path = path;
    }

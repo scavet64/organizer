@@ -1,0 +1,10 @@
+<div mat-dialog-content>
+  <p>What is the path that you want to scan?</p>
+  <mat-form-field>
+    <input matInput [(ngModel)]="path" placeholder="Path to scan">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions class="button-wrapper">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button cdkFocusInitial (click)="save()">Save</button>
+</div>

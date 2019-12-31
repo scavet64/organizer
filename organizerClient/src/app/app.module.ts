@@ -30,7 +30,8 @@ import {
   MatNativeDateModule,
   MatExpansionModule,
   MatDialogModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatSortModule
 } from "@angular/material";
 import { HeaderComponent } from './header/header.component';
 import { MainviewComponent } from './mainview/mainview.component';
@@ -49,6 +50,7 @@ import { MediaListItemComponent } from './media/media-list-item/media-list-item.
 import { TruncationPipe } from './common/truncation.pipe';
 import { MediaTagsComponent } from './media/media-tags/media-tags.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { CreateScanLocationDialogComponent } from './scan-locations/create-scan-location-dialog/create-scan-location-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +68,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     AlertComponent,
     MediaListItemComponent,
     TruncationPipe,
-    MediaTagsComponent
+    MediaTagsComponent,
+    CreateScanLocationDialogComponent
   ],
   imports: [
     AppRoutingModule,
@@ -101,12 +104,14 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     MatTableModule,
     MatGridListModule,
     NgbModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSortModule
   ],
   entryComponents: [
     AlertComponent,
-    CreateEditComponent,
     ConfirmDialogComponent,
+    CreateEditComponent,
+    CreateScanLocationDialogComponent,
     MediaTagsComponent
   ],
   providers: [],

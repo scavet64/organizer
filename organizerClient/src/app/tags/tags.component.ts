@@ -17,7 +17,7 @@ import { tooltipDefaultOptions, Constants } from '../common/constants';
 })
 export class TagsComponent implements OnInit {
 
-  displayedColumns: string[] = ['Tag', 'Description'];
+  displayedColumns: string[] = ['name', 'description'];
   searchBox: string;
   dataSource: MatTableDataSource<TagModel>;
   mobileView: boolean;

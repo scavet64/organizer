@@ -10,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author Gnostech Inc.
  */
-@RestController("/scan")
+@RestController()
+@RequestMapping("/scan")
 public class ScanLocationController {
    
    private static final Logger LOGGER = LoggerFactory.getLogger(ScanLocationController.class);
@@ -33,8 +36,8 @@ public class ScanLocationController {
       return ResponseEntity.ok(new DataResponse(scanLocationSevice.findAllScanLocations()));
    }
    
-   @PostMapping
-   public ResponseEntity<Response> addScanLocation(AddScanLocationRequest request) {
+   @PostMapping("/create")
+   public ResponseEntity<Response> addScanLocation(@RequestBody AddScanLocationRequest request) {
       
       if (request.getPath() == null || request.getPath().isBlank()) {
          return ResponseEntity.badRequest().body(new ErrorResponse("Path must be non blank"));

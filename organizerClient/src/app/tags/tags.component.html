@@ -16,7 +16,7 @@
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort #table>
 
-      <ng-container matColumnDef="Tag">
+      <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Tag </th>
         <td mat-cell *matCellDef="let tag">
           <div class="chip-wrapper">
@@ -30,7 +30,7 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="Description">
+      <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
         <td mat-cell *matCellDef="let tag">
           <div class="description-wrapper">
