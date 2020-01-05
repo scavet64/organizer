@@ -17,6 +17,8 @@ package com.scavettapps.organizer.scanner;
 
 import java.io.File;
 import java.util.Collection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScanLocationSevice {
 
+   private static final Logger LOGGER = LoggerFactory.getLogger(ScanLocationSevice.class);
    private final ScanLocationRepository scanLocationRepository;
 
    @Autowired
@@ -42,8 +45,19 @@ public class ScanLocationSevice {
    public Collection<ScanLocation> findAllScanLocations() {
       return this.scanLocationRepository.findAll();
    }
+   
+   public boolean deleteScanLocation(long id) {
+      ScanLocation toDelete = this.scanLocationRepository.findById(id).orElseGet(null);
+      if (toDelete == null) {
+         return false;
+      } else {
+         LOGGER.info("Deleting Scan Location: " + toDelete.getPath());
+         this.scanLocationRepository.deleteById(id);
+         return true;
+      }
+   }
 
-   public void throwIfInvalid(String pathToTest) throws IllegalScanningLocationException {
+   private void throwIfInvalid(String pathToTest) throws IllegalScanningLocationException {
       if (pathToTest != null && !pathToTest.isBlank()) {
          File file = new File(pathToTest);
          if(!file.exists()) {

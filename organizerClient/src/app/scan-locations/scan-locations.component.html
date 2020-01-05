@@ -18,14 +18,14 @@
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort #table>
 
-      <ng-container matColumnDef="Path">
+      <ng-container matColumnDef="path">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Path </th>
         <td mat-cell *matCellDef="let location">
           {{location.path}}
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="Lastscan">
+      <ng-container matColumnDef="lastscan">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Scan </th>
         <td mat-cell *matCellDef="let location">
           <div class="description-wrapper">
@@ -37,26 +37,26 @@
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="Action">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Actions </th>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let location">
           <div *ngIf="!mobileView">
-            <button mat-icon-button class="edit-tag-button" (click)="editTag(tag)">
+            <button mat-icon-button class="edit-tag-button" (click)="editTag(location)">
               <i class="far fa-edit"></i>
             </button>
-            <button mat-icon-button class="" (click)="deleteClick(tag)">
+            <button mat-icon-button class="" (click)="deleteScanLocation(location)">
               <i class="fas fa-trash-alt"></i>
             </button>
           </div>
           <div *ngIf="mobileView" class="more-options-wrapper">
             <mat-menu #appMenu="matMenu">
               <div style="color: white;">
-                <button mat-button class="edit-tag-button" (click)="editTag(tag)">
+                <button mat-button class="edit-tag-button" (click)="editTag(location)">
                   <i class="far fa-edit"></i>&nbsp;Edit
                 </button>
               </div>
               <div style="color: white;">
-                <button mat-button class="" (click)="deleteClick(tag)">
+                <button mat-button class="" (click)="deleteScanLocation(location)">
                   <i class="fas fa-trash-alt"></i>&nbsp;Delete
                 </button>
               </div>

@@ -22,10 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -48,6 +51,16 @@ public class ScanLocationController {
    @GetMapping
    public ResponseEntity<Response> getScanLocations() {
       return ResponseEntity.ok(new DataResponse(scanLocationSevice.findAllScanLocations()));
+   }
+   
+   @DeleteMapping
+   public ResponseEntity<Response> removeScanLocation(@RequestParam long id) {
+      if (this.scanLocationSevice.deleteScanLocation(id)) {
+         return ResponseEntity.ok(new DataResponse("Scan Location was successfully deleted"));
+      } else {
+         return ResponseEntity.badRequest().body(new ErrorResponse("Cannot delete something that does not exist"));
+      }
+      
    }
    
    @PostMapping("/create")

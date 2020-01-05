@@ -4,6 +4,7 @@ import { ScanLocation } from './scan-location';
 import { ScanLocationService } from './scan-location.service';
 import { CreateScanLocationDialogComponent } from './create-scan-location-dialog/create-scan-location-dialog.component';
 import { AlertService } from '../alert/alert.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-scan-locations',
@@ -17,7 +18,7 @@ export class ScanLocationsComponent implements OnInit {
   public searchBox: string;
   public mobileView: boolean;
 
-  displayedColumns: string[] = ['Path', 'Lastscan', 'Action'];
+  displayedColumns: string[] = ['path', 'lastscan', 'action'];
   dataSource: MatTableDataSource<ScanLocation>;
 
   @ViewChild('table', { static: true }) table: MatTable<ScanLocation>;
@@ -31,7 +32,6 @@ export class ScanLocationsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("init");
     this.scanlocationService.getAllScanLocations().subscribe(res => {
       this.scanLocations = res.data;
       console.log(this.scanLocations);
@@ -56,9 +56,33 @@ export class ScanLocationsComponent implements OnInit {
         let scanLoc = new ScanLocation(path);
         this.scanlocationService.createNewScanLocation(scanLoc).subscribe(res => {
           scanLoc = res.data;
+          this.scanLocations.push(scanLoc);
+          this.dataSource.data = this.scanLocations;
           this.alertService.success(`Successfully added new location to scan!`);
         }, (err) => {
           this.alertService.error(`Could not add location: ${err.error.error}`);
+        });
+      }
+    });
+  }
+
+  deleteScanLocation(scanLocation: ScanLocation) {
+    const dialogRef = this.dialogRef.open(ConfirmDialogComponent, {
+      width: '500px',
+      data: {
+        title: `Are you sure?`,
+        message: `'${scanLocation.path}' will no longer be scanned. This will remove all the media scanned from this location.`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.scanlocationService.deleteScanLocation(scanLocation.id).subscribe(res => {
+          this.alertService.success('Successfully removed Scan Location');
+          this.scanLocations = this.scanLocations.filter(obj => obj !== scanLocation);
+          this.dataSource.data = this.scanLocations;
+        }, (err) => {
+          this.alertService.error(`Could not remove Scan Location: ${err.error.error}`);
         });
       }
     });
