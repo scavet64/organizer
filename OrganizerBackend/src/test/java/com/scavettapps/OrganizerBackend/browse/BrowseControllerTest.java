@@ -66,7 +66,7 @@ public class BrowseControllerTest {
    @Test
    public void browseDirectoryTest_noHidden() throws Exception {
       String response = mockMvc.perform(MockMvcRequestBuilders
-          .get("/browse")
+          .post("/browse")
           .accept(MediaType.APPLICATION_JSON)
           .contentType(MediaType.APPLICATION_JSON)
       .content(mapper.writeValueAsString(new BrowseRequest("E:\\", false))))
@@ -81,7 +81,7 @@ public class BrowseControllerTest {
    @Test
    public void browseDirectoryTest_showHidden() throws Exception {
       String response = mockMvc.perform(MockMvcRequestBuilders
-          .get("/browse")
+          .post("/browse")
           .accept(MediaType.APPLICATION_JSON)
           .contentType(MediaType.APPLICATION_JSON)
       .content(mapper.writeValueAsString(new BrowseRequest("E:\\", true))))

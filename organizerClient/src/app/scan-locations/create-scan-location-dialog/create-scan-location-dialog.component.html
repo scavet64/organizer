@@ -1,8 +1,22 @@
 <div mat-dialog-content>
-  <p>What is the path that you want to scan?</p>
+  <p>Browse to the path that should be scanned</p>
   <mat-form-field>
-    <input matInput [(ngModel)]="path" placeholder="Path to scan">
+    <input matInput [(ngModel)]="path" placeholder="Path to scan" >
   </mat-form-field>
+  <div class="directory-container">
+    <div *ngIf="path">
+      <button mat-button (click)="backClick()" class="directory-button odd-button">
+        <i class="fas fa-arrow-left"></i>&nbsp;back
+      </button>
+    </div>
+    <div class="" *ngFor="let directory of directories; let even = even; let odd = odd">
+      <button mat-button (click)="directoryClick(directory)" class="directory-button" [ngClass]="{'even-button': even, 'odd-button': odd}">
+        <i class="fas fa-folder"></i>
+        &nbsp;{{directory}}
+      </button>
+    </div>
+  </div>
+  <hr>
 </div>
 <div mat-dialog-actions class="button-wrapper">
   <button mat-button (click)="onNoClick()">Cancel</button>
