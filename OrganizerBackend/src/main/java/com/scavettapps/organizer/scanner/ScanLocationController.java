@@ -41,10 +41,15 @@ public class ScanLocationController {
    
    private static final Logger LOGGER = LoggerFactory.getLogger(ScanLocationController.class);
    
+   private final FileScanningService fileScanningService;
    private final ScanLocationSevice scanLocationSevice;
 
    @Autowired
-   public ScanLocationController(ScanLocationSevice scanLocationSevice) {
+   public ScanLocationController(
+       FileScanningService fileScanningService,
+       ScanLocationSevice scanLocationSevice
+   ) {
+      this.fileScanningService = fileScanningService;
       this.scanLocationSevice = scanLocationSevice;
    }
    
@@ -77,6 +82,12 @@ public class ScanLocationController {
          LOGGER.warn("Invalid Scanning path", ex);
          return ResponseEntity.badRequest().body(new ErrorResponse(ex.getLocalizedMessage()));
       }
+   }
+   
+   @PutMapping("/initiate")
+   public ResponseEntity<Response> initiateScan(@RequestParam long id) {
+      this.fileScanningService.initiateScanning(id);
+      return ResponseEntity.accepted().body(new DataResponse("Started scanning location"));
    }
    
 }

@@ -43,7 +43,7 @@ public class RequestResponseLoggingFilter implements Filter {
          throws IOException, ServletException {
 
       HttpServletRequest req = (HttpServletRequest) request;
-      LOGGER.debug("Logging Request  {} : {}", req.getMethod(), req.getRequestURI());
+      LOGGER.info("Logging Request  {} : {}", req.getMethod(), req.getRequestURI());
       chain.doFilter(request, response);
    }
 

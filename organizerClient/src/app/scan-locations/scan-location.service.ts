@@ -39,4 +39,10 @@ export class ScanLocationService {
       .put<Response<any>>(`${environment.baseURL}scan/edit`, location)
       .pipe(timeout(10000));
   }
+
+  public initiateScan(id: number): Observable<Response<any>> {
+    return this.http
+      .put<Response<any>>(`${environment.baseURL}scan/initiate?id=${id}`, {})
+      .pipe(timeout(10000));
+  }
 }

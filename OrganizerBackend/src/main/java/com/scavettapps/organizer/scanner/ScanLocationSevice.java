@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.scanner;
 
+import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.io.File;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -44,6 +45,12 @@ public class ScanLocationSevice {
 
    public Collection<ScanLocation> findAllScanLocations() {
       return this.scanLocationRepository.findAll();
+   }
+   
+   public ScanLocation getScanLocation(long id) {
+      return this.scanLocationRepository.findById(id).orElseThrow(() -> {
+         throw new EntityNotFoundException("Could not find ScanLocation with ID: " + id);
+      });
    }
    
    public boolean deleteScanLocation(long id) {

@@ -1,12 +1,12 @@
 /**
  * Copyright 2019 Vincent Scavetta
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,6 +41,7 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import com.scavettapps.organizer.media.MediaFileService;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * @author Vincent Scavetta
@@ -49,11 +50,9 @@ import com.scavettapps.organizer.media.MediaFileService;
 public class FileScanningService {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(FileScanningService.class);
-   
+
    //TODO: Look into increasing this. I am seeing odd errors with this multi threaded
    private static final int NUMBER_THREADS = 1;
-   
-   private static Folder workingFolder;
 
    private final FolderService folderService;
    private final IHashService quickHash;
@@ -61,9 +60,9 @@ public class FileScanningService {
    private final ScanLocationSevice scanLocationService;
 
    public FileScanningService(
-       FolderService folderService, 
-       @Qualifier("QuickHash") IHashService quickHash, 
-       MediaFileService mediaFileService, 
+       FolderService folderService,
+       @Qualifier("QuickHash") IHashService quickHash,
+       MediaFileService mediaFileService,
        ScanLocationSevice scanLocationService) {
       this.folderService = folderService;
       this.quickHash = quickHash;
@@ -72,14 +71,28 @@ public class FileScanningService {
    }
 
    @Transactional
-   public Folder scanLocationForFiles(String path) throws InterruptedException,
-       ExecutionException {
+   @Async
+   public void initiateScanning(long id) {
+      ScanLocation location = this.scanLocationService.getScanLocation(id);
+      try {
+         scanLocationForFiles(location.getPath());
+      } catch (InterruptedException | ExecutionException ex) {
+         LOGGER.error("Failed to scan: " + location.getPath());
+      }
+
+   }
+
+   @Transactional
+   public Folder scanLocationForFiles(String path) throws InterruptedException, ExecutionException {
+
+      Thread.sleep(10000);
+      LOGGER.info("Initializing Scanning of: " + path);
 
       Set<MediaFile> addedFiles = Collections.synchronizedSet(new HashSet<>());
 
       // Create the initial folder based on the passed in path. IF it already exists. get it.
       File scanningPathFile = new File(path);
-      workingFolder = folderService.findFolderByPath(scanningPathFile.getPath());
+      Folder workingFolder = folderService.findFolderByPath(scanningPathFile.getPath());
       if (workingFolder == null) {
          // new folder
          workingFolder = new Folder(scanningPathFile.getPath());
@@ -88,39 +101,33 @@ public class FileScanningService {
       //Get the list of files to work with
       List<File> filesInLocation = Arrays.asList(scanningPathFile.listFiles());
 
-      // Partition the list into equal parts for splitting into threads
-      List<List<File>> parts = ListUtils
-          .partition(filesInLocation, filesInLocation.size() / NUMBER_THREADS);
+      // Only scan if there are files
+      if (!filesInLocation.isEmpty()) {
 
-      List<Thread> threads = new ArrayList<>();
-      for (List<File> partitionedList : parts) {
-         Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-               try {
-                  recurseDirectory(
-                      partitionedList.toArray(new File[partitionedList.size()]),
-                      workingFolder,
-                      addedFiles);
-               } catch (IOException e) {
-                  e.printStackTrace();
-               }
-            }
-         });
-         t.start();
-         threads.add(t);
+         // Partition the list into equal parts for splitting into threads
+         List<List<File>> parts = ListUtils.partition(
+             filesInLocation,
+             filesInLocation.size() / NUMBER_THREADS
+         );
+
+         List<Thread> threads = new ArrayList<>();
+         for (List<File> partitionedList : parts) {
+            Thread t = new Thread(new ScanThreadTask(partitionedList, workingFolder, addedFiles));
+            t.start();
+            threads.add(t);
+         }
+
+         LOGGER.info("Kicked off threads");
+
+         for (Thread treadToJoin : threads) {
+            treadToJoin.join();
+         }
+
+         LOGGER.info("Joined off threads");
       }
 
-      LOGGER.info("Kicked off threads");
-
-      for (Thread treadToJoin : threads) {
-         treadToJoin.join();
-      }
-
-      LOGGER.info("Joined off threads");
-
-      this.folderService.saveFolder(workingFolder);
-
+      LOGGER.info("Finished Scanning: " + path);
+      workingFolder = this.folderService.saveFolder(workingFolder);
       return workingFolder;
    }
 
@@ -146,7 +153,12 @@ public class FileScanningService {
                 mimetype
             );
             LOGGER.info(
-                "new file added - hash: " + newFile.getHash() + " name: " + newFile.getName() + " mimetype: " + mimetype
+                "new file added - hash: "
+                + newFile.getHash()
+                + " name: "
+                + newFile.getName()
+                + " mimetype: "
+                + mimetype
             );
             return newFile;
          } else {
@@ -160,7 +172,12 @@ public class FileScanningService {
       } else {
          String mimeType = URLConnection.guessContentTypeFromName(file.getName());
          LOGGER.info(
-             "existing file based on name and size - hash: " + existingFile.getHash() + " name: " + existingFile.getName() + " mimetype: " + mimeType
+             "existing file based on name and size - hash: "
+             + existingFile.getHash()
+             + " name: "
+             + existingFile.getName()
+             + " mimetype: "
+             + mimeType
          );
          existingFile.updateLastSeen();
          this.mediaFileService.saveMediaFile(existingFile);
@@ -210,7 +227,7 @@ public class FileScanningService {
                   previousFile.addDuplicatePath(
                       new DuplicateMediaFilePath(processedFile.getPath())
                   );
-               } else {                  
+               } else {
                   currentFolder.addFile(processedFile);
                   scannedFiles.add(processedFile);
                }
@@ -220,5 +237,30 @@ public class FileScanningService {
          }
       }
       // End of a directory search.
+   }
+
+   class ScanThreadTask implements Runnable {
+
+      private final List<File> partitionedList;
+      private final Folder workingFolder;
+      private final Set<MediaFile> addedFiles;
+
+      public ScanThreadTask(List<File> partitionedList, Folder workingFolder, Set<MediaFile> addedFiles) {
+         this.partitionedList = partitionedList;
+         this.workingFolder = workingFolder;
+         this.addedFiles = addedFiles;
+      }
+
+      @Override
+      public void run() {
+         try {
+            recurseDirectory(
+                partitionedList.toArray(new File[partitionedList.size()]),
+                workingFolder,
+                addedFiles);
+         } catch (IOException ex) {
+            LOGGER.error("Failed recursing directory", ex);
+         }
+      }
    }
 }

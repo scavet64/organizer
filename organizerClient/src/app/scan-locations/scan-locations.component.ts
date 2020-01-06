@@ -38,7 +38,7 @@ export class ScanLocationsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.scanLocations);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-    }, error =>  {
+    }, error => {
       this.alertService.error(`could not load scan locations ${error.error.error}`);
     });
     //this.sizeCheck();
@@ -85,6 +85,14 @@ export class ScanLocationsComponent implements OnInit {
           this.alertService.error(`Could not remove Scan Location: ${err.error.error}`);
         });
       }
+    });
+  }
+
+  scanNow(scanLocation: ScanLocation) {
+    this.scanlocationService.initiateScan(scanLocation.id).subscribe(res => {
+      this.alertService.success(res.data);
+    }, (err) => {
+      this.alertService.error(`Failed starting scan: ${err.error.error}`);
     });
   }
 
