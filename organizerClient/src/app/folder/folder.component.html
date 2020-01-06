@@ -1,0 +1,53 @@
+<div class="content-margins">
+  <!-- <div >
+    Scanned Media Folders
+  </div> -->
+
+  <!-- Root folders list -->
+  <div *ngIf="!currentFolder" style="margin-top:50px;">
+    Scanned Media Folders
+
+    <div class="folder-container">
+      <div *ngFor="let rootFolder of rootFolders" class="" style="margin: 10px">
+        <button mat-button style="text-transform: none" (click)="folderClicked(rootFolder)" class="folder-button mat-elevation-z3">
+          <i class="fas fa-folder"></i>
+          &nbsp;{{rootFolder.folderName}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="currentFolder" style="margin-top:50px;">
+    <!-- BreadCrumbs -->
+    <div class="breadcrumb-container">
+      <button mat-button (click)="backClicked()">
+        <i class="fas fa-arrow-left"></i>&nbsp;Back
+      </button>
+      <div *ngFor="let prev of previousFolders">
+        <button mat-button class="breadcrumb" (click)="navigateToFolder(prev)">{{prev.folderName}}</button>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      <div>
+        <button mat-button class="breadcrumb">{{currentFolder.folderName}}</button>
+      </div>
+    </div>
+
+    <!-- Folder List -->
+    <div class="folder-container">
+      <div *ngFor="let rootFolder of currentFolder.folders" class="" style="margin: 10px">
+        <button mat-button style="text-transform: none" (click)="folderClicked(rootFolder)" class="folder-button mat-elevation-z3">
+          <i class="fas fa-folder"></i>
+          &nbsp;{{rootFolder.folderName}}
+        </button>
+      </div>
+    </div>
+
+    <!-- Media List -->
+    <div>
+      <app-media-list-item *ngFor="let file of currentFolder.files" [file]="file" [knownTags]="knownTags" [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)">
+      </app-media-list-item>
+    </div>
+
+
+  </div>
+</div>

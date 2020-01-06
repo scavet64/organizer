@@ -51,6 +51,7 @@ import { TruncationPipe } from './common/truncation.pipe';
 import { MediaTagsComponent } from './media/media-tags/media-tags.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { CreateScanLocationDialogComponent } from './scan-locations/create-scan-location-dialog/create-scan-location-dialog.component';
+import { FolderComponent } from './folder/folder.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { CreateScanLocationDialogComponent } from './scan-locations/create-scan-
     MediaListItemComponent,
     TruncationPipe,
     MediaTagsComponent,
-    CreateScanLocationDialogComponent
+    CreateScanLocationDialogComponent,
+    FolderComponent
   ],
   imports: [
     AppRoutingModule,

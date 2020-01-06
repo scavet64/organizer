@@ -6,6 +6,7 @@ import { TagsComponent } from './tags/tags.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ScanLocationsComponent } from './scan-locations/scan-locations.component';
 import { MediaComponent } from './media/media.component';
+import { FolderComponent } from './folder/folder.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
     {path: 'dashboard', component: DashboardComponent},
     {path: 'tags', component: TagsComponent},
     {path: 'scanlocations', component: ScanLocationsComponent},
+    {path: 'folder', component: FolderComponent},
     {path: 'media', component: MediaComponent}
   ]}
 
