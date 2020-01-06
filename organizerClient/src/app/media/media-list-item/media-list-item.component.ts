@@ -17,6 +17,7 @@ export class MediaListItemComponent implements OnInit {
 
   @Input() knownTags: TagModel[];
   @Input() file: MediaFile;
+  @Input() imgSource: string;
   @Output() tagsEdited: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(

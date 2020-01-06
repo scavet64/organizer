@@ -17,6 +17,7 @@ package com.scavettapps.organizer.transcoding;
 
 import com.scavettapps.organizer.media.MediaFile;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import org.springframework.stereotype.Service;
 import ws.schild.jave.AudioAttributes;
@@ -64,6 +65,11 @@ public class JaveTranscodingService implements ITranscodingService {
       } catch (EncoderException ex) {
          throw new TranscodingException(ex);
       }
+   }
+
+   @Override
+   public File getDefaultThumbnail(MediaFile file) throws IOException {
+      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
    }
 
 }

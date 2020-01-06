@@ -10,6 +10,7 @@ import { startWith, map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { AlertService } from '../alert/alert.service';
+import { ResourceService } from './resource.service';
 
 @Component({
   selector: 'app-media',
@@ -39,6 +40,7 @@ export class MediaComponent implements OnInit {
   constructor(
     private alertService: AlertService,
     private mediaFileService: MediaService,
+    private resourceService: ResourceService,
     private tagService: TagService
   ) {
    }
@@ -138,6 +140,24 @@ export class MediaComponent implements OnInit {
     }, error => {
       this.alertService.error(`Failed to edit tags: ${error.error.error}`);
     });
+  }
+
+  getThumbnailSrc(mediaFile: MediaFile): string {
+    let url;
+    if (mediaFile.mimetype.includes('video')) {
+      // This is a video so use a thumbnail if it has one.
+      if (mediaFile.thumbnail) {
+        url = this.resourceService.getThumbnailUrl(mediaFile.thumbnail);
+      }
+    } else if (mediaFile.mimetype.includes('image')) {
+      url = this.resourceService.getMediaUrl(mediaFile);
+    }
+
+    // if URL couldn't be generated, fall back to this.
+    if (!url) {
+      url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg';
+    }
+    return url;
   }
 
 }

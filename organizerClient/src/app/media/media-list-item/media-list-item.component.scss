@@ -17,6 +17,9 @@
   margin-right: 5px;
   border-radius: 10px;
   height: 85px;
+  width: 150px;
+  max-width: 150px;
+  min-width: 150px;
 }
 
 .content-wrapper {
@@ -29,4 +32,12 @@
   margin-top: auto;
   margin-bottom: auto;
   display: flex;
+}
+
+.chip-video {
+  background-color: hsl(226, 51%, 47%);
+}
+
+.chip-image {
+  background-color: hsl(335, 51%, 47%);
 }

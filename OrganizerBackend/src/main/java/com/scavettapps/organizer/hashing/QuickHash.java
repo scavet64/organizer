@@ -36,7 +36,7 @@ public class QuickHash implements IHashService {
          XXHashFactory factory = XXHashFactory.fastestInstance();
          int seed = 0x9747b28c; // used to initialize the hash value, use whatever value you want, but always the same
          StreamingXXHash32 hash32 = factory.newStreamingHash32(seed);
-         byte[] buf = new byte[100000000]; // for real-world usage, use a larger buffer, like 8192 bytes
+         byte[] buf = new byte[100000000];
          for (;;) {
             in.skip(file.length() / 5);
             int read = in.read(buf);

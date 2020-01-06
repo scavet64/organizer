@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
+import com.scavettapps.organizer.files.StoredFile;
 import com.sun.istack.NotNull;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -77,6 +78,9 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    
    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
    private Set<DuplicateMediaFilePath> duplicatePaths = new HashSet<>();
+   
+   @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+   private StoredFile thumbnail;
 
    public MediaFile(String hash, String name) {
       super();
@@ -193,6 +197,14 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
 
    public void setIsIgnored(boolean isIgnored) {
       this.isIgnored = isIgnored;
+   }
+
+   public StoredFile getThumbnail() {
+      return thumbnail;
+   }
+
+   public void setThumbnail(StoredFile thumbnail) {
+      this.thumbnail = thumbnail;
    }
 
    @Override

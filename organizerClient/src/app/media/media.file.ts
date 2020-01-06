@@ -1,4 +1,5 @@
 import { TagModel } from '../tags/tagModel';
+import { StoredFile } from './stored.file';
 
 export interface MediaFile {
     id: number;
@@ -8,4 +9,5 @@ export interface MediaFile {
     path: string;
     tags: TagModel[];
     mimetype: string;
+    thumbnail: StoredFile;
 }

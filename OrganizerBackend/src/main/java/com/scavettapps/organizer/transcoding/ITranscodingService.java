@@ -26,4 +26,5 @@ import java.io.IOException;
  */
 public interface ITranscodingService {
    public File transcodeMediaFile(MediaFile file) throws TranscodingException;
+   public File getDefaultThumbnail(MediaFile file) throws IOException;
 }

@@ -16,6 +16,8 @@
 package com.scavettapps.organizer.scanner;
 
 import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
+import com.scavettapps.organizer.files.StoredFile;
+import com.scavettapps.organizer.files.StoredFileService;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import com.scavettapps.organizer.media.MediaFileService;
+import com.scavettapps.organizer.transcoding.ITranscodingService;
+import java.util.function.Predicate;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -56,18 +60,25 @@ public class FileScanningService {
 
    private final FolderService folderService;
    private final IHashService quickHash;
+   private final ITranscodingService transcodingService;
    private final MediaFileService mediaFileService;
    private final ScanLocationSevice scanLocationService;
+   private final StoredFileService storedFileService;
 
    public FileScanningService(
        FolderService folderService,
        @Qualifier("QuickHash") IHashService quickHash,
+       @Qualifier("bramp") ITranscodingService transcodingService,
        MediaFileService mediaFileService,
-       ScanLocationSevice scanLocationService) {
+       ScanLocationSevice scanLocationService,
+       StoredFileService storedFileService
+   ) {
       this.folderService = folderService;
       this.quickHash = quickHash;
+      this.transcodingService = transcodingService;
       this.mediaFileService = mediaFileService;
       this.scanLocationService = scanLocationService;
+      this.storedFileService = storedFileService;
    }
 
    @Transactional
@@ -84,8 +95,6 @@ public class FileScanningService {
 
    @Transactional
    public Folder scanLocationForFiles(String path) throws InterruptedException, ExecutionException {
-
-      Thread.sleep(10000);
       LOGGER.info("Initializing Scanning of: " + path);
 
       Set<MediaFile> addedFiles = Collections.synchronizedSet(new HashSet<>());
@@ -152,6 +161,10 @@ public class FileScanningService {
                 file.getPath(),
                 mimetype
             );
+            if (mimetype.contains("video")) {
+               // Video Detected. Grab the thumbnail.
+               newFile.setThumbnail(getVideoThumb(newFile));
+            }
             LOGGER.info(
                 "new file added - hash: "
                 + newFile.getHash()
@@ -228,6 +241,26 @@ public class FileScanningService {
                       new DuplicateMediaFilePath(processedFile.getPath())
                   );
                } else {
+
+                  // Make sure the thumbnail is unique too if it has one.
+                  if (processedFile.getThumbnail() != null) {
+                     previousFile = scannedFiles
+                         .stream()
+                         .filter(mediaFile -> (mediaFile.getThumbnail() != null && mediaFile.getThumbnail().getHash().equalsIgnoreCase(processedFile.getThumbnail().getHash())))
+                         .collect(Collectors.toList())
+                         .stream()
+                         .findFirst()
+                         .orElse(null);
+                     if (previousFile != null) {
+                        // file is not unique. Use the previously found's thumbnail
+
+                        File duplicateThumb = new File(processedFile.getPath());
+                        duplicateThumb.delete();
+
+                        processedFile.setThumbnail(previousFile.getThumbnail());
+                     }
+                  }
+
                   currentFolder.addFile(processedFile);
                   scannedFiles.add(processedFile);
                }
@@ -237,6 +270,29 @@ public class FileScanningService {
          }
       }
       // End of a directory search.
+   }
+
+   private StoredFile getVideoThumb(MediaFile newFile) {
+      LOGGER.info("Generating thumbnail for: " + newFile.getName());
+      try {
+         File thumbnailFile = transcodingService.getDefaultThumbnail(newFile);
+         String thumbhash = this.quickHash.getHash(thumbnailFile);
+
+         // If this thumb already exists, use that. This should be rare but it could happen.
+         StoredFile storedThumbFile = this.storedFileService.getStoredFile(thumbhash);
+         if (storedThumbFile == null) {
+            storedThumbFile = new StoredFile(
+                thumbhash,
+                thumbnailFile.getAbsolutePath(),
+                thumbnailFile.getName(),
+                thumbnailFile.length()
+            );
+         }
+         return storedThumbFile;
+      } catch (IOException ex) {
+         LOGGER.error("Could not generate thumbnail for video: " + newFile.getName());
+         return null;
+      }
    }
 
    class ScanThreadTask implements Runnable {

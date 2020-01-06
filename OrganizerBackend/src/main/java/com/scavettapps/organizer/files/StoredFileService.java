@@ -15,7 +15,15 @@
  */
 package com.scavettapps.organizer.files;
 
+import com.scavettapps.organizer.core.EntityNotFoundException;
+import com.scavettapps.organizer.media.MediaFile;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,12 +33,44 @@ import org.springframework.stereotype.Service;
 @Service
 public class StoredFileService {
    
-   private StoredFileRepository storedFileRepository;
+   private final StoredFileRepository storedFileRepository;
 
    @Autowired
    public StoredFileService(StoredFileRepository storedFileRepository) {
       this.storedFileRepository = storedFileRepository;
    }
    
+   public StoredFile getStoredFile(String hash) {
+      StoredFile file = this.storedFileRepository.findByHash(hash).orElse(null);
+      return file;
+   }
+   
+   public List<StoredFile> getAllStoredFiles() {
+      return this.storedFileRepository.findAll();
+   }
+   
+   /**
+    * finds the file on the file system and loads it into a resource
+    *
+    * @param hash the hash of the file
+    * @return resource that is the file
+    * @throws FileNotFoundException if the file is not found
+    * @throws EntityNotFoundException if the hash is not found
+    */
+   public Resource loadFileAsResource(String hash) throws FileNotFoundException {
+
+      StoredFile file = getStoredFile(hash);
+
+      try {
+         Resource resource = new UrlResource(new File(file.getPath()).toURI());
+         if (resource.exists()) {
+            return resource;
+         } else {
+            throw new FileNotFoundException("File not found: " + file);
+         }
+      } catch (MalformedURLException ex) {
+         throw new FileNotFoundException("Malformed URL Exception: " + file);
+      }
+   }
    
 }

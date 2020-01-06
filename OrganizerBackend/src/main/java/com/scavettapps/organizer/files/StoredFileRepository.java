@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.files;
 
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -22,5 +23,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Vincent Scavetta
  */
 public interface StoredFileRepository extends JpaRepository<StoredFile, Long>{
-   
+   Optional<StoredFile> findByHash(String hash);
 }

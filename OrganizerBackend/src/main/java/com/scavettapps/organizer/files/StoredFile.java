@@ -35,6 +35,10 @@ public class StoredFile extends AbstractPersistableEntity<Long>{
    @NotNull
    @Column(name = "hash")
    private String hash;
+   
+   @NotNull
+   @Column(name = "path")
+   private String path;
 
    @NotNull
    @Column(name = "name")
@@ -43,4 +47,46 @@ public class StoredFile extends AbstractPersistableEntity<Long>{
    @NotNull
    @Column(name = "size")
    private long size;
+
+   public StoredFile() {
+   }
+
+   public StoredFile(String hash, String path, String name, long size) {
+      this.hash = hash;
+      this.path = path;
+      this.name = name;
+      this.size = size;
+   }
+
+   public String getHash() {
+      return hash;
+   }
+
+   public void setHash(String hash) {
+      this.hash = hash;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public String getPath() {
+      return path;
+   }
+
+   public void setPath(String path) {
+      this.path = path;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public long getSize() {
+      return size;
+   }
+
+   public void setSize(long size) {
+      this.size = size;
+   }
 }

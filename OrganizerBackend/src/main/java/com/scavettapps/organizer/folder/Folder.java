@@ -1,12 +1,12 @@
 /**
  * Copyright 2019 Vincent Scavetta
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,12 +75,13 @@ public class Folder extends AbstractPersistableEntity<Long> {
    }
 
    /**
-    * Adds a folder to this list of folders.
-    * This was done because of the way that the scanning services was implemented. Eventually I 
-    * would like to go back and fix it so that maybe this code would be unneeded I can just use the
-    * built in functions of the set. Since the folder object that is passed in to this 
+    * Adds a folder to this list of folders. This was done because of the way that the scanning
+    * services was implemented. Eventually I would like to go back and fix it so that maybe this
+    * code would be unneeded I can just use the built in functions of the set. Since the folder
+    * object that is passed in to this
+    *
     * @param folder
-    * @return 
+    * @return
     */
    public boolean addFolder(Folder folder) {
 
@@ -90,7 +91,10 @@ public class Folder extends AbstractPersistableEntity<Long> {
          //Search for the folder using the path.
          Folder existingFolder = folders.stream()
              .filter(mediaFile -> (mediaFile.getPath().equalsIgnoreCase(folder.getPath())))
-             .collect(Collectors.toList()).get(0);
+             .collect(Collectors.toList())
+             .stream()
+             .findFirst()
+             .orElse(null);
 
          if (existingFolder == null) {
             return this.folders.add(folder);
@@ -101,12 +105,12 @@ public class Folder extends AbstractPersistableEntity<Long> {
          }
       }
    }
-   
+
    public Folder getFolder(String path) {
       if (this.folders.isEmpty()) {
          return null;
       }
-      
+
       return folders.stream()
           .filter(mediaFile -> (mediaFile.getPath().equalsIgnoreCase(path)))
           .collect(Collectors.toList()).get(0);
@@ -124,7 +128,7 @@ public class Folder extends AbstractPersistableEntity<Long> {
       if (this.files.isEmpty()) {
          return null;
       }
-      
+
       return files.stream()
           .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(hash)))
           .collect(Collectors.toList()).get(0);
