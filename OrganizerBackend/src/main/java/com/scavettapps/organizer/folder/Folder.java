@@ -15,7 +15,9 @@
  */
 package com.scavettapps.organizer.folder;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.media.MediaFile;
 import java.util.HashSet;
@@ -39,6 +41,7 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "folders", uniqueConstraints = @UniqueConstraint(columnNames = {"path"}))
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@UUID")
 public class Folder extends AbstractPersistableEntity<Long> {
 
    @NotNull
@@ -56,7 +59,6 @@ public class Folder extends AbstractPersistableEntity<Long> {
    private Set<MediaFile> files;
 
    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-   @JsonIgnore
    private Folder folder;
 
    public Folder(String path) {

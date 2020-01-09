@@ -25,6 +25,7 @@ import com.scavettapps.organizer.core.response.ErrorResponse;
 import com.scavettapps.organizer.core.response.Response;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author Vincent Scavetta
@@ -63,6 +64,12 @@ public class FolderController {
    public Response findFilesInFolder(@RequestParam long folderId) {
 
       return new DataResponse(this.folderRepo.findAllByFolder_Id(folderId));
+   }
+   
+   @GetMapping("/folder")
+   public Response findFileById(@RequestParam long folderId) {
+
+      return new DataResponse(this.folderRepo.findById(folderId));
    }
 
 }
