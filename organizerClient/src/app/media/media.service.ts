@@ -8,6 +8,7 @@ import { timeout } from 'rxjs/operators';
 import { TagModel } from '../tags/tagModel';
 import { PageRequest } from '../common/PageRequest';
 import { MediaSearchRequest } from './media-search-request';
+import { ResourceService } from './resource.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ import { MediaSearchRequest } from './media-search-request';
 export class MediaService {
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private resourceService: ResourceService
   ) { }
 
   public getVideoStreamURL(video: MediaFile) {
@@ -48,5 +50,23 @@ export class MediaService {
     return this.http
       .get<Response<any>>(`${environment.baseURL}media`, { params: data })
       .pipe(timeout(10000));
+  }
+
+  public getThumbnailSrc(mediaFile: MediaFile): string {
+    let url;
+    if (mediaFile.mimetype.includes('video')) {
+      // This is a video so use a thumbnail if it has one.
+      if (mediaFile.thumbnail) {
+        url = this.resourceService.getThumbnailUrl(mediaFile.thumbnail);
+      }
+    } else if (mediaFile.mimetype.includes('image')) {
+      url = this.resourceService.getMediaUrl(mediaFile);
+    }
+
+    // if URL couldn't be generated, fall back to this.
+    if (!url) {
+      url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg';
+    }
+    return url;
   }
 }

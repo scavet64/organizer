@@ -5,8 +5,15 @@ import { TagService } from '../tags/tag.service';
 import { TagModel } from '../tags/tagModel';
 import { MediaService } from '../media/media.service';
 import { AlertService } from '../alert/alert.service';
-import { ResourceService } from '../media/resource.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+import { VideoplayerService } from '../videoplayer/videoplayer.service';
 import { MediaFile } from '../media/media.file';
+
+export interface SearchParams {
+  currentFolder: number;
+  search: string;
+}
 
 @Component({
   selector: 'app-folder',
@@ -15,67 +22,81 @@ import { MediaFile } from '../media/media.file';
 })
 export class FolderComponent implements OnInit {
 
-  currentFolder: Folder;
+  // This does not reload during navigation events
   knownTags: TagModel[];
+
+  // These variables should be reloaded during navigation events
   rootFolders: Folder[];
+  currentFolder: Folder;
   previousFolders: Folder[] = [];
+  hadParams: boolean;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private alertService: AlertService,
     private folderService: FolderService,
-    private mediaFileService: MediaService,
-    private resourceService: ResourceService,
-    private tagService: TagService
+    public mediaFileService: MediaService,
+    private router: Router,
+    private tagService: TagService,
+    public videoplayerService: VideoplayerService
   ) { }
 
   ngOnInit() {
-    this.folderService.getRootFolders().subscribe(res => {
-      console.log(res);
-      this.rootFolders = res.data.Folders;
+    this.activatedRoute.queryParams
+      .pipe(
+        switchMap(params => {
+          console.log(params);
+          if (params.folder) {
+            this.hadParams = true;
+            return this.folderService.getFolder(params.folder);
+          } else {
+            this.hadParams = false;
+            return this.folderService.getRootFolders();
+          }
+        }))
+      .subscribe(resp => {
+        console.log(resp);
+        if (this.hadParams) {
+          this.currentFolder = resp.data;
 
-      //TODO: DEBUG CODE REMOVE THIS. JUST FOR EASY QUICK REFRESHES
-      //this.currentFolder = this.rootFolders[0];
-    }, (err) => {
-      console.log(`Could not get root folder`);
-    });
+          // Build out the breadcrumbs again
+          this.previousFolders = [];
+          let previous = this.currentFolder.folder;
+          while (previous != null) {
+            this.previousFolders.push(previous);
+            previous = previous.folder;
+          }
+          this.previousFolders.reverse();
+        } else {
+          this.currentFolder = null;
+          this.rootFolders = resp.data.Folders;
+        }
+      });
 
     this.tagService.getAllTags().subscribe(res => {
       this.knownTags = res.data;
-      console.log(this.knownTags);
+      //console.log(this.knownTags);
     }, (err) => {
       console.log(`Could not get tags`);
     });
   }
 
   folderClicked(folder: Folder) {
-    if (this.currentFolder) {
-      this.previousFolders.push(this.currentFolder);
-    }
-    this.currentFolder = folder;
+    this.router.navigate(['/folder'], {
+      queryParams: { folder: folder.id },
+      queryParamsHandling: 'merge'
+    });
   }
 
   backClicked() {
-    this.currentFolder = this.previousFolders.pop();
-  }
-
-  public navigateToFolder(folder: Folder) {
-    let simp: Folder;
-    let found = false;
-    console.log("previous folders Array:");
-    console.log(this.previousFolders);
-    while (!found && this.previousFolders.length > 0) {
-      simp = this.previousFolders.pop();
-      console.log(simp);
-      if (simp.id === folder.id) {
-        console.log("found");
-        found = true;
-      }
+    const navigateTo = this.previousFolders.pop();
+    if (navigateTo) {
+      this.folderClicked(navigateTo);
+    } else {
+      this.router.navigate(['/folder'], {
+        queryParams: {},
+      });
     }
-
-    console.log("previous folders Array After:");
-    console.log(this.previousFolders);
-
-    this.currentFolder = simp;
   }
 
   updateMediaFilesTags(event: any) {
@@ -87,22 +108,8 @@ export class FolderComponent implements OnInit {
     });
   }
 
-  getThumbnailSrc(mediaFile: MediaFile): string {
-    let url;
-    if (mediaFile.mimetype.includes('video')) {
-      // This is a video so use a thumbnail if it has one.
-      if (mediaFile.thumbnail) {
-        url = this.resourceService.getThumbnailUrl(mediaFile.thumbnail);
-      }
-    } else if (mediaFile.mimetype.includes('image')) {
-      url = this.resourceService.getMediaUrl(mediaFile);
-    }
-
-    // if URL couldn't be generated, fall back to this.
-    if (!url) {
-      url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg';
-    }
-    return url;
+  openMedia(mediaFile: MediaFile) {
+    this.videoplayerService.showVideo(mediaFile);
   }
 
 }

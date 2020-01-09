@@ -9,4 +9,5 @@ export class Folder {
   folders: Folder[];
   files: MediaFile[];
   visibleInTree = false;
+  folder: Folder;
 }

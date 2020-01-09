@@ -2,7 +2,7 @@
   display: flex;
   justify-content: flex-start;
   background-color: #424242;
-  padding: 10px;
+  padding: 0px;
   border-radius: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
@@ -15,8 +15,9 @@
   // height: 100%;
   // min-height: 100%;
   margin-right: 5px;
-  border-radius: 10px;
-  height: 85px;
+  border-radius: 10px 0px 0px 10px;
+  // height: 85px;
+  max-height: 89px;
   width: 150px;
   max-width: 150px;
   min-width: 150px;

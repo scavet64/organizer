@@ -26,7 +26,7 @@
           <input matInput placeholder="Text Color" name="textColor" type="text" [(ngModel)]="tag.textColor" required
             [cpPosition]="'bottom'" [cpPositionOffset]="'0%'" [cpPositionRelativeToArrow]="false"
             [(colorPicker)]="tag.textColor" [value]="tag.textColor">
-          <button mat-raised-button (click)="refreshTextColor($event)" [matTooltip]="'Generate a new random color'">
+          <button mat-raised-button (click)="refreshTextColor($event)" [matTooltip]="'Generate a new random color'" type="button">
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>
@@ -39,7 +39,7 @@
             [(ngModel)]="tag.backgroundColor" required [cpPosition]="'bottom'" [cpPositionOffset]="'0%'"
             [cpPositionRelativeToArrow]="false" [(colorPicker)]="tag.backgroundColor" [value]="tag.backgroundColor"
             [cpWidth]="'230'" [cpAlphaChannel]="'disabled'">
-          <button mat-raised-button (click)="refreshBackgroundColor($event)" [matTooltip]="'Generate a new random color'">
+          <button mat-raised-button (click)="refreshBackgroundColor($event)" [matTooltip]="'Generate a new random color'" type="button">
             <i class="fas fa-sync-alt"></i>
           </button>
         </div>

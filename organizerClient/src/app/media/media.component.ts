@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { AlertService } from '../alert/alert.service';
 import { ResourceService } from './resource.service';
+import { VideoplayerService } from '../videoplayer/videoplayer.service';
 
 @Component({
   selector: 'app-media',
@@ -41,7 +42,8 @@ export class MediaComponent implements OnInit {
     private alertService: AlertService,
     private mediaFileService: MediaService,
     private resourceService: ResourceService,
-    private tagService: TagService
+    private tagService: TagService,
+    public videoplayerService: VideoplayerService
   ) {
    }
 

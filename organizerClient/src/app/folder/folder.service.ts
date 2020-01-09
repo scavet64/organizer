@@ -19,4 +19,10 @@ export class FolderService {
       .get<Response<any>>(`${environment.baseURL}folder/root`)
       .pipe(timeout(10000));
   }
+
+  public getFolder(id: number): Observable<Response<any>> {
+    return this.http
+      .get<Response<any>>(`${environment.baseURL}folder?folderId=${id}`)
+      .pipe(timeout(10000));
+  }
 }

@@ -10,7 +10,7 @@ import { tooltipDefaultOptions } from 'src/app/common/constants';
   templateUrl: './media-list-item.component.html',
   styleUrls: ['./media-list-item.component.scss'],
   providers: [
-    {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaultOptions}
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaultOptions }
   ],
 })
 export class MediaListItemComponent implements OnInit {
@@ -19,6 +19,7 @@ export class MediaListItemComponent implements OnInit {
   @Input() file: MediaFile;
   @Input() imgSource: string;
   @Output() tagsEdited: EventEmitter<any> = new EventEmitter<any>();
+  @Output() openMedia: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private dialog: MatDialog
@@ -39,10 +40,16 @@ export class MediaListItemComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const data = {file: this.file, editedTags: result};
+        const data = { file: this.file, editedTags: result };
         this.tagsEdited.emit(data);
       }
     });
+  }
+
+  openMediaClick() {
+    if (this.file.mimetype.includes('video')) {
+      this.openMedia.emit(this.file);
+    }
   }
 
 }

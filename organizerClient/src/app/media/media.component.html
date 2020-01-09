@@ -49,7 +49,7 @@
 
   <!-- List View -->
   <div>
-    <app-media-list-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags" [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)">
+    <app-media-list-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags" [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="videoplayerService.showVideo(file)">
     </app-media-list-item>
   </div>
 
