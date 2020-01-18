@@ -40,3 +40,16 @@
   width: 100px;
   margin: 5px;
 }
+
+.sorting-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sort-column-container {
+  width: 49%;
+}
+
+.sort-direction-container {
+  width: 49%;
+}

@@ -22,6 +22,11 @@ export class VideoplayerService {
       data: this.mediaFileService.getVideoStreamURL(file)
     });
 
+    this.mediaFileService.addView(file.id).subscribe(res => {
+      console.log(res.data);
+      file.views++;
+    });
+
     dialogRef.afterClosed().subscribe(result => {
       console.log("closed video");
     });

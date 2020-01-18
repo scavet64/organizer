@@ -20,6 +20,7 @@ export class MediaListItemComponent implements OnInit {
   @Input() imgSource: string;
   @Output() tagsEdited: EventEmitter<any> = new EventEmitter<any>();
   @Output() openMedia: EventEmitter<any> = new EventEmitter();
+  @Output() tagClicked: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private dialog: MatDialog
@@ -50,6 +51,10 @@ export class MediaListItemComponent implements OnInit {
     if (this.file.mimetype.includes('video')) {
       this.openMedia.emit(this.file);
     }
+  }
+
+  viewMediaWithTag(tag: TagModel) {
+    this.tagClicked.emit(tag);
   }
 
 }

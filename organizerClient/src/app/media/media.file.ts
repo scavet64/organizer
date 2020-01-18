@@ -10,4 +10,5 @@ export interface MediaFile {
     tags: TagModel[];
     mimetype: string;
     thumbnail: StoredFile;
+    views: number;
 }

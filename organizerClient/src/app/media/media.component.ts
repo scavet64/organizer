@@ -35,6 +35,9 @@ export class MediaComponent implements OnInit {
   selectedTags: TagModel[] = [];
   filteredTags: Observable<TagModel[]>;
 
+  sortColumn: string = 'id';
+  sortDirection: string = 'desc';
+
   @ViewChild('chipInput', {static: false}) chipInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
@@ -62,7 +65,7 @@ export class MediaComponent implements OnInit {
   }
 
   public getMedia() {
-    this.mediaFileService.getMediaPages(0).subscribe(res => {
+    this.mediaFileService.getMediaPages(0, 20, this.sortColumn, this.sortDirection).subscribe(res => {
       this.pageResponse = res.data;
       console.log(this.pageResponse);
     });
@@ -71,7 +74,7 @@ export class MediaComponent implements OnInit {
   onPageChange(event) {
     console.log(event);
     console.log(event.pageIndex);
-    this.mediaFileService.getMediaPages(event.pageIndex, event.pageSize).subscribe(res => {
+    this.mediaFileService.getMediaPages(event.pageIndex, event.pageSize, this.sortColumn, this.sortDirection).subscribe(res => {
       this.pageResponse = res.data;
     });
   }
@@ -129,7 +132,9 @@ export class MediaComponent implements OnInit {
 
   search() {
     console.log(this.searchBox);
-    this.mediaFileService.getMediaPagesSearch(0, this.searchBox, this.selectedTags).subscribe(res => {
+    console.log(this.sortColumn);
+    console.log(this.sortDirection);
+    this.mediaFileService.getMediaPagesSearch(0, this.searchBox, this.selectedTags, this.sortColumn, this.sortDirection).subscribe(res => {
       this.pageResponse = res.data;
       console.log(this.pageResponse);
     });
@@ -160,6 +165,15 @@ export class MediaComponent implements OnInit {
       url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg';
     }
     return url;
+  }
+
+  tagClicked(event: any) {
+    this.selectedTags.push(event);
+    this.search();
+  }
+
+  openMedia(file: MediaFile) {
+    this.videoplayerService.showVideo(file);
   }
 
 }

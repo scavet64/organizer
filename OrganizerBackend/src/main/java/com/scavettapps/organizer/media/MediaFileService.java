@@ -61,6 +61,10 @@ public class MediaFileService {
       this.tagRepository = tagRepository;
       this.transcodingService = transcodingService;
    }
+   
+   public Optional<MediaFile> getMediaFile(long id) {
+      return this.mediaFileRepository.findById(id);
+   }
 
    public Optional<MediaFile> getMediaFile(String hash) {
       return this.mediaFileRepository.findByHash(hash);
@@ -205,5 +209,11 @@ public class MediaFileService {
       }
 
       return specs;
+   }
+
+   public MediaFile addView(long mediaId) {
+      MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
+      file.incrementViews();
+      return this.mediaFileRepository.save(file);
    }
 }

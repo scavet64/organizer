@@ -38,15 +38,15 @@ export class MediaService {
       .pipe(timeout(10000));
   }
 
-  public getMediaPages(pageNumber: number, numberPerPage: number = 20) {
-    const data = new PageRequest(pageNumber, numberPerPage).toHttpParams();
+  public getMediaPages(pageNumber: number, numberPerPage: number = 20, sortColumn: string, sortDirection: string) {
+    const data = new PageRequest(pageNumber, numberPerPage, sortColumn, sortDirection).toHttpParams();
     return this.http
       .get<Response<any>>(`${environment.baseURL}media`, { params: data })
       .pipe(timeout(10000));
   }
 
-  public getMediaPagesSearch(pageNumber: number, name: string, tags: TagModel[]) {
-    const data = new MediaSearchRequest(pageNumber, name, tags).toHttpParams();
+  public getMediaPagesSearch(pageNumber: number, name: string, tags: TagModel[], sortColumn: string, sortDirection: string) {
+    const data = new MediaSearchRequest(pageNumber, name, tags, sortColumn, sortDirection).toHttpParams();
     return this.http
       .get<Response<any>>(`${environment.baseURL}media`, { params: data })
       .pipe(timeout(10000));
@@ -68,5 +68,11 @@ export class MediaService {
       url = 'https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg';
     }
     return url;
+  }
+
+  public addView(id: number): Observable<Response<any>> {
+    return this.http
+      .put<Response<any>>(`${environment.baseURL}media/view`, id)
+      .pipe(timeout(10000));
   }
 }

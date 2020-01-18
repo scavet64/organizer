@@ -68,6 +68,14 @@ body {
 .table-wrapper {
 }
 
+.my-chip {
+  font-size: 12px;
+  padding: 5px 12px !important;
+  height: 25px !important;
+  min-height: 10px !important;
+  margin: 3px !important;
+}
+
 /////////////// Custom Scrollbar stuff ///////////////
 
 .fixed[scrollx=true], div[scrolly=true] {

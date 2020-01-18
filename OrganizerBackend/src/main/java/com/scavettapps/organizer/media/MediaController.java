@@ -32,6 +32,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -47,15 +48,15 @@ public class MediaController {
 
    /**
     *
-    * @param fileID the file ID corresponding to the video
+    * @param fileHash the file ID corresponding to the video
     * @return returns the video as a resource stream
     */
-   @GetMapping(value = "/{fileID}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+   @GetMapping(value = "/{fileHash}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
-   ResponseEntity<Resource> getFullVideo(@PathVariable String fileID)
+   ResponseEntity<Resource> getFullVideo(@PathVariable String fileHash)
        throws FileNotFoundException {
 
-      Resource fileResource = mediaFileService.loadFileAsResource(fileID);
+      Resource fileResource = mediaFileService.loadFileAsResource(fileHash);
       ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(fileResource);
       return resp;
    }
@@ -97,5 +98,11 @@ public class MediaController {
    ) {
       Page<MediaFile> mediaPage = this.mediaFileService.getPageOfMediaFiles(pageable, request);
       return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
+   }
+   
+   @PutMapping("/view")
+   public ResponseEntity<Response> addView(@RequestBody Long mediaId) {
+      mediaFileService.addView(mediaId);
+      return ResponseEntity.ok(new DataResponse("View has been added"));
    }
 }

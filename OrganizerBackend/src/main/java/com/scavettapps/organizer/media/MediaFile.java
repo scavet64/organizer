@@ -31,6 +31,7 @@ import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
 import com.scavettapps.organizer.files.StoredFile;
 import com.sun.istack.NotNull;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
 import javax.persistence.GeneratedValue;
@@ -64,9 +65,16 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    @Column(name = "mimetype")
    private String mimetype;
    
+   @Column(name = "views")
+   private long views = 0;
+   
    @NotNull
    @Column(name = "ignored")
    private boolean isIgnored;
+   
+   @NotNull
+   @Column(name = "date_added")
+   private Instant dateAdded;
    
    @NotNull
    @Column(name = "last_seen_date")
@@ -87,7 +95,9 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
       this.hash = hash;
       this.name = name;
       this.lastSeenDate = LocalDate.now();
-      isIgnored = false;
+      this.dateAdded = Instant.now();
+      this.views = 0;
+      this.isIgnored = false;
    }
 
    public MediaFile(String hash, String name, long size, String path, String mimetype) {
@@ -98,13 +108,21 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
       this.path = path;
       this.mimetype = mimetype;
       this.lastSeenDate = LocalDate.now();
-      isIgnored = false;
+      this.dateAdded = Instant.now();
+      this.views = 0;
+      this.isIgnored = false;
    }
 
    public MediaFile() {
       super();
       this.lastSeenDate = LocalDate.now();
-      isIgnored = false;
+      this.dateAdded = Instant.now();
+      this.views = 0;
+      this.isIgnored = false;
+   }
+   
+   public long incrementViews() {
+      return this.views++;
    }
    
    public boolean addTag(Tag tag) {
@@ -189,6 +207,22 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
 
    public void setMimetype(String mimetype) {
       this.mimetype = mimetype;
+   }
+
+   public long getViews() {
+      return views;
+   }
+
+   public void setViews(long views) {
+      this.views = views;
+   }
+
+   public Instant getDateAdded() {
+      return dateAdded;
+   }
+
+   public void setDateAdded(Instant dateAdded) {
+      this.dateAdded = dateAdded;
    }
 
    public boolean isIsIgnored() {

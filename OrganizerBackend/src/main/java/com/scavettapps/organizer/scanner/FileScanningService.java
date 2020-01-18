@@ -44,7 +44,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import com.scavettapps.organizer.media.MediaFileService;
 import com.scavettapps.organizer.transcoding.ITranscodingService;
+import java.io.FileInputStream;
 import java.util.function.Predicate;
+import org.apache.tika.Tika;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -153,6 +155,20 @@ public class FileScanningService {
          if (existingFile == null) {
             // Hash not found in database. Create the new media file object
             String mimetype = URLConnection.guessContentTypeFromName(file.getName());
+            if (mimetype == null) {
+               LOGGER.warn("Could not guess mimetype using name for file: {}", file.getName());
+               try (FileInputStream fis = new FileInputStream(file)) {
+                  mimetype = URLConnection.guessContentTypeFromStream(fis);
+               }
+               if (mimetype == null) {
+                  LOGGER.warn("Could not guess mimetype using stream for file: {}", file.getName());
+                  Tika tika = new Tika();
+                  mimetype = tika.detect(file);
+                  if (mimetype == null) {
+                     LOGGER.error("Could not determine mimetype for file: {}", file.getName());
+                  }
+               }
+            }
 
             MediaFile newFile = new MediaFile(
                 hash,
@@ -161,7 +177,7 @@ public class FileScanningService {
                 file.getPath(),
                 mimetype
             );
-            if (mimetype.contains("video")) {
+            if (mimetype != null && mimetype.contains("video")) {
                // Video Detected. Grab the thumbnail.
                newFile.setThumbnail(getVideoThumb(newFile));
             }
