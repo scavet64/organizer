@@ -20,7 +20,7 @@ export class MediaSearchRequest extends PageRequest {
   toHttpParams(): HttpParams {
     let params = super.toHttpParams();
     if (this.name && this.name !== '') {
-      params = params.set('name', `like:${this.name}`);
+      params = params.set('name', `like:${this.name}`.toLowerCase());
     }
 
     if (this.tagIds.length > 0) {
