@@ -1,0 +1,78 @@
+<div class="content-margins">
+  <div style="margin-top:50px;">
+    All Scan Locations
+  </div>
+
+  <!-- Filter and new button -->
+  <div class="filter-wrapper">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter by Path">
+    </mat-form-field>
+    <button mat-raised-button class="create-new-scan-button" (click)="createLocation()"
+      [matTooltip]="'Create a new Scan Location'" matTooltipClass="organizer-tooltip">
+      <i class="fas fa-plus"></i> <span style="margin-left: 10px;">New</span>
+    </button>
+  </div>
+
+  <!-- Table of scan locations -->
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort #table>
+
+      <ng-container matColumnDef="path">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Path </th>
+        <td mat-cell *matCellDef="let location">
+          {{location.path}}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastscan">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Scan </th>
+        <td mat-cell *matCellDef="let location">
+          <div class="description-wrapper">
+            <p>
+              {{location.lastScan || 'Never'}}
+            </p>
+          </div>
+
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let location">
+          <div *ngIf="!mobileView">
+            <button mat-icon-button class="edit-tag-button" (click)="scanNow(location)" [matTooltip]="'Start Scan Now'" matTooltipClass="organizer-tooltip">
+              <i class="fas fa-play-circle"></i>
+            </button>
+            <button mat-icon-button class="" (click)="deleteScanLocation(location)" [matTooltip]="'Remove Scan Location'" matTooltipClass="organizer-tooltip">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+          <div *ngIf="mobileView" class="more-options-wrapper">
+            <mat-menu #appMenu="matMenu">
+              <div style="color: white;">
+                <button mat-button class="edit-tag-button" (click)="scanNow(location)">
+                  <i class="fas fa-play-circle"></i>&nbsp;Edit
+                </button>
+              </div>
+              <div style="color: white;">
+                <button mat-button class="" (click)="deleteScanLocation(location)">
+                  <i class="fas fa-trash-alt"></i>&nbsp;Delete
+                </button>
+              </div>
+            </mat-menu>
+            <button mat-icon-button class="more-options-button" [matMenuTriggerFor]="appMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+  </div>
+</div>

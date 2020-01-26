@@ -1,0 +1,45 @@
+<div class="wrapper">
+
+  <!-- Media is a video -->
+
+  <img [src]="imgSource" class="thumbnail" (click)="openMediaClick()" />
+
+
+  <!--
+  <div *ngIf="!file.mimetype.indexOf('video')"> -->
+  <!-- Media is a photo -->
+  <!-- <img *ngIf="!file.thumbnail" src="https://i.kym-cdn.com/photos/images/newsfeed/001/460/439/32f.jpg" class="thumbnail" />
+    <img *ngIf="file.thumbnail" [src]="getThumbnailUrl(file.thumbnail)" class="thumbnail" />
+  </div> -->
+
+
+  <div class="content-wrapper">
+    <div style="padding: 10px">
+      <div style="font-size: .9rem; display:flex; text-align: justify;">
+        {{file.name}}
+      </div>
+
+      <br>
+
+      <!-- Tags -->
+      <mat-chip-list >
+        <mat-chip *ngIf="file.mimetype.includes('video')" class="chip-video my-chip ellipse-text">Video</mat-chip>
+        <mat-chip *ngIf="file.mimetype.includes('image')" class="chip-image my-chip ellipse-text">Image</mat-chip>
+        <mat-chip *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor" style="max-width: 200px;"
+          class="ellipse-text my-chip" [style.color]="tag.textColor" [matTooltip]="tag.name"
+          matTooltipClass="organizer-tooltip" (click)="viewMediaWithTag(tag)">
+          {{ tag.name }}
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+    <div class="button-container">
+      {{file.views}}
+      <button mat-icon-button (click)="showTags()">
+        <i class="fas fa-tags"></i>
+      </button>
+      <button mat-icon-button>
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>

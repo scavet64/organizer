@@ -21,9 +21,9 @@ export class AppComponent {
       icon: 'pricetags'
     },
     {
-      title: 'List',
-      url: '/list',
-      icon: 'list'
+      title: 'Media',
+      url: '/media',
+      icon: 'videocam'
     }
   ];
 

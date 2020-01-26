@@ -14,20 +14,36 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { CreateEditPage } from './tag/create-edit/create-edit.page';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { MediaTagsComponent } from './media-tags/media-tags.component';
+import { HomePage } from './home/home.page';
+import { FilterPipe } from './tag/filter.pipe';
+import { CoreModule } from './common/core.module';
+import { TruncationPipe } from './truncation.pipe';
+import { TooltipsModule } from 'ionic-tooltips';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MediaFilterPipe } from './media/media-filter.pipe';
+import { VideoplayerComponent } from './media/videoplayer/videoplayer.component';
 
 @NgModule({
   declarations: [
     CreateEditPage,
-    AppComponent
+    AppComponent,
+    MediaTagsComponent,
+    VideoplayerComponent
   ],
   entryComponents: [
+    MediaTagsComponent,
+    VideoplayerComponent
   ],
   imports: [
+    CoreModule,
     BrowserModule,
     FormsModule,
     ColorPickerModule,
+    BrowserAnimationsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    TooltipsModule.forRoot(),
     IonicModule.forRoot(),
     AppRoutingModule,
     SweetAlert2Module

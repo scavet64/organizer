@@ -1,0 +1,32 @@
+  <ion-card style="margin: 0; padding: 0;">
+    <ion-card-header style="font-size: 1rem" color="dark">
+      <ion-input clearInput [(ngModel)]='searchBox' class="inputBox" [placeholder]='"search"'></ion-input>
+    </ion-card-header>
+    <ion-card-subtitle>
+
+    </ion-card-subtitle>
+    <ion-card-content style="padding: 0">
+
+      <ion-list class="fixed" style="max-height: 330px; overflow-x: hidden; overflow-y: scroll; padding-top: 0" [lines]='"full"'>
+        <ion-item *ngFor="let tag of knownTags | filter : searchBox">
+          <ion-checkbox class="checkbox" slot='start' [ngModel]="tag.selected" (click)="tagClicked(tag)"></ion-checkbox>
+          <ion-chip color="dark" [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor">
+            {{ tag.name | truncation: 20 }}
+          </ion-chip>
+        </ion-item>
+      </ion-list>
+
+      <ion-card-content class="ion-no-padding">
+        <ion-item color="dark">
+          <ion-button slot='end' (click)="save()">
+              Save
+            <!-- <ion-icon name="trash" slot="start"></ion-icon> -->
+          </ion-button>
+          <ion-button slot='start' (click)="cancel()">
+              Cancel
+            <!-- <ion-icon name="trash" slot="start"></ion-icon> -->
+          </ion-button>
+        </ion-item>
+      </ion-card-content>
+    </ion-card-content>
+  </ion-card>

@@ -1,0 +1,36 @@
+.content-margins {
+  margin-left: 3%;
+  margin-right: 3%;
+  margin-bottom: 10px;
+}
+
+.filter-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.folder-button {
+  width: 275px;
+  background-color: #424242;
+}
+
+.folder-container {
+  display: flex;
+  justify-content: flex-start;
+  flex-flow: wrap;
+}
+
+.breadcrumb-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.breadcrumb {
+  margin-right: 10px;
+  margin-left: 10px;
+}
