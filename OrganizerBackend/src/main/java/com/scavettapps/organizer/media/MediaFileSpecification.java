@@ -1,12 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Copyright 2019 Vincent Scavetta
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.specifications.AbstractFilterSpecification;
 import com.scavettapps.organizer.tag.Tag;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author vstro
+ * @author Vincent Scavetta
  */
 @Service
 public class MediaFileSpecification extends AbstractFilterSpecification<MediaFile> {
@@ -27,11 +38,27 @@ public class MediaFileSpecification extends AbstractFilterSpecification<MediaFil
                 return null;
             }
  
-            ListJoin<MediaFile, Tag> tags = root.joinList("tags", JoinType.INNER);
+            Join<MediaFile, Tag> tags = root.join("tags", JoinType.INNER);
  
             return cb.like(
                 cb.lower(tags.get(attribute)),
                 containsLowerCase(value)
+            );
+         };
+   }
+   
+   public Specification<MediaFile> getTagAttributeEquals(String attribute, Object value) {
+      return (root, query, cb) ->
+         {
+            if(value == null) {
+                return null;
+            }
+ 
+            Join<MediaFile, Tag> tags = root.join("tags", JoinType.INNER);
+ 
+            return cb.equal(
+                tags.get(attribute),
+                value
             );
          };
    }

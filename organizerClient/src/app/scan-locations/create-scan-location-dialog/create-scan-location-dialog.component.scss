@@ -1,0 +1,30 @@
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.directory-container {
+  height: 350px;
+  overflow-y: scroll;
+  margin: 5px;
+}
+
+.directory-button {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.even-button {
+  border-radius: 0px;
+}
+
+.odd-button {
+  background-color: rgb(54, 54, 54);
+  border-radius: 0px;
+}

@@ -1,0 +1,56 @@
+.sidenav-container {
+  color: white;
+  padding: 1rem 0;
+}
+
+.menu-item {
+  padding: 1rem;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease-in-out;
+  outline: none;
+}
+
+.menu-item:hover {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.menu-item :first-child {
+  padding-top: 0;
+}
+
+.menu-item-selected {
+  // background-color: #c43e00;
+  background-color: #C2185B;
+  opacity: 1;
+}
+
+.menu-item i, .menu-section-header i {
+  padding-right: 0.5rem;
+  font-size: 1rem;
+}
+
+.menu-item.sub {
+  padding: 0.5rem 0.5rem 0.5rem 3rem;
+}
+
+.menu-item.menu-section-header {
+  padding: 1rem;
+  opacity: 0.6;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.05rem;
+}
+
+.menu-expander {
+  background: #0e1d25;
+  color: white !important;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: 0;
+}
+
+.menu-expander>.mat-expansion-indicator, .mat-expansion-indicator::after, .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
+  color: white !important;
+}
