@@ -45,8 +45,12 @@ import java.util.stream.Collectors;
 import com.scavettapps.organizer.media.MediaFileService;
 import com.scavettapps.organizer.transcoding.ITranscodingService;
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.function.Predicate;
 import org.apache.tika.Tika;
+import static org.springframework.data.jpa.domain.JpaSort.path;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -169,13 +173,17 @@ public class FileScanningService {
                   }
                }
             }
+            
+            BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 
             MediaFile newFile = new MediaFile(
                 hash,
                 file.getName(),
                 file.length(),
                 file.getPath(),
-                mimetype
+                mimetype,
+                attr.creationTime().toInstant(),
+                attr.lastModifiedTime().toInstant()
             );
             if (mimetype != null && mimetype.contains("video")) {
                // Video Detected. Grab the thumbnail.
@@ -209,6 +217,7 @@ public class FileScanningService {
              + mimeType
          );
          existingFile.updateLastSeen();
+         
          this.mediaFileService.saveMediaFile(existingFile);
          throw new AlreadyExistsException("file already existed");
       }
