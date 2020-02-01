@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -215,5 +216,9 @@ public class MediaFileService {
       MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
       file.incrementViews();
       return this.mediaFileRepository.save(file);
+   }
+   
+   public List<MediaFile> findAllMediaWithDuplicates() {
+      return this.mediaFileRepository.findAllByDuplicatePathsNotEmpty();
    }
 }
