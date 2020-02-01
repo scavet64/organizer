@@ -53,6 +53,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { CreateScanLocationDialogComponent } from './scan-locations/create-scan-location-dialog/create-scan-location-dialog.component';
 import { FolderComponent } from './folder/folder.component';
 import { VideoplayerComponent } from './videoplayer/videoplayer.component';
+import { ManagementComponent } from './management/management.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { VideoplayerComponent } from './videoplayer/videoplayer.component';
     MediaTagsComponent,
     CreateScanLocationDialogComponent,
     FolderComponent,
-    VideoplayerComponent
+    VideoplayerComponent,
+    ManagementComponent
   ],
   imports: [
     AppRoutingModule,

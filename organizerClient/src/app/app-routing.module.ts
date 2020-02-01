@@ -7,6 +7,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ScanLocationsComponent } from './scan-locations/scan-locations.component';
 import { MediaComponent } from './media/media.component';
 import { FolderComponent } from './folder/folder.component';
+import { ManagementComponent } from './management/management.component';
 
 
 const routes: Routes = [
@@ -15,7 +16,8 @@ const routes: Routes = [
     {path: 'tags', component: TagsComponent},
     {path: 'scanlocations', component: ScanLocationsComponent},
     {path: 'folder', component: FolderComponent},
-    {path: 'media', component: MediaComponent}
+    {path: 'media', component: MediaComponent},
+    {path: 'management', component: ManagementComponent}
   ]}
 
 ];
