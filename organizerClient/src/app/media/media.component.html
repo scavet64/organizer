@@ -1,6 +1,6 @@
 <div class="content-margins">
 
-  <div class="filter-wrapper" style="margin-top:50px;">
+  <div class="filter-wrapper" style="margin-top:20px;">
     <mat-form-field>
       <input matInput [(ngModel)]="searchBox" placeholder="Filter by Name" (keyup.enter)="search()">
     </mat-form-field>
@@ -85,7 +85,7 @@
 
   <span class="body-header">
     <!-- Media Type Filter -->
-    <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="test($event)"
+    <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="mediaTypeFilterChanged($event)"
       animationDuration="0ms">
       <mat-tab label="All">
       </mat-tab>

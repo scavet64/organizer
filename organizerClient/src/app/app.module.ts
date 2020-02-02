@@ -57,6 +57,7 @@ import { FolderComponent } from './folder/folder.component';
 import { VideoplayerComponent } from './videoplayer/videoplayer.component';
 import { ManagementComponent } from './management/management.component';
 import { MediaInfoComponent } from './media/media-info/media-info.component';
+import { DataSizePipe } from './common/data-size.pipe';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { MediaInfoComponent } from './media/media-info/media-info.component';
     FolderComponent,
     VideoplayerComponent,
     ManagementComponent,
-    MediaInfoComponent
+    MediaInfoComponent,
+    DataSizePipe
   ],
   imports: [
     AppRoutingModule,

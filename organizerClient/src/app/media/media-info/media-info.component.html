@@ -1,9 +1,10 @@
 <p class="details-header">Media Details</p>
+<hr>
 <div class="details">
   <strong>Name:</strong> {{file.name}}
 </div>
 <div class="details">
-  <strong>Size:</strong> {{file.size}}
+  <strong>Size:</strong> {{file.size | dataSize: 2}}
 </div>
 <div class="details">
   <strong>Added:</strong> {{file.dateAdded | date:'medium'}}

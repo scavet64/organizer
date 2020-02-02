@@ -201,7 +201,7 @@ export class MediaComponent implements OnInit {
     this.videoplayerService.showVideo(file);
   }
 
-  test(event) {
+  mediaTypeFilterChanged(event) {
     console.log(event);
     switch (event) {
       case 0:
