@@ -5,7 +5,7 @@ export class MediaSortType {
   public static readonly NameSort = new MediaSortType('Name', 'name');
   public static readonly DateAddedSort = new MediaSortType('Date Added', 'dateAdded');
   public static readonly DateCreatedSort = new MediaSortType('Date Created', 'dateCreated');
-  public static readonly DateModifiedSort = new MediaSortType('Date Modified', 'dateModified');
+  public static readonly DateModifiedSort = new MediaSortType('Date Modified', 'lastModified');
   public static readonly FileSizeSort = new MediaSortType('File Size', 'size');
   public static readonly ViewsSort = new MediaSortType('Views', 'views');
   public static readonly RatingSort = new MediaSortType('Rating', 'rating');
@@ -15,7 +15,7 @@ export class MediaSortType {
     MediaSortType.NameSort,
     MediaSortType.DateAddedSort,
     MediaSortType.DateCreatedSort,
-    // MediaSortType.DateModifiedSort,
+    MediaSortType.DateModifiedSort,
     MediaSortType.FileSizeSort,
     MediaSortType.ViewsSort,
     MediaSortType.RatingSort,
