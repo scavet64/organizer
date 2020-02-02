@@ -42,6 +42,7 @@ public class Converters {
    @PostConstruct
    public void init() {
       map.put(String.class, s -> s);
+      map.put(Boolean.class, Boolean::valueOf);
       map.put(Long.class, Long::valueOf);
       map.put(Integer.class, Integer::valueOf);
       map.put(ChronoLocalDate.class, Converters::timestampParse);

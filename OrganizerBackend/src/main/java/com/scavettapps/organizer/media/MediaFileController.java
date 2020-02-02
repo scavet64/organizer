@@ -17,6 +17,7 @@ package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
+import com.scavettapps.organizer.media.json.SetMediaFavoriteRequest;
 import java.io.FileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -60,6 +61,11 @@ public class MediaFileController {
       return resp;
    }
 
+   /**
+    * 
+    * @param request
+    * @return 
+    */
    @PutMapping("/tags")
    public ResponseEntity<Response> updateTagsForMedia(
        @RequestBody @Validated AddTagRequest request
@@ -76,6 +82,12 @@ public class MediaFileController {
       );
    }
 
+   /**
+    * Find a page of media. This is the main method as to get all media
+    * @param pageable
+    * @param request
+    * @return 
+    */
    @GetMapping
    public ResponseEntity<Response> findMedia(
        Pageable pageable,
@@ -85,12 +97,32 @@ public class MediaFileController {
       return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
    }
    
+   /**
+    * 
+    * @param mediaId
+    * @return 
+    */
    @PutMapping("/view")
    public ResponseEntity<Response> addView(@RequestBody Long mediaId) {
       mediaFileService.addView(mediaId);
       return ResponseEntity.ok(new DataResponse("View has been added"));
    }
    
+   /**
+    * 
+    * @param req
+    * @return 
+    */
+   @PutMapping("/favorite")
+   public ResponseEntity<Response> toggleFavorite(@RequestBody SetMediaFavoriteRequest req) {
+      MediaFile updated = mediaFileService.setFavorite(req.getMediaId(), req.getIsFavorite());
+      return ResponseEntity.ok(new DataResponse(updated));
+   }
+   
+   /**
+    * 
+    * @return 
+    */
    @GetMapping("/duplicate")
    public Response getDuplicates() {
       return new DataResponse(this.mediaFileService.findAllMediaWithDuplicates());

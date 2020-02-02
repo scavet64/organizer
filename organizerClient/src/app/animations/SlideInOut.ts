@@ -1,0 +1,34 @@
+import { trigger, transition, style, animate, state, group } from '@angular/animations';
+
+export const SlideInOut = trigger('slideInOut', [
+  state('opened', style({
+      'max-height': '500px', 'opacity': '1', 'visibility': 'visible'
+  })),
+  state('closed', style({
+      'max-height': '0px', 'opacity': '0', 'visibility': 'hidden'
+  })),
+  transition('opened => closed', [group([
+      animate('400ms ease-in-out', style({
+          'opacity': '0'
+      })),
+      animate('600ms ease-in-out', style({
+          'max-height': '0px'
+      })),
+      animate('700ms ease-in-out', style({
+          'visibility': 'hidden'
+      }))
+  ]
+  )]),
+  transition('closed => opened', [group([
+      animate('1ms ease-in-out', style({
+          'visibility': 'visible'
+      })),
+      animate('600ms ease-in-out', style({
+          'max-height': '500px'
+      })),
+      animate('800ms ease-in-out', style({
+          'opacity': '1'
+      }))
+  ]
+  )])
+]);

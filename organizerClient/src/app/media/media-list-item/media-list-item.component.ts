@@ -4,6 +4,7 @@ import { MatDialog, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material';
 import { MediaTagsComponent } from '../media-tags/media-tags.component';
 import { TagModel } from 'src/app/tags/tagModel';
 import { tooltipDefaultOptions } from 'src/app/common/constants';
+import { MediaInfoComponent } from '../media-info/media-info.component';
 
 @Component({
   selector: 'app-media-list-item',
@@ -21,6 +22,7 @@ export class MediaListItemComponent implements OnInit {
   @Output() tagsEdited: EventEmitter<any> = new EventEmitter<any>();
   @Output() openMedia: EventEmitter<any> = new EventEmitter();
   @Output() tagClicked: EventEmitter<any> = new EventEmitter();
+  @Output() favoriteToggled: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private dialog: MatDialog
@@ -47,6 +49,18 @@ export class MediaListItemComponent implements OnInit {
     });
   }
 
+  showMediaInfo() {
+    const dialogRef = this.dialog.open(MediaInfoComponent, {
+      width: '720px',
+      data: {
+        file: this.file
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+
   openMediaClick() {
     if (this.file.mimetype.includes('video')) {
       this.openMedia.emit(this.file);
@@ -55,6 +69,10 @@ export class MediaListItemComponent implements OnInit {
 
   viewMediaWithTag(tag: TagModel) {
     this.tagClicked.emit(tag);
+  }
+
+  favoriteToggle() {
+    this.favoriteToggled.emit(this.file);
   }
 
 }

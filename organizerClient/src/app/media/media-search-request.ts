@@ -8,13 +8,26 @@ export class MediaSearchRequest extends PageRequest {
   sortDirection: string;
   name: string;
   tagIds: number[];
+  mediaType: string;
+  onlyShowFavorite: boolean;
 
-  constructor(pageNumber: number, name: string, tags: TagModel[], sortColumn: string = 'id', sortDirection: string = 'desc') {
-    super(pageNumber);
+  constructor(
+    name: string,
+    tags: TagModel[],
+    sortColumn: string = 'id',
+    sortDirection: string = 'desc',
+    mediaType: string,
+    onlyShowFavorite: boolean,
+    pageNumber: number = 0,
+    resultsPerPage: number = 20
+    ) {
+    super(pageNumber, resultsPerPage);
     this.name = name;
     this.tagIds = new Array();
     this.sortColumn = sortColumn;
     this.sortDirection = sortDirection;
+    this.mediaType = mediaType;
+    this.onlyShowFavorite = onlyShowFavorite;
 
     if (tags != null) {
       tags.forEach(tag => this.tagIds.push(tag.id));
@@ -28,6 +41,10 @@ export class MediaSearchRequest extends PageRequest {
       params = params.set('name', `like:${this.name}`.toLowerCase());
     }
 
+    if (this.mediaType && this.mediaType !== '') {
+      params = params.set('mediaType', `like:${this.mediaType}`.toLowerCase());
+    }
+
     if (this.tagIds.length > 0) {
       params = params.set('tags', this.tagIds.toString());
     }
@@ -35,6 +52,8 @@ export class MediaSearchRequest extends PageRequest {
     if (this.sortColumn && this.sortDirection) {
       params = params.set(PageParams.SORT, `${this.sortColumn},${this.sortDirection}`);
     }
+
+    params = params.set(`isFavorite`, this.onlyShowFavorite.toString());
     return params;
   }
 }

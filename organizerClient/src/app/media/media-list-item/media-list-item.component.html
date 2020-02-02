@@ -33,7 +33,16 @@
       </mat-chip-list>
     </div>
     <div class="button-container">
-      {{file.views}}
+      <span style="margin-right: 15px; font-size: 12px">
+        Views: {{file.views}}
+      </span>
+      <button mat-icon-button (click)="favoriteToggle()">
+        <i *ngIf="!file.isFavorite" class="far fa-star"></i>
+        <i *ngIf="file.isFavorite" class="fas fa-star"></i>
+      </button>
+      <button mat-icon-button (click)="showMediaInfo()">
+        <i class="fas fa-info"></i>
+      </button>
       <button mat-icon-button (click)="showTags()">
         <i class="fas fa-tags"></i>
       </button>

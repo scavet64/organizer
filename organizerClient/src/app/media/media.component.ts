@@ -1,4 +1,4 @@
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MediaFile } from './media.file';
 import { TagModel } from '../tags/tagModel';
@@ -12,13 +12,19 @@ import { FormControl } from '@angular/forms';
 import { AlertService } from '../alert/alert.service';
 import { ResourceService } from './resource.service';
 import { VideoplayerService } from '../videoplayer/videoplayer.service';
+import { MediaSearchRequest } from './media-search-request';
+import { SlideInOut } from '../animations/SlideInOut';
+import { MediaSortType } from './media.sort.type';
 
 @Component({
   selector: 'app-media',
   templateUrl: './media.component.html',
-  styleUrls: ['./media.component.scss']
+  styleUrls: ['./media.component.scss'],
+  animations: [SlideInOut]
 })
 export class MediaComponent implements OnInit {
+  private readonly advanceSearchStateKey = 'mediaAdvanceSearch';
+
   visible = true;
   selectable = true;
   removable = true;
@@ -35,11 +41,19 @@ export class MediaComponent implements OnInit {
   selectedTags: TagModel[] = [];
   filteredTags: Observable<TagModel[]>;
 
-  sortColumn: string = 'id';
+  mediaSortOptions: MediaSortType[] = MediaSortType.mediaSortOptions;
+  sortColumn: string = MediaSortType.DateAddedSort.value;
   sortDirection: string = 'desc';
+  onlyShowFavorite = false;
+  mediaFilter: string = null;
 
-  @ViewChild('chipInput', {static: false}) chipInput: ElementRef<HTMLInputElement>;
-  @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
+  selected = new FormControl(0);
+
+  showAdvanceSearch = false;
+  advanceSearchState = 'closed';
+
+  @ViewChild('chipInput', { static: false }) chipInput: ElementRef<HTMLInputElement>;
+  @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
 
   constructor(
     private alertService: AlertService,
@@ -48,10 +62,14 @@ export class MediaComponent implements OnInit {
     private tagService: TagService,
     public videoplayerService: VideoplayerService
   ) {
-   }
+  }
 
   ngOnInit() {
-    this.getMedia();
+    const storedPref = localStorage.getItem(this.advanceSearchStateKey);
+    if (storedPref) {
+      this.advanceSearchState = storedPref;
+    }
+    this.search();
 
     this.tagService.getAllTags().subscribe(res => {
       this.knownTags = res.data;
@@ -64,22 +82,18 @@ export class MediaComponent implements OnInit {
     });
   }
 
-  public getMedia() {
-    this.mediaFileService.getMediaPages(0, 20, this.sortColumn, this.sortDirection).subscribe(res => {
-      this.pageResponse = res.data;
-      console.log(this.pageResponse);
-    });
-  }
-
   onPageChange(event) {
     console.log(event);
     console.log(event.pageIndex);
-    this.mediaFileService.getMediaPages(event.pageIndex, event.pageSize, this.sortColumn, this.sortDirection).subscribe(res => {
+    const request = new MediaSearchRequest(
+      this.searchBox, this.selectedTags, this.sortColumn, this.sortDirection, this.mediaFilter, event.pageIndex, event.pageSize
+    );
+    this.mediaFileService.getMediaPagesSearch(request).subscribe(res => {
       this.pageResponse = res.data;
     });
   }
 
-  add(event: MatChipInputEvent): void {
+  addTagToSearch(event: MatChipInputEvent): void {
     // Add tag only when MatAutocomplete is not open
     // To make sure this does not conflict with OptionSelected Event
     if (!this.matAutocomplete.isOpen) {
@@ -106,7 +120,7 @@ export class MediaComponent implements OnInit {
     return this.knownTags.find(tag => tag.name === name);
   }
 
-  remove(tag: TagModel): void {
+  removeTagFromSearch(tag: TagModel): void {
     const index = this.selectedTags.indexOf(tag);
 
     if (index >= 0) {
@@ -115,7 +129,7 @@ export class MediaComponent implements OnInit {
     }
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
+  selectedTag(event: MatAutocompleteSelectedEvent): void {
     this.selectedTags.push(this.getTagFromName(event.option.viewValue));
     this.chipInput.nativeElement.value = '';
     this.tagControl.setValue(null);
@@ -134,7 +148,18 @@ export class MediaComponent implements OnInit {
     console.log(this.searchBox);
     console.log(this.sortColumn);
     console.log(this.sortDirection);
-    this.mediaFileService.getMediaPagesSearch(0, this.searchBox, this.selectedTags, this.sortColumn, this.sortDirection).subscribe(res => {
+    console.log(this.onlyShowFavorite);
+    const request = new MediaSearchRequest(
+      this.searchBox,
+      this.selectedTags,
+      this.sortColumn,
+      this.sortDirection,
+      this.mediaFilter,
+      this.onlyShowFavorite,
+      0,
+      this.pageResponse ? this.pageResponse.size : 20
+    );
+    this.mediaFileService.getMediaPagesSearch(request).subscribe(res => {
       this.pageResponse = res.data;
       console.log(this.pageResponse);
     });
@@ -176,4 +201,31 @@ export class MediaComponent implements OnInit {
     this.videoplayerService.showVideo(file);
   }
 
+  test(event) {
+    console.log(event);
+    switch (event) {
+      case 0:
+        this.mediaFilter = null;
+        break;
+      case 1:
+        this.mediaFilter = 'video';
+        break;
+      case 2:
+        this.mediaFilter = 'image';
+        break;
+    }
+    this.search();
+  }
+
+  showMoreFilters() {
+    this.advanceSearchState = this.advanceSearchState === 'closed' ? 'opened' : 'closed';
+    localStorage.setItem(this.advanceSearchStateKey, this.advanceSearchState);
+  }
+
+  favoriteToggle(mediaFile: MediaFile) {
+    this.mediaFileService.toggleFavorite(mediaFile.id, !mediaFile.isFavorite).subscribe(res => {
+      mediaFile.isFavorite = res.data.isFavorite;
+      this.alertService.success(`Successfully favorited media`);
+    });
+  }
 }

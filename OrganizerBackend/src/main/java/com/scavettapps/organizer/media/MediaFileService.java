@@ -1,12 +1,12 @@
 /**
  * Copyright 2019 Vincent Scavetta
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,8 +52,8 @@ public class MediaFileService {
 
    @Autowired
    public MediaFileService(
-       MediaFileRepository mediaFileRepository, 
-       MediaFileSpecification mediaFileSpecification, 
+       MediaFileRepository mediaFileRepository,
+       MediaFileSpecification mediaFileSpecification,
        TagRepository tagRepository,
        @Qualifier("bramp") ITranscodingService transcodingService
    ) {
@@ -62,7 +62,7 @@ public class MediaFileService {
       this.tagRepository = tagRepository;
       this.transcodingService = transcodingService;
    }
-   
+
    public Optional<MediaFile> getMediaFile(long id) {
       return this.mediaFileRepository.findById(id);
    }
@@ -70,11 +70,11 @@ public class MediaFileService {
    public Optional<MediaFile> getMediaFile(String hash) {
       return this.mediaFileRepository.findByHash(hash);
    }
-   
+
    public Optional<MediaFile> getMediaFile(String fileName, long size) {
       return this.mediaFileRepository.findByNameAndSize(fileName, size);
    }
-   
+
    public MediaFile saveMediaFile(MediaFile file) {
       return this.mediaFileRepository.save(file);
    }
@@ -186,9 +186,15 @@ public class MediaFileService {
       return this.mediaFileRepository.findAll(getDefaultSpecification(mediaFileRequest), page);
    }
 
+   /**
+    * TODO: There has to be a better way than null checking every time
+    * @param params
+    * @return 
+    */
    private Specification<MediaFile> getDefaultSpecification(MediaFileRequest params) {
       // Exposed attributes in API spec do not need to be same as Database table column names.
       Specification<MediaFile> specs = null;
+      
       if (params.getName() != null) {
          specs = Specification.where(mediaFileSpecification.getStringTypeSpecification(
              "name",
@@ -208,6 +214,33 @@ public class MediaFileService {
             }
          }
       }
+      if (params.getMediaType() != null) {
+         if (specs == null) {
+            specs = Specification.where(mediaFileSpecification.getStringTypeSpecification(
+                "mimetype",
+                params.getMediaType()
+            ));
+         } else {
+            specs = specs.and(mediaFileSpecification.getStringTypeSpecification(
+                "mimetype",
+                params.getMediaType()
+            ));
+         }
+      }
+      
+      if (params.getIsFavorite()) {
+         if (specs == null) {
+            specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
+                "isFavorite",
+                "eq:True"
+            ));
+         } else {
+            specs = specs.and(mediaFileSpecification.getBooleanTypeSpecification(
+                "isFavorite",
+                "eq:True"
+            ));
+         }
+      }
 
       return specs;
    }
@@ -217,8 +250,20 @@ public class MediaFileService {
       file.incrementViews();
       return this.mediaFileRepository.save(file);
    }
-   
+
    public List<MediaFile> findAllMediaWithDuplicates() {
       return this.mediaFileRepository.findAllByDuplicatePathsNotEmpty();
+   }
+   
+   public MediaFile setFavorite(long mediaId, boolean isFavorite) {
+      MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
+      file.setIsFavorite(isFavorite);
+      return this.mediaFileRepository.save(file);
+   }
+   
+   public MediaFile setIgnored(long mediaId, boolean isIgnored) {
+      MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
+      file.setIsFavorite(isIgnored);
+      return this.mediaFileRepository.save(file);
    }
 }

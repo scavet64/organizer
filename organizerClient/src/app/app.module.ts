@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -31,7 +31,9 @@ import {
   MatExpansionModule,
   MatDialogModule,
   MatSnackBarModule,
-  MatSortModule
+  MatSortModule,
+  MatButtonToggleModule,
+  MatSlideToggleModule
 } from "@angular/material";
 import { HeaderComponent } from './header/header.component';
 import { MainviewComponent } from './mainview/mainview.component';
@@ -54,6 +56,7 @@ import { CreateScanLocationDialogComponent } from './scan-locations/create-scan-
 import { FolderComponent } from './folder/folder.component';
 import { VideoplayerComponent } from './videoplayer/videoplayer.component';
 import { ManagementComponent } from './management/management.component';
+import { MediaInfoComponent } from './media/media-info/media-info.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +78,8 @@ import { ManagementComponent } from './management/management.component';
     CreateScanLocationDialogComponent,
     FolderComponent,
     VideoplayerComponent,
-    ManagementComponent
+    ManagementComponent,
+    MediaInfoComponent
   ],
   imports: [
     AppRoutingModule,
@@ -84,6 +88,7 @@ import { ManagementComponent } from './management/management.component';
     ColorPickerModule,
     HttpClientModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatMenuModule,
     MatProgressSpinnerModule,
@@ -103,6 +108,7 @@ import { ManagementComponent } from './management/management.component';
     MatExpansionModule,
     MatDialogModule,
     MatSidenavModule,
+    MatSlideToggleModule,
     MatSnackBarModule,
     FormsModule,
     MatFormFieldModule,
@@ -118,10 +124,12 @@ import { ManagementComponent } from './management/management.component';
     ConfirmDialogComponent,
     CreateEditComponent,
     CreateScanLocationDialogComponent,
+    MediaInfoComponent,
     MediaTagsComponent,
     VideoplayerComponent
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule { }

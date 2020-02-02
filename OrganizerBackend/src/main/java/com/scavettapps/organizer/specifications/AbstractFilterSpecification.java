@@ -64,6 +64,13 @@ public class AbstractFilterSpecification<TYPE>{
     */
    @Autowired
    private FilterSpecifications<TYPE, Long> longTypeSpecifications;
+   
+   /**
+    * {@link FilterSpecifications} for Entity {@link TYPE} and Field type
+    * {@link Long}
+    */
+   @Autowired
+   private FilterSpecifications<TYPE, Boolean> booleanTypeSpecifications;
 
    protected String containsLowerCase(String searchField) {
       return wildcard + searchField.toLowerCase() + wildcard;
@@ -124,6 +131,20 @@ public class AbstractFilterSpecification<TYPE>{
     */
    public Specification<TYPE> getIntegerTypeSpecification(String fieldName, String filterValue) {
       return getSpecification(fieldName, filterValue, converters.getFunction(Integer.class), integerTypeSpecifications);
+   }
+   
+   /**
+    * Returns the Specification for Entity {@link TYPE} for the given
+    * fieldName and filterValue for the field type Integer
+    *
+    * @param fieldName   The name of the field that will be filtered on
+    * @param filterValue the value that should be used in the filter. This value
+    *                    must have a function attached to it
+    * @return the Specification for Entity {@link TYPE} for the given
+    *         fieldName and filterValue for the field type Integer
+    */
+   public Specification<TYPE> getBooleanTypeSpecification(String fieldName, String filterValue) {
+      return getSpecification(fieldName, filterValue, converters.getFunction(Boolean.class), integerTypeSpecifications);
    }
 
    /**

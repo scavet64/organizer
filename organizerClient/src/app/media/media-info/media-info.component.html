@@ -1,0 +1,25 @@
+<p class="details-header">Media Details</p>
+<div class="details">
+  <strong>Name:</strong> {{file.name}}
+</div>
+<div class="details">
+  <strong>Size:</strong> {{file.size}}
+</div>
+<div class="details">
+  <strong>Added:</strong> {{file.dateAdded | date:'medium'}}
+</div>
+<div class="details">
+  <strong>Created:</strong> {{file.dateCreated | date:'medium'}}
+</div>
+<div class="details">
+  <strong>Modified:</strong> {{file.lastModified | date:'medium'}}
+</div>
+<div class="details">
+  <strong>Views:</strong> {{file.views}}
+</div>
+<div class="details">
+  <strong>MIME Type:</strong> {{file.mimetype}}
+</div>
+<div class="details">
+  <strong>Marked As Favorite:</strong> {{file.isFavorite ? 'Yes' : 'No'}}
+</div>

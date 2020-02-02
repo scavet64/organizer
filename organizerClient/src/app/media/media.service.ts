@@ -6,7 +6,6 @@ import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { TagModel } from '../tags/tagModel';
-import { PageRequest } from '../common/PageRequest';
 import { MediaSearchRequest } from './media-search-request';
 import { ResourceService } from './resource.service';
 
@@ -38,15 +37,8 @@ export class MediaService {
       .pipe(timeout(10000));
   }
 
-  public getMediaPages(pageNumber: number, numberPerPage: number = 20, sortColumn: string, sortDirection: string) {
-    const data = new PageRequest(pageNumber, numberPerPage, sortColumn, sortDirection).toHttpParams();
-    return this.http
-      .get<Response<any>>(`${environment.baseURL}media`, { params: data })
-      .pipe(timeout(10000));
-  }
-
-  public getMediaPagesSearch(pageNumber: number, name: string, tags: TagModel[], sortColumn: string, sortDirection: string) {
-    const data = new MediaSearchRequest(pageNumber, name, tags, sortColumn, sortDirection).toHttpParams();
+  public getMediaPagesSearch(searchRequest: MediaSearchRequest) {
+    const data = searchRequest.toHttpParams();
     return this.http
       .get<Response<any>>(`${environment.baseURL}media`, { params: data })
       .pipe(timeout(10000));
@@ -73,6 +65,16 @@ export class MediaService {
   public addView(id: number): Observable<Response<any>> {
     return this.http
       .put<Response<any>>(`${environment.baseURL}media/view`, id)
+      .pipe(timeout(10000));
+  }
+
+  public toggleFavorite(id: number, favorite: boolean): Observable<Response<any>> {
+    const data = {
+      mediaId: id,
+      isFavorite: favorite
+    };
+    return this.http
+      .put<Response<any>>(`${environment.baseURL}media/favorite`, data)
       .pipe(timeout(10000));
   }
 }

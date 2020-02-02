@@ -11,4 +11,8 @@ export interface MediaFile {
     mimetype: string;
     thumbnail: StoredFile;
     views: number;
+    dateCreated: Date;
+    dateAdded: Date;
+    lastModified: Date;
+    isFavorite: boolean;
 }
