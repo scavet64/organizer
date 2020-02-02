@@ -2,3 +2,5 @@
 OrganizerBackend/src/main/resources/static/
 
 OrganizerBackend/organizer-db.mv.db
+
+OrganizerBackend/organizer-db.trace.db
