@@ -40,6 +40,11 @@ public class StoredFileService {
       this.storedFileRepository = storedFileRepository;
    }
    
+   public StoredFile getStoredFile(long id) {
+      StoredFile file = this.storedFileRepository.findById(id).orElse(null);
+      return file;
+   }
+   
    public StoredFile getStoredFile(String hash) {
       StoredFile file = this.storedFileRepository.findByHash(hash).orElse(null);
       return file;
@@ -52,14 +57,14 @@ public class StoredFileService {
    /**
     * finds the file on the file system and loads it into a resource
     *
-    * @param hash the hash of the file
+    * @param id the id of the file
     * @return resource that is the file
     * @throws FileNotFoundException if the file is not found
     * @throws EntityNotFoundException if the hash is not found
     */
-   public Resource loadFileAsResource(String hash) throws FileNotFoundException {
+   public Resource loadFileAsResource(long id) throws FileNotFoundException {
 
-      StoredFile file = getStoredFile(hash);
+      StoredFile file = getStoredFile(id);
 
       try {
          Resource resource = new UrlResource(new File(file.getPath()).toURI());

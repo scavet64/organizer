@@ -11,7 +11,7 @@ export class ResourceService {
   constructor() { }
 
   public getThumbnailUrl(file: StoredFile) {
-    return `${environment.baseURL}stored/${file.hash}/full`;
+    return `${environment.baseURL}stored/${file.id}/full`;
   }
 
   public getMediaUrl(file: MediaFile) {

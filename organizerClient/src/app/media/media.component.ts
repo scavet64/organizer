@@ -86,7 +86,14 @@ export class MediaComponent implements OnInit {
     console.log(event);
     console.log(event.pageIndex);
     const request = new MediaSearchRequest(
-      this.searchBox, this.selectedTags, this.sortColumn, this.sortDirection, this.mediaFilter, event.pageIndex, event.pageSize
+      this.searchBox,
+      this.selectedTags,
+      this.sortColumn,
+      this.sortDirection,
+      this.mediaFilter,
+      this.onlyShowFavorite,
+      event.pageIndex,
+      event.pageSize
     );
     this.mediaFileService.getMediaPagesSearch(request).subscribe(res => {
       this.pageResponse = res.data;

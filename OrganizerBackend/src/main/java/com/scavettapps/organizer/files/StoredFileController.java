@@ -45,7 +45,7 @@ public class StoredFileController {
    }
 
    @GetMapping(value = "/{fileID}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-   public ResponseEntity<Resource> getFullVideo(@PathVariable String fileID)
+   public ResponseEntity<Resource> getFullVideo(@PathVariable long fileID)
        throws FileNotFoundException {
 
       Resource fileResource = StoredFileService.loadFileAsResource(fileID);

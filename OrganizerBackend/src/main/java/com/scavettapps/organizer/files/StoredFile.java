@@ -29,7 +29,7 @@ import javax.persistence.UniqueConstraint;
  * @author Vincent Scavetta
  */
 @Entity
-@Table(name = "stored_files", uniqueConstraints = @UniqueConstraint(columnNames = {"hash"}))
+@Table(name = "stored_files")
 public class StoredFile extends AbstractPersistableEntity<Long>{
    
    @NotNull

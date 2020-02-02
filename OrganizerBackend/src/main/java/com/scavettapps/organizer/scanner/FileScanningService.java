@@ -303,17 +303,12 @@ public class FileScanningService {
          File thumbnailFile = transcodingService.getDefaultThumbnail(newFile);
          String thumbhash = this.quickHash.getHash(thumbnailFile);
 
-         // If this thumb already exists, use that. This should be rare but it could happen.
-         StoredFile storedThumbFile = this.storedFileService.getStoredFile(thumbhash);
-         if (storedThumbFile == null) {
-            storedThumbFile = new StoredFile(
-                thumbhash,
-                thumbnailFile.getAbsolutePath(),
-                thumbnailFile.getName(),
-                thumbnailFile.length()
-            );
-         }
-         return storedThumbFile;
+         return new StoredFile(
+             thumbhash,
+             thumbnailFile.getAbsolutePath(),
+             thumbnailFile.getName(),
+             thumbnailFile.length()
+         );
       } catch (IOException ex) {
          LOGGER.error("Could not generate thumbnail for video: " + newFile.getName());
          return null;
