@@ -20,6 +20,12 @@
   .mat-cell {
     padding-left: 5px !important;
   }
+
+  .mat-column-name {
+    width: 300px;
+    min-width: 150px;
+    max-width: 300px;
+  }
 }
 
 .rounded {
@@ -56,14 +62,24 @@ table {
 // }
 
 .mat-column-name {
-  width: 200px;
-  min-width: 150px;
-  max-width: 200px;
+  width: 400px;
+  max-width: 300px;
+}
+
+.mat-column-numberOfTaggedMedia {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
 }
 
 .mat-column-description {
   word-wrap: break-word;
   word-break: break-all;
+}
+
+.mat-column-info {
+  width: 5px;
+  max-width: 5px;
 }
 
 .mat-chip-list-wrapper {
@@ -80,8 +96,10 @@ table {
   display: block;
 }
 
-.edit-tag-button {
-  margin-right: 10px
+.menu-button {
+  justify-content: left;
+  display: flex;
+  width: 100%;
 }
 
 .description-wrapper {
@@ -127,3 +145,7 @@ table {
 // .tag-action-button {
 //   width: 1rem;;
 // }
+
+.tag-wrapper {
+  display: flex;
+}

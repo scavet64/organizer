@@ -58,6 +58,7 @@ import { VideoplayerComponent } from './videoplayer/videoplayer.component';
 import { ManagementComponent } from './management/management.component';
 import { MediaInfoComponent } from './media/media-info/media-info.component';
 import { DataSizePipe } from './common/data-size.pipe';
+import { TagInfoComponent } from './tags/tag-info/tag-info.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import { DataSizePipe } from './common/data-size.pipe';
     VideoplayerComponent,
     ManagementComponent,
     MediaInfoComponent,
-    DataSizePipe
+    DataSizePipe,
+    TagInfoComponent
   ],
   imports: [
     AppRoutingModule,
@@ -128,6 +130,7 @@ import { DataSizePipe } from './common/data-size.pipe';
     CreateScanLocationDialogComponent,
     MediaInfoComponent,
     MediaTagsComponent,
+    TagInfoComponent,
     VideoplayerComponent
   ],
   providers: [],

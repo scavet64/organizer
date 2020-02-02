@@ -6,6 +6,7 @@ import { CreateEditComponent } from './create-edit/create-edit.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { AlertService } from '../alert/alert.service';
 import { tooltipDefaultOptions, Constants } from '../common/constants';
+import { TagInfoComponent } from './tag-info/tag-info.component';
 
 @Component({
   selector: 'app-tags',
@@ -17,7 +18,10 @@ import { tooltipDefaultOptions, Constants } from '../common/constants';
 })
 export class TagsComponent implements OnInit {
 
-  displayedColumns: string[] = ['name', 'description'];
+  private readonly mobileColumns: string[] = ['name', 'info'];
+  private readonly desktopColumns: string[] = ['name', 'numberOfTaggedMedia', 'description'];
+
+  displayedColumns: string[];
   searchBox: string;
   dataSource: MatTableDataSource<TagModel>;
   mobileView: boolean;
@@ -41,9 +45,15 @@ export class TagsComponent implements OnInit {
 
   sizeCheck() {
     this.mobileView = window.innerWidth < Constants.MIN_WIDTH;
+    if (this.mobileView) {
+      this.displayedColumns = this.mobileColumns;
+    } else {
+      this.displayedColumns = this.desktopColumns;
+    }
   }
 
   ngOnInit() {
+    this.sizeCheck();
     this.tagService.getAllTags().subscribe(res => {
       this.tags = res.data;
       console.log(this.tags);
@@ -51,7 +61,6 @@ export class TagsComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
-    this.sizeCheck();
   }
 
   applyFilter(filterValue: string) {
@@ -132,6 +141,18 @@ export class TagsComponent implements OnInit {
           this.alertService.error(`Could not create tag: ${err.error.error}`);
         });
       }
+    });
+  }
+
+  showTagInfo(tagToShow: TagModel) {
+
+    const dialogRef = this.dialog.open(TagInfoComponent, {
+      width: '500px',
+      data: tagToShow
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
     });
   }
 

@@ -30,6 +30,15 @@
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="numberOfTaggedMedia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Tagged Media </th>
+        <td mat-cell *matCellDef="let tag">
+          <div class="chip-wrapper">
+            {{tag.numberOfTaggedMedia}}
+          </div>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
         <td mat-cell *matCellDef="let tag">
@@ -37,7 +46,10 @@
             <p>
               {{tag.description}}
             </p>
-            <div *ngIf="!mobileView">
+            <div>
+              <button mat-icon-button (click)="showTagInfo(tag)">
+                <i class="fas fa-info-circle"></i>
+              </button>
               <button mat-icon-button class="edit-tag-button" (click)="editTag(tag)">
                 <i class="far fa-edit"></i>
               </button>
@@ -45,16 +57,29 @@
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
+          </div>
+
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="info">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
+        <td mat-cell *matCellDef="let tag">
             <div *ngIf="mobileView" class="more-options-wrapper">
-              <mat-menu #appMenu="matMenu">
+              <mat-menu #appMenu="matMenu" class="menu">
                 <div style="color: white;">
-                  <button mat-button class="edit-tag-button" (click)="editTag(tag)">
-                    <i class="far fa-edit"></i>&nbsp;Edit
+                  <button mat-button class="menu-button" (click)="showTagInfo(tag)">
+                    <i class="fas fa-info-circle"></i>&nbsp; Info
                   </button>
                 </div>
                 <div style="color: white;">
-                  <button mat-button class="" (click)="deleteClick(tag)">
-                    <i class="fas fa-trash-alt"></i>&nbsp;Delete
+                  <button mat-button class="menu-button" (click)="editTag(tag)">
+                    <i class="far fa-edit"></i>&nbsp; Edit
+                  </button>
+                </div>
+                <div style="color: white;">
+                  <button mat-button class="menu-button" (click)="deleteClick(tag)">
+                    <i class="fas fa-trash-alt"></i>&nbsp; Delete
                   </button>
                 </div>
               </mat-menu>
@@ -62,9 +87,6 @@
                 <mat-icon>more_vert</mat-icon>
               </button>
             </div>
-
-          </div>
-
         </td>
       </ng-container>
 

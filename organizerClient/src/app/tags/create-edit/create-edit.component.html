@@ -3,7 +3,7 @@
     <span>
       <mat-chip-list>
         {{title}}
-        <mat-chip [style.color]="tag.textColor" [style.background-color]="tag.backgroundColor">
+        <mat-chip [style.color]="tag.textColor" [style.background-color]="tag.backgroundColor" class="my-chip edit-chip">
           {{tag.name || 'example'}}
         </mat-chip>
       </mat-chip-list>

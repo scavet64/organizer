@@ -92,4 +92,8 @@ public class Tag extends AbstractAuditableEntity<User, Long> {
    public void setTextColor(String textColor) {
       this.textColor = textColor;
    }
+   
+   public int getNumberOfTaggedMedia() {
+      return mediaFiles != null ? mediaFiles.size() : 0;
+   }
 }

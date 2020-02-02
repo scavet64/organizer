@@ -5,6 +5,7 @@ export class TagModel {
     backgroundColor: string;
     textColor: string;
     selected?: boolean;
+    numberOfTaggedMedia: number;
 
     constructor(name: string, description: string, backgroundColor: string, textColor: string) {
         this.name = name;
