@@ -1,0 +1,54 @@
+<div class="main-wrapper">
+  <mat-checkbox *ngIf="modifyMultiple" class="checkbox" [(ngModel)]="file.isSelected">
+
+  </mat-checkbox>
+  <div class="wrapper">
+
+    <!-- Media is a video -->
+
+    <img [src]="imgSource" class="thumbnail" (click)="openMediaClick()" />
+
+
+    <div class="content-wrapper">
+      <div style="padding: 10px">
+        <div class="filename-container">
+          {{file.name}}
+        </div>
+
+        <!-- Tags -->
+        <mat-chip-list>
+          <mat-chip *ngIf="file.mimetype.includes('video')" class="chip-video my-chip-xs ellipse-text">Video</mat-chip>
+          <mat-chip *ngIf="file.mimetype.includes('image')" class="chip-image my-chip-xs ellipse-text">Image</mat-chip>
+          <mat-chip *ngFor="let tag of file.tags" [style.background-color]="tag.backgroundColor"
+            style="max-width: 200px;" class="ellipse-text my-chip-xs" [style.color]="tag.textColor"
+            [matTooltip]="tag.name" matTooltipClass="organizer-tooltip" (click)="viewMediaWithTag(tag)">
+            {{ tag.name }}
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+      <div class="button-container">
+        <span style="margin-right: 15px; font-size: 12px; margin-top: auto; margin-bottom: auto;"
+          matTooltip="Date Added: {{file.dateAdded | date:'medium'}}" matTooltipClass="organizer-tooltip">
+          <i class="fas fa-calendar-plus"></i>&nbsp; {{file.dateAdded | date}}
+        </span>
+        <span style="margin-right: 15px; font-size: 12px; margin-top: auto; margin-bottom: auto;"
+          matTooltip="Total Views: {{file.views}}" matTooltipClass="organizer-tooltip">
+          <i class="far fa-eye"></i>&nbsp; {{file.views}}
+        </span>
+        <button mat-icon-button (click)="showMediaInfo()">
+          <i class="fas fa-info"></i>
+        </button>
+        <button mat-icon-button (click)="favoriteToggle()">
+          <i *ngIf="!file.isFavorite" class="far fa-star"></i>
+          <i *ngIf="file.isFavorite" class="fas fa-star"></i>
+        </button>
+        <button mat-icon-button (click)="showTags()">
+          <i class="fas fa-tags"></i>
+        </button>
+        <button mat-icon-button>
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

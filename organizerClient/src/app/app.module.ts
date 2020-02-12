@@ -59,6 +59,7 @@ import { ManagementComponent } from './management/management.component';
 import { MediaInfoComponent } from './media/media-info/media-info.component';
 import { DataSizePipe } from './common/data-size.pipe';
 import { TagInfoComponent } from './tags/tag-info/tag-info.component';
+import { MediaListGridItemComponent } from './media/media-list-grid-item/media-list-grid-item.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { TagInfoComponent } from './tags/tag-info/tag-info.component';
     ManagementComponent,
     MediaInfoComponent,
     DataSizePipe,
-    TagInfoComponent
+    TagInfoComponent,
+    MediaListGridItemComponent
   ],
   imports: [
     AppRoutingModule,

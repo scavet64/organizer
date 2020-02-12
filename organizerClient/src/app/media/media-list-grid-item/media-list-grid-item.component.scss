@@ -1,0 +1,62 @@
+.main-wrapper {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.checkbox {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 10px;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  background-color: #424242;
+  padding: 0px;
+  border-radius: 10px;
+  margin-top: 1px;
+  width: 100%;
+}
+
+.thumbnail {
+  object-fit: cover;
+  // min-width: 10%;
+  // width: 10%;
+  // height: 100%;
+  // min-height: 100%;
+  margin-right: 5px;
+  border-radius: 10px 0px 0px 10px;
+  max-height: 50px;
+  width: 90px;
+}
+
+.content-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-container {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+}
+
+.chip-video {
+  background-color: hsl(226, 51%, 47%);
+}
+
+.chip-image {
+  background-color: hsl(335, 51%, 47%);
+}
+
+.filename-container {
+  font-size: .9rem;
+  display: block;
+  text-align: justify;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
