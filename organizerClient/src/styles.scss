@@ -78,6 +78,15 @@ body {
   text-overflow: ellipsis;
 }
 
+.my-chip-xs {
+  font-size: 0.7rem;
+  padding: 0px 7px !important;
+  height: 14px !important;
+  min-height: 10px !important;
+  margin: 3px !important;
+  text-overflow: ellipsis;
+}
+
 /////////////// Custom Scrollbar stuff ///////////////
 
 .fixed[scrollx=true], div[scrolly=true] {
