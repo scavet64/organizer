@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.scanner;
 
+import com.scavettapps.organizer.scanner.engine.FileScanningService;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.ErrorResponse;
 import com.scavettapps.organizer.core.response.Response;

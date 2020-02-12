@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.scavettapps.organizer.scanner;
+package com.scavettapps.organizer.scanner.engine;
 
 import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
 import com.scavettapps.organizer.files.StoredFile;
@@ -43,15 +43,13 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import com.scavettapps.organizer.media.MediaFileService;
+import com.scavettapps.organizer.scanner.ScanLocation;
+import com.scavettapps.organizer.scanner.ScanLocationSevice;
 import com.scavettapps.organizer.transcoding.ITranscodingService;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
-import java.util.function.Predicate;
-import java.util.logging.Level;
 import org.apache.tika.Tika;
-import static org.springframework.data.jpa.domain.JpaSort.path;
 import org.springframework.scheduling.annotation.Async;
 
 /**
