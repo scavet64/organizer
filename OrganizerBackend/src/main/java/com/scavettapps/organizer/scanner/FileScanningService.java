@@ -49,6 +49,7 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import org.apache.tika.Tika;
 import static org.springframework.data.jpa.domain.JpaSort.path;
 import org.springframework.scheduling.annotation.Async;
@@ -147,7 +148,7 @@ public class FileScanningService {
    }
 
    @Transactional
-   private MediaFile processFile(File file) throws AlreadyExistsException, IOException {
+   private MediaFile processFile(File file) throws AlreadyExistsException, IOException, IllegalMimeTypeException {
 
       // Check to see if we know this file using name and size
       MediaFile existingFile = this.mediaFileService.getMediaFile(file.getName(), file.length()).orElse(null);
@@ -172,6 +173,11 @@ public class FileScanningService {
                      LOGGER.error("Could not determine mimetype for file: {}", file.getName());
                   }
                }
+            }
+            
+            // Only add media files, ignore anything thats not a video, image, or audio
+            if (isAllowedMimeType(mimetype)) {
+               throw new IllegalMimeTypeException("Illegal mimetype: " + mimetype);
             }
             
             BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
@@ -291,6 +297,8 @@ public class FileScanningService {
                }
             } catch (AlreadyExistsException ex) {
                LOGGER.info("file already existed and is recorded. Skipping");
+            } catch (IllegalMimeTypeException ex) {
+               LOGGER.info("file's mimetype was illegal: {}", ex.getMessage());
             }
          }
       }
@@ -312,6 +320,15 @@ public class FileScanningService {
       } catch (IOException ex) {
          LOGGER.error("Could not generate thumbnail for video: " + newFile.getName());
          return null;
+      }
+   }
+
+   private boolean isAllowedMimeType(String mimetype) {
+      if (mimetype == null) {
+         return false;
+      } else {
+         String lowered = mimetype.toLowerCase();
+         return lowered.contains("video") || lowered.contains("image") || lowered.contains("audio");
       }
    }
 
