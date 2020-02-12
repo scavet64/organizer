@@ -27,13 +27,12 @@ export class MediaComponent implements OnInit {
 
   visible = true;
   selectable = true;
-  removable = true;
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly pageSizeOptions = [10, 20, 50];
   pageResponse: PaginationResponse<MediaFile>;
   knownTags: TagModel[];
-  isListView = true;
+  isListView = false;
   searchBox: string;
 
   tagControl = new FormControl();
@@ -51,6 +50,8 @@ export class MediaComponent implements OnInit {
 
   showAdvanceSearch = false;
   advanceSearchState = 'closed';
+
+  editingMultiple = false;
 
   @ViewChild('chipInput', { static: false }) chipInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
@@ -234,5 +235,19 @@ export class MediaComponent implements OnInit {
       mediaFile.isFavorite = res.data.isFavorite;
       this.alertService.success(`Successfully favorited media`);
     });
+  }
+
+  editMultiple() {
+    this.editingMultiple = true;
+  }
+
+  chooseSelectedMediasTags() {
+    const checkedMedia = this.pageResponse.content.filter(file => file.isSelected);
+    console.log(`total checked: ${checkedMedia.length}`);
+  }
+
+  cancelEditMultiple() {
+    this.editingMultiple = false;
+    this.pageResponse.content.forEach(file => file.isSelected = false);
   }
 }

@@ -15,4 +15,5 @@ export interface MediaFile {
     dateAdded: Date;
     lastModified: Date;
     isFavorite: boolean;
+    isSelected: boolean;  // This is used in media page to determine if is selected when editing multiple media tags
 }

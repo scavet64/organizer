@@ -16,10 +16,10 @@
       <mat-form-field class="example-chip-list">
         <mat-chip-list #chipList aria-label="Tag selection">
           <mat-chip *ngFor="let tag of selectedTags" [selectable]="selectable"
-            [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor" [removable]="removable"
+            [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor"
             (removed)="removeTagFromSearch(tag)">
             {{tag.name}}
-            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
           <input matInput placeholder="Filter by Tag" #chipInput [formControl]="tagControl" [matAutocomplete]="auto"
             [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -70,6 +70,8 @@
       </div>
       <mat-slide-toggle style="margin-top: 10px; margin-bottom: 10px" [(ngModel)]="onlyShowFavorite"
         (change)="search()">Only Show Favorites</mat-slide-toggle>
+      <mat-slide-toggle style="margin-top: 10px; margin-bottom: 10px; margin-left: 10px" [(ngModel)]="isListView">List
+        View</mat-slide-toggle>
     </div>
   </div>
   <div class="show-more-container" (click)="showMoreFilters()">
@@ -96,20 +98,40 @@
     </mat-tab-group>
 
     <!-- Paginator -->
-    <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
-      [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-    </mat-paginator>
+    <div style="display:flex">
+      <button mat-flat-button *ngIf="!editingMultiple" (click)="editMultiple()" class="editMultipleButton">
+        Edit Multiple
+      </button>
+      <button *ngIf="editingMultiple" mat-flat-button (click)="chooseSelectedMediasTags()" class="editMultipleButton" style="margin-right: 10px;">
+        Choose Tags
+      </button>
+      <button *ngIf="editingMultiple" mat-flat-button (click)="cancelEditMultiple()" class="editMultipleButton">
+        Cancel Editing
+      </button>
+      <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
+        [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+
   </span>
 
 
 
 
   <!-- List View -->
-  <div>
+  <div *ngIf="isListView">
     <app-media-list-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags"
       [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
       (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)">
     </app-media-list-item>
+  </div>
+
+  <!-- Grid View -->
+  <div *ngIf="!isListView">
+    <app-media-list-grid-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags"
+      [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
+      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple">
+    </app-media-list-grid-item>
   </div>
 
   <!-- Paginator -->
