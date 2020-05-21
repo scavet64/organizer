@@ -36,15 +36,16 @@ export class MediaListGridItemComponent implements OnInit {
     const dialogRef = this.dialog.open(MediaTagsComponent, {
       width: '500px',
       data: {
-        mediasTags: JSON.parse(JSON.stringify(this.file.tags)),  // Send in a cloned version so edits are not reflected
-        knownTags: this.knownTags,
-        filename: this.file.name
+        mediaFiles: JSON.parse(JSON.stringify([this.file])),
+        knownTags: JSON.parse(JSON.stringify(this.knownTags)),
+        title: this.file.name
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const data = { file: this.file, editedTags: result };
+        const data = { file: this.file, editedTags: result[0].tags };
+        console.log(data);
         this.tagsEdited.emit(data);
       }
     });

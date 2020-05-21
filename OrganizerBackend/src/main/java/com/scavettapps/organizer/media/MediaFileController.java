@@ -15,10 +15,14 @@
  */
 package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.media.json.AddTagRequest;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
+import com.scavettapps.organizer.media.json.EditMultipleMediasTagsRequest;
 import com.scavettapps.organizer.media.json.SetMediaFavoriteRequest;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +85,34 @@ public class MediaFileController {
           HttpStatus.OK
       );
    }
+   
+   /**
+    * 
+    * @param request
+    * @return 
+    */
+   @PutMapping("/tags/multiple")
+   public ResponseEntity<Response> updateMultipleMediasTags(
+       @RequestBody @Validated EditMultipleMediasTagsRequest request
+   ) {
+      
+      List<MediaFile> updatedMedia = new ArrayList<>();
+      
+      request.getUpdatedMedia().forEach(mediaToTags -> {
+         updatedMedia.add(
+             mediaFileService.addTagToMediaFile(
+                 mediaToTags.getMediaId(), 
+                 mediaToTags.getTagIds()
+             )
+         );
+      });
+
+      return new ResponseEntity<>(
+          new DataResponse(updatedMedia),
+          HttpStatus.OK
+      );
+   }
+
 
    /**
     * Find a page of media. This is the main method as to get all media

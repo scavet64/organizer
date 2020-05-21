@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.scavettapps.organizer.media;
+package com.scavettapps.organizer.media.json;
 
 import com.sun.istack.NotNull;
 import java.util.Collection;

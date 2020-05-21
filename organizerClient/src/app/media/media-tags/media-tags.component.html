@@ -1,6 +1,6 @@
 <div>
   <div class="header">
-    {{filename}}
+    {{title}}
   </div>
   <mat-form-field class="full-width">
     <input matInput [(ngModel)]="searchBox" placeholder="Search">
@@ -9,7 +9,7 @@
 
   <mat-list class="fixed media-tag-list">
     <mat-list-item *ngFor="let tag of knownTags | filter : searchBox" class="list-item-wrapper">
-      <mat-checkbox class="checkbox" [ngModel]="tag.selected" (click)="tagClicked(tag)"></mat-checkbox>
+      <mat-checkbox class="checkbox" [(ngModel)]="tag.selected" [(indeterminate)]="tag.indeterminate" (click)="tagClicked(tag)"></mat-checkbox>
       <mat-chip class="ellipse-text" [style.background-color]="tag.backgroundColor" [style.color]="tag.textColor"
         [matTooltip]="tag.name" matTooltipClass="organizer-tooltip">
         {{ tag.name }}

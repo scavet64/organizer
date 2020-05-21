@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
-import { PageRequest } from '../common/PageRequest';
-import { TagModel } from '../tags/tagModel';
-import { PageParams } from '../common/PageParams';
+import { PageRequest } from '../../common/PageRequest';
+import { TagModel } from '../../tags/tagModel';
+import { PageParams } from '../../common/PageParams';
 
 export class MediaSearchRequest extends PageRequest {
   sortColumn: string;

@@ -6,8 +6,9 @@ import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { TagModel } from '../tags/tagModel';
-import { MediaSearchRequest } from './media-search-request';
+import { MediaSearchRequest } from './requests/media-search-request';
 import { ResourceService } from './resource.service';
+import { EditMultipleMediatagsRequest, MediaTags } from './requests/edit-multiple-mediatags-request';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,19 @@ export class MediaService {
       .put<Response<any>>(`${environment.baseURL}media/tags`, {
         mediaId: id, tagIds: updatedTags.map(temp => temp.id)
       })
+      .pipe(timeout(10000));
+  }
+
+  public updateMultipleMediaFileTags(updatedMedia: MediaFile[]): Observable<Response<any>> {
+
+    const request: EditMultipleMediatagsRequest = new EditMultipleMediatagsRequest();
+
+    updatedMedia.forEach(media => {
+      request.updatedMedia.push(new MediaTags(media.id, media.tags.map(tag => tag.id)));
+    });
+
+    return this.http
+      .put<Response<any>>(`${environment.baseURL}media/tags/multiple`, request)
       .pipe(timeout(10000));
   }
 

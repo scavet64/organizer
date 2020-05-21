@@ -2,13 +2,14 @@ import { Component, OnInit, Input, Inject } from '@angular/core';
 import { TagModel } from 'src/app/tags/tagModel';
 import { MAT_DIALOG_DATA, MatDialogRef, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material';
 import { tooltipDefaultOptions } from 'src/app/common/constants';
+import { MediaFile } from '../media.file';
 
 @Component({
   selector: 'app-media-tags',
   templateUrl: './media-tags.component.html',
   styleUrls: ['./media-tags.component.scss'],
   providers: [
-    {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaultOptions}
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaultOptions }
   ],
 })
 export class MediaTagsComponent implements OnInit {
@@ -16,8 +17,8 @@ export class MediaTagsComponent implements OnInit {
   searchBox: string;
 
   public knownTags: TagModel[];
-  public mediasTags: TagModel[];
-  public filename: string;
+  public mediaFiles: MediaFile[];
+  public title: string;
 
   constructor(
     public dialogRef: MatDialogRef<MediaTagsComponent>,
@@ -25,28 +26,57 @@ export class MediaTagsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.mediasTags = this.data.mediasTags;
     this.knownTags = this.data.knownTags;
-    this.filename = this.data.filename;
-    console.log(this.mediasTags);
+    this.title = this.data.title;
+    this.mediaFiles = this.data.mediaFiles;
+
     console.log(this.knownTags);
     this.knownTags.forEach(tag => {
-      if (this.mediasTags.find(x => x.id === tag.id)) {
-        tag.selected = true;
-      } else {
-        tag.selected = false;
+
+      let atLeastOneHas = false;
+      let allHaveThisTag = true;
+      this.mediaFiles.forEach(mediaFile => {
+        if (mediaFile.tags.find(x => x.id === tag.id)) {
+          atLeastOneHas = true;
+        } else {
+          allHaveThisTag = false;
+        }
+      });
+      if (atLeastOneHas) {
+        if (!allHaveThisTag) {
+          tag.indeterminate = true;
+        } else {
+          tag.selected = true;
+        }
       }
     });
   }
 
   tagClicked(tag: TagModel) {
     console.log('testing click');
-    if (this.mediasTags.find(x => x.id === tag.id)) {
-      this.mediasTags = this.mediasTags.filter(obj => obj.id !== tag.id);
-      console.log('tag removed');
+
+    // If the tag is indeterminate, they are now all checked.
+    // If the media file didnt previously have the tag, add it
+    if (tag.indeterminate) {
+      this.mediaFiles.forEach(mediaFile => {
+        const t = mediaFile.tags.find(x => x.id = tag.id);
+        if (!t) {
+          mediaFile.tags.push(tag);
+        }
+      });
+      console.log('indeterminate tag modified');
+    } else if (tag.selected) {
+      // remove it from all the media
+      this.mediaFiles.forEach(mediaFile => {
+        mediaFile.tags = mediaFile.tags.filter(obj => obj.id !== tag.id);
+      });
+      console.log('tag removed from all');
     } else {
-      this.mediasTags.push(tag);
-      console.log('tag added');
+      // add it to all media.
+      this.mediaFiles.forEach(mediaFile => {
+        mediaFile.tags.push(tag);
+      });
+      console.log('tag added to all');
     }
   }
 
@@ -55,7 +85,7 @@ export class MediaTagsComponent implements OnInit {
   }
 
   save(): void {
-    this.dialogRef.close(this.mediasTags);
+    this.dialogRef.close(this.mediaFiles);
   }
 
 }

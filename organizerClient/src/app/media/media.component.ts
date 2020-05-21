@@ -5,16 +5,17 @@ import { TagModel } from '../tags/tagModel';
 import { PaginationResponse } from '../common/page-response';
 import { MediaService } from './media.service';
 import { TagService } from '../tags/tag.service';
-import { MatAutocomplete, MatChipInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocomplete, MatChipInputEvent, MatAutocompleteSelectedEvent, MatDialog } from '@angular/material';
 import { startWith, map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { AlertService } from '../alert/alert.service';
 import { ResourceService } from './resource.service';
 import { VideoplayerService } from '../videoplayer/videoplayer.service';
-import { MediaSearchRequest } from './media-search-request';
+import { MediaSearchRequest } from './requests/media-search-request';
 import { SlideInOut } from '../animations/SlideInOut';
 import { MediaSortType } from './media.sort.type';
+import { MediaTagsComponent } from './media-tags/media-tags.component';
 
 @Component({
   selector: 'app-media',
@@ -58,6 +59,7 @@ export class MediaComponent implements OnInit {
 
   constructor(
     private alertService: AlertService,
+    private dialog: MatDialog,
     private mediaFileService: MediaService,
     private resourceService: ResourceService,
     private tagService: TagService,
@@ -243,6 +245,34 @@ export class MediaComponent implements OnInit {
 
   chooseSelectedMediasTags() {
     const checkedMedia = this.pageResponse.content.filter(file => file.isSelected);
+
+    if (checkedMedia.length === 0) {
+      this.alertService.warning(`No media selected`);
+      return;
+    }
+
+    const dialogRef = this.dialog.open(MediaTagsComponent, {
+      width: '500px',
+      data: {
+        mediaFiles: JSON.parse(JSON.stringify(checkedMedia)),   // Send in a cloned version so edits are not reflected
+        knownTags: JSON.parse(JSON.stringify(this.knownTags)),  // Send in a cloned version so edits are not reflected
+        title: `Select tags for media`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.mediaFileService.updateMultipleMediaFileTags(result).subscribe(res => {
+          const updated: MediaFile[] = res.data;
+          updated.forEach(updatedMedia => {
+            checkedMedia.find(obj => obj.id === updatedMedia.id).tags = updatedMedia.tags;
+          });
+          this.alertService.success(`Successfully tagged media`);
+          this.cancelEditMultiple();
+        });
+      }
+    });
+
     console.log(`total checked: ${checkedMedia.length}`);
   }
 
