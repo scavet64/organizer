@@ -49,6 +49,7 @@ import com.scavettapps.organizer.transcoding.ITranscodingService;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.scheduling.annotation.Async;
 
@@ -56,9 +57,10 @@ import org.springframework.scheduling.annotation.Async;
  * @author Vincent Scavetta
  */
 @Service
+@Slf4j
 public class FileScanningService {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(FileScanningService.class);
+   //private static final Logger LOGGER = LoggerFactory.getLogger(FileScanningService.class);
 
    //TODO: Look into increasing this. I am seeing odd errors with this multi threaded
    private static final int NUMBER_THREADS = 1;
@@ -93,14 +95,14 @@ public class FileScanningService {
       try {
          scanLocationForFiles(location.getPath());
       } catch (InterruptedException | ExecutionException ex) {
-         LOGGER.error("Failed to scan: " + location.getPath());
+         log.error("Failed to scan: " + location.getPath());
       }
 
    }
 
    @Transactional
    public Folder scanLocationForFiles(String path) throws InterruptedException, ExecutionException {
-      LOGGER.info("Initializing Scanning of: " + path);
+      log.info("Initializing Scanning of: " + path);
 
       Set<MediaFile> addedFiles = Collections.synchronizedSet(new HashSet<>());
 
@@ -131,16 +133,16 @@ public class FileScanningService {
             threads.add(t);
          }
 
-         LOGGER.info("Kicked off threads");
+         log.info("Kicked off threads");
 
          for (Thread treadToJoin : threads) {
             treadToJoin.join();
          }
 
-         LOGGER.info("Joined off threads");
+         log.info("Joined off threads");
       }
 
-      LOGGER.info("Finished Scanning: " + path);
+      log.info("Finished Scanning: " + path);
       workingFolder = this.folderService.saveFolder(workingFolder);
       return workingFolder;
    }
@@ -159,22 +161,22 @@ public class FileScanningService {
             // Hash not found in database. Create the new media file object
             String mimetype = URLConnection.guessContentTypeFromName(file.getName());
             if (mimetype == null) {
-               LOGGER.warn("Could not guess mimetype using name for file: {}", file.getName());
+               log.warn("Could not guess mimetype using name for file: {}", file.getName());
                try (FileInputStream fis = new FileInputStream(file)) {
                   mimetype = URLConnection.guessContentTypeFromStream(fis);
                }
                if (mimetype == null) {
-                  LOGGER.warn("Could not guess mimetype using stream for file: {}", file.getName());
+                  log.warn("Could not guess mimetype using stream for file: {}", file.getName());
                   Tika tika = new Tika();
                   mimetype = tika.detect(file);
                   if (mimetype == null) {
-                     LOGGER.error("Could not determine mimetype for file: {}", file.getName());
+                     log.error("Could not determine mimetype for file: {}", file.getName());
                   }
                }
             }
             
             // Only add media files, ignore anything thats not a video, image, or audio
-            if (isAllowedMimeType(mimetype)) {
+            if (!isAllowedMimeType(mimetype)) {
                throw new IllegalMimeTypeException("Illegal mimetype: " + mimetype);
             }
             
@@ -193,7 +195,7 @@ public class FileScanningService {
                // Video Detected. Grab the thumbnail.
                newFile.setThumbnail(getVideoThumb(newFile));
             }
-            LOGGER.info(
+            log.info(
                 "new file added - hash: "
                 + newFile.getHash()
                 + " name: "
@@ -203,7 +205,7 @@ public class FileScanningService {
             );
             return newFile;
          } else {
-            LOGGER.error(
+            log.error(
                 "file hash already existed file added - hash: "
                 + hash
                 + " name: "
@@ -212,7 +214,7 @@ public class FileScanningService {
          }
       } else {
          String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-         LOGGER.info(
+         log.info(
              "existing file based on name and size - hash: "
              + existingFile.getHash()
              + " name: "
@@ -237,7 +239,7 @@ public class FileScanningService {
    @Transactional
    public void recurseDirectory(File[] files, Folder currentFolder, Set<MediaFile> scannedFiles)
        throws IOException {
-      LOGGER.info("Now Entering: " + currentFolder.getPath());
+      log.info("Now Entering: " + currentFolder.getPath());
       for (File file : files) {
          if (file.isDirectory()) {
             // Do we have this file already?
@@ -265,7 +267,7 @@ public class FileScanningService {
 
                // If this file was found, add to its duplicate file list
                if (previousFile != null) {
-                  LOGGER.warn("duplicate hash found during this scanning session!");
+                  log.warn("duplicate hash found during this scanning session!");
                   previousFile.addDuplicatePath(
                       new DuplicateMediaFilePath(processedFile.getPath())
                   );
@@ -281,9 +283,9 @@ public class FileScanningService {
                          .findFirst()
                          .orElse(null);
                      if (previousFile != null) {
-                        // file is not unique. Use the previously found's thumbnail
-
-                        File duplicateThumb = new File(processedFile.getPath());
+                        // Thumbnail file is not unique. Use the previously found's thumbnail
+                        log.info("Found a duplicate thumbnail with hash [{}]", processedFile.getThumbnail().getHash());
+                        File duplicateThumb = new File(processedFile.getThumbnail().getPath());
                         duplicateThumb.delete();
 
                         processedFile.setThumbnail(previousFile.getThumbnail());
@@ -294,9 +296,9 @@ public class FileScanningService {
                   scannedFiles.add(processedFile);
                }
             } catch (AlreadyExistsException ex) {
-               LOGGER.info("file already existed and is recorded. Skipping");
+               log.info("file already existed and is recorded. Skipping");
             } catch (IllegalMimeTypeException ex) {
-               LOGGER.info("file's mimetype was illegal: {}", ex.getMessage());
+               log.info("file's mimetype was illegal: {}", ex.getMessage());
             }
          }
       }
@@ -304,7 +306,7 @@ public class FileScanningService {
    }
 
    private StoredFile getVideoThumb(MediaFile newFile) {
-      LOGGER.info("Generating thumbnail for: " + newFile.getName());
+      log.info("Generating thumbnail for: " + newFile.getName());
       try {
          File thumbnailFile = transcodingService.getDefaultThumbnail(newFile);
          String thumbhash = this.quickHash.getHash(thumbnailFile);
@@ -316,7 +318,7 @@ public class FileScanningService {
              thumbnailFile.length()
          );
       } catch (IOException ex) {
-         LOGGER.error("Could not generate thumbnail for video: " + newFile.getName());
+         log.error("Could not generate thumbnail for video: " + newFile.getName());
          return null;
       }
    }
@@ -350,7 +352,7 @@ public class FileScanningService {
                 workingFolder,
                 addedFiles);
          } catch (IOException ex) {
-            LOGGER.error("Failed recursing directory", ex);
+            log.error("Failed recursing directory", ex);
          }
       }
    }
