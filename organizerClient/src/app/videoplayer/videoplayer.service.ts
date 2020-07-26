@@ -16,10 +16,14 @@ export class VideoplayerService {
 
   public showVideo(file: MediaFile) {
     const dialogRef = this.dialog.open(VideoplayerComponent, {
-      width: '80%',
-      maxHeight: '90%',
+      width: '80vw',
+      height: '90vh',
       panelClass: 'videomodel',
-      data: this.mediaFileService.getVideoStreamURL(file)
+      data: {
+        rawUrl: this.mediaFileService.getVideoStreamURL(file),
+        transcodeUrl: this.mediaFileService.getVideoStreamURLTranscode(file),
+        mime: file.mimetype
+      }
     });
 
     this.mediaFileService.addView(file.id).subscribe(res => {

@@ -20,22 +20,30 @@ import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
 import com.scavettapps.organizer.media.json.EditMultipleMediasTagsRequest;
 import com.scavettapps.organizer.media.json.SetMediaFavoriteRequest;
+import com.scavettapps.organizer.transcoding.BrampTranscodingService;
+import com.scavettapps.organizer.transcoding.TranscodingException;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,6 +57,9 @@ public class MediaFileController {
 
    @Autowired
    private MediaFileService mediaFileService;
+   
+   @Autowired
+   private BrampTranscodingService brampTranscodingService;
 
    /**
     *
@@ -57,11 +68,83 @@ public class MediaFileController {
     */
    @GetMapping(value = "/{fileHash}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
-   ResponseEntity<Resource> getFullVideo(@PathVariable String fileHash)
+   ResponseEntity getFullVideo(
+       @PathVariable String fileHash,
+       @RequestHeader(value = "Range", required = false) String httpRangeList
+   )
        throws FileNotFoundException {
-
+      
+      //return mediaFileService.prepareContent(fileHash, httpRangeList);
+      
       Resource fileResource = mediaFileService.loadFileAsResource(fileHash);
       ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(fileResource);
+      return resp;
+   }
+   
+   /**
+    *
+    * @param fileHash the file ID corresponding to the video
+    * @return returns the video as a resource stream
+    */
+   @GetMapping(value = "/{fileHash}/info")
+   public @ResponseBody
+   ResponseEntity getVideoDetails(
+       @PathVariable String fileHash,
+       @RequestHeader(value = "Range", required = false) String httpRangeList
+   )
+       throws FileNotFoundException {
+      
+      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
+      var details = this.brampTranscodingService.getMediaDetails(mediaFile);
+      return ResponseEntity.status(HttpStatus.OK).body(details);
+   }
+   
+   /**
+    *
+    * @param fileHash the file ID corresponding to the video
+    * @return returns the video as a resource stream
+    */
+   @GetMapping(value = "/{fileHash}/transcode", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+   public @ResponseBody
+   ResponseEntity<Resource> transcodeVideo(
+       @PathVariable String fileHash,
+       @RequestHeader HttpHeaders headers
+   )
+       throws FileNotFoundException, TranscodingException, MalformedURLException {
+
+      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
+      
+      var playlistFile = brampTranscodingService.transcodeStream(mediaFile);
+      Resource resource = new UrlResource(playlistFile.toURI());
+      
+      //Resource fileResource = mediaFileService.loadFileAsResource(fileHash);
+      ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(resource);
+      return resp;
+   }
+   
+   private static final String TEMP_LOCATION = "C:/temp/organizer";
+   
+   /**
+    *
+    * @param fileHash the file ID corresponding to the video
+    * @return returns the video as a resource stream
+    */
+   @GetMapping(value = "/{fileHash}/{partfile}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+   public @ResponseBody
+   ResponseEntity<Resource> videoPartFile(
+       @PathVariable String fileHash,
+       @PathVariable String partfile,
+       @RequestHeader HttpHeaders headers
+   )
+       throws FileNotFoundException, TranscodingException, MalformedURLException {
+
+      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
+      
+      File partFileTarget = Paths.get(TEMP_LOCATION, mediaFile.getHash(),partfile).toFile();
+      
+      Resource resource = new UrlResource(partFileTarget.toURI());
+      
+      ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(resource);
       return resp;
    }
 

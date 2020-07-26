@@ -3,6 +3,7 @@
 @import '../node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css';
 
 @import '~@angular/material/theming';
+@import '~video.js/dist/video-js.css';
 @include mat-core();
 
 $organizer-primary: mat-palette($mat-pink);

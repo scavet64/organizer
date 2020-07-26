@@ -18,6 +18,7 @@ package com.scavettapps.organizer.media;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
+import com.scavettapps.organizer.transcoding.BrampTranscodingService;
 import com.scavettapps.organizer.transcoding.ITranscodingService;
 import com.scavettapps.organizer.transcoding.TranscodingException;
 import java.io.File;
@@ -26,9 +27,10 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -36,7 +38,25 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+import org.springframework.http.HttpStatus;
 
 /**
  *
@@ -45,22 +65,36 @@ import org.springframework.stereotype.Service;
 @Service
 public class MediaFileService {
 
+   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+   public static final String VIDEO = "/video";
+
+   public static final String CONTENT_TYPE = "Content-Type";
+   public static final String CONTENT_LENGTH = "Content-Length";
+   public static final String VIDEO_CONTENT = "video/";
+   public static final String CONTENT_RANGE = "Content-Range";
+   public static final String ACCEPT_RANGES = "Accept-Ranges";
+   public static final String BYTES = "bytes";
+   public static final int BYTE_RANGE = 1024;
+
    private final MediaFileRepository mediaFileRepository;
    private final MediaFileSpecification mediaFileSpecification;
    private final TagRepository tagRepository;
-   private final ITranscodingService transcodingService;
+   
+   @Autowired
+   private  BrampTranscodingService transcodingService;
 
    @Autowired
    public MediaFileService(
        MediaFileRepository mediaFileRepository,
        MediaFileSpecification mediaFileSpecification,
-       TagRepository tagRepository,
-       @Qualifier("bramp") ITranscodingService transcodingService
+       TagRepository tagRepository
+       //@Qualifier("bramp") ITranscodingService transcodingService
    ) {
       this.mediaFileRepository = mediaFileRepository;
       this.mediaFileSpecification = mediaFileSpecification;
       this.tagRepository = tagRepository;
-      this.transcodingService = transcodingService;
+      //this.transcodingService = transcodingService;
    }
 
    public Optional<MediaFile> getMediaFile(long id) {
@@ -91,6 +125,10 @@ public class MediaFileService {
 
       MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
 
+      if (file.getMimetype().equals("video/x-matroska")) {
+         // Convert
+      }
+
       try {
          Resource resource = new UrlResource(new File(file.getPath()).toURI());
          if (resource.exists()) {
@@ -103,6 +141,131 @@ public class MediaFileService {
       }
    }
 
+   public ResponseEntity<byte[]> prepareContent(String hash, String range) throws TranscodingException {
+      
+      MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
+
+      long rangeStart = 0;
+      long rangeEnd;
+      byte[] data;
+      Long fileSize;
+      String pathToFileToPlay;
+      if (file.getMimetype().equals("video/x-matroska")) {
+         // Convert
+         //this.transcodingService.transcodeMediaFile();
+         pathToFileToPlay = file.getPath();
+      } else {
+         pathToFileToPlay = file.getPath();
+      }
+      
+      try {
+         //fileSize = getFileSize(file.getPath());
+         fileSize = file.getSize();
+         if (range == null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                //.header(CONTENT_TYPE, VIDEO_CONTENT + fileType)
+                .header(CONTENT_LENGTH, String.valueOf(fileSize))
+                .body(readByteRange(pathToFileToPlay, rangeStart, fileSize - 1)); // Read the object and convert it as bytes
+         }
+         String[] ranges = range.split("-");
+         rangeStart = Long.parseLong(ranges[0].substring(6));
+         if (ranges.length > 1) {
+            rangeEnd = Long.parseLong(ranges[1]);
+         } else {
+            rangeEnd = fileSize - 1;
+         }
+         if (fileSize < rangeEnd) {
+            rangeEnd = fileSize - 1;
+         }
+         data = readByteRange(pathToFileToPlay, rangeStart, rangeEnd);
+      } catch (IOException e) {
+         logger.error("Exception while reading the file {}", e.getMessage());
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      }
+      String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
+      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+          //.header(CONTENT_TYPE, VIDEO_CONTENT + fileType)
+          .header(ACCEPT_RANGES, BYTES)
+          .header(CONTENT_LENGTH, contentLength)
+          .header(CONTENT_RANGE, BYTES + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
+          .body(data);
+   }
+
+   /**
+    * ready file byte by byte.
+    *
+    * @param filePath String.
+    * @param start long.
+    * @param end long.
+    * @return byte array.
+    * @throws IOException exception.
+    */
+   public byte[] readByteRange(String filePath, long start, long end) throws IOException {
+      Path path = Paths.get(filePath);
+      try ( InputStream inputStream = (Files.newInputStream(path));  ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream()) {
+         byte[] data = new byte[BYTE_RANGE];
+         int nRead;
+         while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            bufferedOutputStream.write(data, 0, nRead);
+         }
+         bufferedOutputStream.flush();
+         byte[] result = new byte[(int) (end - start) + 1];
+         System.arraycopy(bufferedOutputStream.toByteArray(), (int) start, result, 0, result.length);
+         return result;
+      }
+   }
+
+//   /**
+//    * Get the filePath.
+//    *
+//    * @return String.
+//    */
+//   private String getFilePath() {
+//      URL url = this.getClass().getResource(VIDEO);
+//      return new File(url.getFile()).getAbsolutePath();
+//   }
+
+   /**
+    * Content length.
+    *
+    * @param filePath String.
+    * @return Long.
+    */
+   public Long getFileSize(String filePath) {
+      return Optional.ofNullable(filePath)
+          .map(file -> Paths.get(file))
+          .map(this::sizeFromFile)
+          .orElse(0L);
+   }
+
+   /**
+    * Getting the size from the path.
+    *
+    * @param path Path.
+    * @return Long.
+    */
+   private Long sizeFromFile(Path path) {
+      try {
+         return Files.size(path);
+      } catch (IOException ioException) {
+         logger.error("Error while getting the file size", ioException);
+      }
+      return 0L;
+   }
+
+//   private ResourceRegion resourceRegion(UrlResource video, HttpHeaders headers) {
+//	var contentLength = video.contentLength();
+//	var range = headers.get("range");
+//	if (range != null) {
+//		var start = range.getRangeStart(contentLength);
+//		var end = range.getRangeEnd(contentLength);
+//		var rangeLength = min(1 * 1024 * 1024, end - start + 1);
+//		ResourceRegion(video, start, rangeLength)
+//	} else {
+//		val rangeLength = min(1 * 1024 * 1024, contentLength)
+//		ResourceRegion(video, 0, rangeLength)
+//	}
+//}
    /**
     * finds the file on the file system and loads it into a resource
     *
@@ -130,10 +293,10 @@ public class MediaFileService {
             throw new FileNotFoundException("File not found: " + file);
          }
       } catch (MalformedURLException ex) {
-         Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
+         //Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
          throw new FileNotFoundException("Malformed URL Exception: " + file);
       } catch (TranscodingException ex) {
-         Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
+         //Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
          throw new FileNotFoundException("Transcoding Exception: " + file);
       }
    }
@@ -188,13 +351,14 @@ public class MediaFileService {
 
    /**
     * TODO: There has to be a better way than null checking every time
+    *
     * @param params
-    * @return 
+    * @return
     */
    private Specification<MediaFile> getDefaultSpecification(MediaFileRequest params) {
       // Exposed attributes in API spec do not need to be same as Database table column names.
       Specification<MediaFile> specs = null;
-      
+
       if (params.getName() != null) {
          specs = Specification.where(mediaFileSpecification.getStringTypeSpecification(
              "name",
@@ -227,7 +391,7 @@ public class MediaFileService {
             ));
          }
       }
-      
+
       if (params.getIsFavorite()) {
          if (specs == null) {
             specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
@@ -254,13 +418,13 @@ public class MediaFileService {
    public List<MediaFile> findAllMediaWithDuplicates() {
       return this.mediaFileRepository.findAllByDuplicatePathsNotEmpty();
    }
-   
+
    public MediaFile setFavorite(long mediaId, boolean isFavorite) {
       MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
       file.setIsFavorite(isFavorite);
       return this.mediaFileRepository.save(file);
    }
-   
+
    public MediaFile setIgnored(long mediaId, boolean isIgnored) {
       MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
       file.setIsFavorite(isIgnored);

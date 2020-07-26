@@ -24,6 +24,10 @@ export class MediaService {
     return `${environment.baseURL}media/${video.hash}/full`;
   }
 
+  public getVideoStreamURLTranscode(video: MediaFile) {
+    return `${environment.baseURL}media/${video.hash}/transcode`;
+  }
+
   public setMediaFileAsHidden(hash: string): Observable<Response<any>> {
     return this.http
       .get<Response<any>>(`${environment.baseURL}media/hide/${hash}`)
