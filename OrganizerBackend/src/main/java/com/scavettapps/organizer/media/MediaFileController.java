@@ -96,7 +96,7 @@ public class MediaFileController {
       
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
       var details = this.brampTranscodingService.getMediaDetails(mediaFile);
-      return ResponseEntity.status(HttpStatus.OK).body(details);
+      return ResponseEntity.status(HttpStatus.OK).body(new DataResponse (details));
    }
    
    /**

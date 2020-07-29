@@ -28,6 +28,12 @@ export class MediaService {
     return `${environment.baseURL}media/${video.hash}/transcode`;
   }
 
+  public getMediaDetails(media: MediaFile) {
+    return this.http
+      .get<Response<any>>(`${environment.baseURL}media/${media.hash}/info`)
+      .pipe(timeout(10000));
+  }
+
   public setMediaFileAsHidden(hash: string): Observable<Response<any>> {
     return this.http
       .get<Response<any>>(`${environment.baseURL}media/hide/${hash}`)

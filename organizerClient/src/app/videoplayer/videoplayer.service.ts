@@ -15,24 +15,29 @@ export class VideoplayerService {
   ) { }
 
   public showVideo(file: MediaFile) {
-    const dialogRef = this.dialog.open(VideoplayerComponent, {
-      width: '80vw',
-      height: '90vh',
-      panelClass: 'videomodel',
-      data: {
-        rawUrl: this.mediaFileService.getVideoStreamURL(file),
-        transcodeUrl: this.mediaFileService.getVideoStreamURLTranscode(file),
-        mime: file.mimetype
-      }
-    });
 
-    this.mediaFileService.addView(file.id).subscribe(res => {
-      console.log(res.data);
-      file.views++;
-    });
+    this.mediaFileService.getMediaDetails(file).subscribe(res => {
+      console.log(res);
+      const dialogRef = this.dialog.open(VideoplayerComponent, {
+        width: '80vw',
+        height: '90vh',
+        panelClass: 'videomodel',
+        data: {
+          rawUrl: this.mediaFileService.getVideoStreamURL(file),
+          transcodeUrl: this.mediaFileService.getVideoStreamURLTranscode(file),
+          mime: file.mimetype,
+          details: res.data
+        }
+      });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log("closed video");
+      this.mediaFileService.addView(file.id).subscribe(res => {
+        console.log(res.data);
+        file.views++;
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        console.log("closed video");
+      });
     });
   }
 

@@ -10,7 +10,7 @@ import videojs from 'video.js';
 export class VideoplayerComponent implements OnInit, OnDestroy {
 
   // @ViewChild('videoPlayer', { static: true }) videoplayer: any;
-  @ViewChild('target', {static: true}) target: ElementRef;
+  @ViewChild('target', { static: true }) target: ElementRef;
   @Input() options: {
     fluid: boolean,
     aspectRatio: string,
@@ -38,14 +38,16 @@ export class VideoplayerComponent implements OnInit, OnDestroy {
 
     if (!this.options) {
       optsToUse = {
-       autoplay: false,
-       controls: true,
-       sources: [
-         { src: this.data.rawUrl, type: this.data.mime, default: true, label: 'Raw' },
-         { src: this.data.transcodeUrl, type: 'application/x-mpegURL', label: 'Transcode' }
+        autoplay: false,
+        controls: true,
+        sources: [
+          { src: this.data.rawUrl, type: this.data.mime, default: true, label: 'Raw' },
+          { src: this.data.transcodeUrl, type: 'application/x-mpegURL', label: 'Transcode' }
         ]
-     };
-   }
+      };
+    }
+
+    console.log(this.data.details);
 
     // instantiate Video.js
     this.player = videojs(this.target.nativeElement, optsToUse, function onPlayerReady() {
@@ -53,7 +55,13 @@ export class VideoplayerComponent implements OnInit, OnDestroy {
       console.log(this.currentSrc());
       this.play();
     });
-    this.player.on('error', function() {
+
+    const theDuration = this.data.details.duration;
+    this.player.duration = () => {
+      return theDuration;
+    };
+
+    this.player.on('error', function () {
       console.log('yo');
     });
     console.log(this.data.url);
