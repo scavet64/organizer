@@ -17,6 +17,7 @@ package com.scavettapps.organizer.scanner;
 
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.io.File;
+import java.time.Instant;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,10 @@ public class ScanLocationSevice {
    public ScanLocation createNewScanLocation(String path) throws IllegalScanningLocationException {
       throwIfInvalid(path);
       return this.scanLocationRepository.save(new ScanLocation(path));
+   }
+
+   public ScanLocation updateScanLocation(ScanLocation locationToSave) {
+      return this.scanLocationRepository.save(locationToSave);
    }
 
    public Collection<ScanLocation> findAllScanLocations() {

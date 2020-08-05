@@ -32,6 +32,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,7 @@ import com.scavettapps.organizer.transcoding.ITranscodingService;
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.scheduling.annotation.Async;
@@ -60,8 +62,6 @@ import org.springframework.scheduling.annotation.Async;
 @Slf4j
 public class FileScanningService {
 
-   //private static final Logger LOGGER = LoggerFactory.getLogger(FileScanningService.class);
-
    //TODO: Look into increasing this. I am seeing odd errors with this multi threaded
    private static final int NUMBER_THREADS = 1;
 
@@ -70,22 +70,20 @@ public class FileScanningService {
    private final ITranscodingService transcodingService;
    private final MediaFileService mediaFileService;
    private final ScanLocationSevice scanLocationService;
-   private final StoredFileService storedFileService;
 
+   @Autowired
    public FileScanningService(
        FolderService folderService,
        @Qualifier("QuickHash") IHashService quickHash,
        @Qualifier("bramp") ITranscodingService transcodingService,
        MediaFileService mediaFileService,
-       ScanLocationSevice scanLocationService,
-       StoredFileService storedFileService
+       ScanLocationSevice scanLocationService
    ) {
       this.folderService = folderService;
       this.quickHash = quickHash;
       this.transcodingService = transcodingService;
       this.mediaFileService = mediaFileService;
       this.scanLocationService = scanLocationService;
-      this.storedFileService = storedFileService;
    }
 
    @Transactional
@@ -94,6 +92,8 @@ public class FileScanningService {
       ScanLocation location = this.scanLocationService.getScanLocation(id);
       try {
          scanLocationForFiles(location.getPath());
+         location.setLastScan(Instant.now());
+         this.scanLocationService.updateScanLocation(location);
       } catch (InterruptedException | ExecutionException ex) {
          log.error("Failed to scan: " + location.getPath());
       }
@@ -126,55 +126,42 @@ public class FileScanningService {
              filesInLocation.size() / NUMBER_THREADS
          );
 
-         List<Thread> threads = new ArrayList<>();
          for (List<File> partitionedList : parts) {
-            Thread t = new Thread(new ScanThreadTask(partitionedList, workingFolder, addedFiles));
-            t.start();
-            threads.add(t);
+            // Scan on this thread as there was an issue with transactions if this was ran on a different thread.
+            // Since this is already async and the operation is more disk intensive, more threads wouldn't make it run much faster
+            // TODO: Look into finding a way to get around the transactional error
+            new ScanThreadTask(partitionedList, workingFolder, addedFiles).run();
          }
-
-         log.info("Kicked off threads");
-
-         for (Thread treadToJoin : threads) {
-            treadToJoin.join();
-         }
-
-         log.info("Joined off threads");
       }
 
       log.info("Finished Scanning: " + path);
-      workingFolder = this.folderService.saveFolder(workingFolder);
-      return workingFolder;
+      try {
+         workingFolder = this.folderService.saveFolder(workingFolder);
+         return workingFolder;
+      } catch (Exception ex) {
+         return workingFolder;
+      }
    }
 
-   @Transactional
+   /**
+    * Process a single file.
+    * @param file The file to process
+    * @return The processed media file
+    * @throws AlreadyExistsException
+    * @throws IOException
+    * @throws IllegalMimeTypeException
+    */
    private MediaFile processFile(File file) throws AlreadyExistsException, IOException, IllegalMimeTypeException {
-
       // Check to see if we know this file using name and size
       MediaFile existingFile = this.mediaFileService.getMediaFile(file.getName(), file.length()).orElse(null);
       if (existingFile == null) {
-
          // Could not find the file in the database without hashing. Get hash and check using that.
          String hash = quickHash.getHash(file);
          existingFile = this.mediaFileService.getMediaFile(hash).orElse(null);
          if (existingFile == null) {
             // Hash not found in database. Create the new media file object
-            String mimetype = URLConnection.guessContentTypeFromName(file.getName());
-            if (mimetype == null) {
-               log.warn("Could not guess mimetype using name for file: {}", file.getName());
-               try (FileInputStream fis = new FileInputStream(file)) {
-                  mimetype = URLConnection.guessContentTypeFromStream(fis);
-               }
-               if (mimetype == null) {
-                  log.warn("Could not guess mimetype using stream for file: {}", file.getName());
-                  Tika tika = new Tika();
-                  mimetype = tika.detect(file);
-                  if (mimetype == null) {
-                     log.error("Could not determine mimetype for file: {}", file.getName());
-                  }
-               }
-            }
-            
+            String mimetype = getMimeType(file);
+
             // Only add media files, ignore anything thats not a video, image, or audio
             if (!isAllowedMimeType(mimetype)) {
                throw new IllegalMimeTypeException("Illegal mimetype: " + mimetype);
@@ -196,31 +183,20 @@ public class FileScanningService {
                newFile.setThumbnail(getVideoThumb(newFile));
             }
             log.info(
-                "new file added - hash: "
-                + newFile.getHash()
-                + " name: "
-                + newFile.getName()
-                + " mimetype: "
-                + mimetype
+                "new file added - hash: " + newFile.getHash() + " name: " + newFile.getName() + " mimetype: " + mimetype
             );
             return newFile;
          } else {
-            log.error(
-                "file hash already existed file added - hash: "
-                + hash
-                + " name: "
-                + file.getName());
+            log.error("file hash already existed file added - hash: " + hash + " name: " + file.getName());
+            //existingFile.addDuplicatePath(new DuplicateMediaFilePath(file.getAbsolutePath()));
             throw new AlreadyExistsException("file already existed");
          }
       } else {
+         // This file was found via its name and length
+         // TODO: Check path to make sure this isnt a duplicate file
          String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-         log.info(
-             "existing file based on name and size - hash: "
-             + existingFile.getHash()
-             + " name: "
-             + existingFile.getName()
-             + " mimetype: "
-             + mimeType
+         log.info("existing file based on name and size - hash: " + existingFile.getHash() + " name: "
+            + existingFile.getName() + " mimetype: " + mimeType
          );
          existingFile.updateLastSeen();
          
@@ -253,56 +229,64 @@ public class FileScanningService {
             // go deeper...
             recurseDirectory(file.listFiles(), scanFolder, scannedFiles);
          } else {
-            try {
-               // Process the file
-               MediaFile processedFile = processFile(file);
+            handleFile(currentFolder, scannedFiles, file);
+         }
+      }
+      // End of a directory search. Save the folder
+   }
 
-               //Does this file already exist somewhere else in this current scanning session?
-               MediaFile previousFile = scannedFiles.stream()
-                   .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(processedFile.getHash())))
+   private void handleFile(Folder currentFolder, Set<MediaFile> scannedFiles, File file) throws IOException {
+      try {
+         // TODO:
+         // Does file exist
+         // If not process the file
+         // If does, update last seen
+
+         // Process the file
+         MediaFile processedFile = processFile(file);
+
+         //Does this file already exist somewhere else in this current scanning session?
+         MediaFile previousFile = scannedFiles.stream()
+             .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(processedFile.getHash())))
+             .collect(Collectors.toList())
+             .stream()
+             .findFirst()
+             .orElse(null);
+
+         // If this file was found, add to its duplicate file list
+         if (previousFile != null) {
+            log.warn("duplicate hash found during this scanning session!");
+            previousFile.addDuplicatePath(
+                new DuplicateMediaFilePath(processedFile.getPath())
+            );
+         } else {
+            // Make sure the thumbnail is unique too if it has one.
+            if (processedFile.getThumbnail() != null) {
+               previousFile = scannedFiles
+                   .stream()
+                   .filter(mediaFile -> (mediaFile.getThumbnail() != null && mediaFile.getThumbnail().getHash().equalsIgnoreCase(processedFile.getThumbnail().getHash())))
                    .collect(Collectors.toList())
                    .stream()
                    .findFirst()
                    .orElse(null);
-
-               // If this file was found, add to its duplicate file list
                if (previousFile != null) {
-                  log.warn("duplicate hash found during this scanning session!");
-                  previousFile.addDuplicatePath(
-                      new DuplicateMediaFilePath(processedFile.getPath())
-                  );
-               } else {
+                  // Thumbnail file is not unique. Use the previously found's thumbnail
+                  log.info("Found a duplicate thumbnail with hash [{}]", processedFile.getThumbnail().getHash());
+                  File duplicateThumb = new File(processedFile.getThumbnail().getPath());
+                  duplicateThumb.delete();
 
-                  // Make sure the thumbnail is unique too if it has one.
-                  if (processedFile.getThumbnail() != null) {
-                     previousFile = scannedFiles
-                         .stream()
-                         .filter(mediaFile -> (mediaFile.getThumbnail() != null && mediaFile.getThumbnail().getHash().equalsIgnoreCase(processedFile.getThumbnail().getHash())))
-                         .collect(Collectors.toList())
-                         .stream()
-                         .findFirst()
-                         .orElse(null);
-                     if (previousFile != null) {
-                        // Thumbnail file is not unique. Use the previously found's thumbnail
-                        log.info("Found a duplicate thumbnail with hash [{}]", processedFile.getThumbnail().getHash());
-                        File duplicateThumb = new File(processedFile.getThumbnail().getPath());
-                        duplicateThumb.delete();
-
-                        processedFile.setThumbnail(previousFile.getThumbnail());
-                     }
-                  }
-
-                  currentFolder.addFile(processedFile);
-                  scannedFiles.add(processedFile);
+                  processedFile.setThumbnail(previousFile.getThumbnail());
                }
-            } catch (AlreadyExistsException ex) {
-               log.info("file already existed and is recorded. Skipping");
-            } catch (IllegalMimeTypeException ex) {
-               log.info("file's mimetype was illegal: {}", ex.getMessage());
             }
+
+            currentFolder.addFile(processedFile);
+            scannedFiles.add(processedFile);
          }
+      } catch (AlreadyExistsException ex) {
+         log.info("file already existed and is recorded. Skipping");
+      } catch (IllegalMimeTypeException ex) {
+         log.info("file's mimetype was illegal: {}", ex.getMessage());
       }
-      // End of a directory search.
    }
 
    private StoredFile getVideoThumb(MediaFile newFile) {
@@ -321,6 +305,25 @@ public class FileScanningService {
          log.error("Could not generate thumbnail for video: " + newFile.getName());
          return null;
       }
+   }
+
+   private String getMimeType(File file) throws IOException {
+      String mimetype = URLConnection.guessContentTypeFromName(file.getName());
+      if (mimetype == null) {
+         log.warn("Could not guess mimetype using name for file: {}", file.getName());
+         try (FileInputStream fis = new FileInputStream(file)) {
+            mimetype = URLConnection.guessContentTypeFromStream(fis);
+         }
+         if (mimetype == null) {
+            log.warn("Could not guess mimetype using stream for file: {}", file.getName());
+            Tika tika = new Tika();
+            mimetype = tika.detect(file);
+            if (mimetype == null) {
+               log.error("Could not determine mimetype for file: {}", file.getName());
+            }
+         }
+      }
+      return mimetype;
    }
 
    private boolean isAllowedMimeType(String mimetype) {
