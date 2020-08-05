@@ -60,6 +60,7 @@ import { MediaInfoComponent } from './media/media-info/media-info.component';
 import { DataSizePipe } from './common/data-size.pipe';
 import { TagInfoComponent } from './tags/tag-info/tag-info.component';
 import { MediaListGridItemComponent } from './media/media-list-grid-item/media-list-grid-item.component';
+import { VjsPlayerComponent } from './vjs-player/vjs-player.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import { MediaListGridItemComponent } from './media/media-list-grid-item/media-l
     MediaInfoComponent,
     DataSizePipe,
     TagInfoComponent,
-    MediaListGridItemComponent
+    MediaListGridItemComponent,
+    VjsPlayerComponent
   ],
   imports: [
     AppRoutingModule,
