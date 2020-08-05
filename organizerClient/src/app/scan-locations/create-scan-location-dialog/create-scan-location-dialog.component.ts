@@ -11,6 +11,7 @@ export class CreateScanLocationDialogComponent implements OnInit {
 
   public showHidden = false;  // TODO: Implement better
 
+  public currentPath: string;
   public path: string;
 
   public breadcrumbs: string[] = [];
@@ -40,6 +41,7 @@ export class CreateScanLocationDialogComponent implements OnInit {
       this.breadcrumbs.push(this.path);
     }
     this.path = directory;
+    this.currentPath = directory;
     this.browseFileSystemService.getChildDirectories(directory, this.showHidden).subscribe(res => {
       this.directories = res.data;
     });
@@ -50,15 +52,28 @@ export class CreateScanLocationDialogComponent implements OnInit {
     const toGet = this.breadcrumbs.pop();
     console.log(`back to: ${toGet}`);
     this.path = toGet;
-    if (toGet) {
-      this.browseFileSystemService.getChildDirectories(toGet, this.showHidden).subscribe(res => {
+    this.processNavigation(toGet);
+  }
+
+  refresh() {
+    this.processNavigation(this.currentPath);
+  }
+
+  navigateTo() {
+    this.processNavigation(this.path);
+  }
+
+  processNavigation(path: string) {
+    if (path) {
+      this.currentPath = path;
+      this.browseFileSystemService.getChildDirectories(path, this.showHidden).subscribe(res => {
         this.directories = res.data;
       });
     } else {
+      this.currentPath = null;
       this.browseFileSystemService.getRootDirectories().subscribe(res => {
         this.directories = res.data;
       });
     }
   }
-
 }

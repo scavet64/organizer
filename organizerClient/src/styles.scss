@@ -88,6 +88,11 @@ body {
   text-overflow: ellipsis;
 }
 
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+
 /////////////// Custom Scrollbar stuff ///////////////
 
 .fixed[scrollx=true], div[scrolly=true] {

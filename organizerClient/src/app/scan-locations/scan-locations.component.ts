@@ -46,7 +46,7 @@ export class ScanLocationsComponent implements OnInit {
 
   createLocation() {
     const dialogRef = this.dialogRef.open(CreateScanLocationDialogComponent, {
-      width: '500px'
+      width: '750px'
     });
 
     dialogRef.afterClosed().subscribe(result => {

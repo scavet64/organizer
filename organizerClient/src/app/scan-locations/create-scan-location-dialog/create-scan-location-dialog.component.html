@@ -1,14 +1,20 @@
 <div mat-dialog-content>
-  <p>Browse to the path that should be scanned</p>
+  <p class="flex-center">Browse to the path that should be scanned</p>
   <mat-form-field>
-    <input matInput [(ngModel)]="path" placeholder="Path to scan" >
-  </mat-form-field>
-  <div class="directory-container">
-    <div *ngIf="path">
-      <button mat-button (click)="backClick()" class="directory-button odd-button">
-        <i class="fas fa-arrow-left"></i>&nbsp;back
+    <div class="input-container">
+      <button *ngIf="currentPath" mat-icon-button (click)="backClick()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <input matInput [(ngModel)]="path" placeholder="Path to scan" (keyup.enter)="navigateTo()">
+      <button mat-icon-button (click)="navigateTo()">
+        <i class="far fa-arrow-alt-circle-right"></i>
+      </button>
+      <button mat-icon-button (click)="refresh()">
+        <i class="fas fa-sync-alt"></i>
       </button>
     </div>
+  </mat-form-field>
+  <div class="directory-container">
     <div class="" *ngFor="let directory of directories; let even = even; let odd = odd">
       <button mat-button (click)="directoryClick(directory)" class="directory-button" [ngClass]="{'even-button': even, 'odd-button': odd}">
         <i class="fas fa-folder"></i>
