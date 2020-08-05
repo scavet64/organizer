@@ -27,12 +27,10 @@ export class VideoplayerComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    // TODO: This doesnt work with videojs. Get this to work
     let volume = localStorage.getItem('volume');
     if (!volume) {
       volume = '0.5';
     }
-    this.target.nativeElement.volume = volume;
 
     let optsToUse;
 
@@ -53,6 +51,7 @@ export class VideoplayerComponent implements OnInit, OnDestroy {
     this.player = videojs(this.target.nativeElement, optsToUse, function onPlayerReady() {
       console.log('onPlayerReady', this);
       console.log(this.currentSrc());
+      this.volume(volume);
       this.play();
     });
 
@@ -68,8 +67,9 @@ export class VideoplayerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // Save the users volume level
+    localStorage.setItem('volume', this.player.volume());
     // destroy player
-    // localStorage.setItem('volume', this.videoplayer.nativeElement.volume);
     if (this.player) {
       this.player.dispose();
     }
