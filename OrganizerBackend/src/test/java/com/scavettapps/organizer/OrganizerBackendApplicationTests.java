@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.scavettapps.OrganizerBackend;
+package com.scavettapps.organizer;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * @author Vincent Scavetta
  */
+@RunWith(SpringRunner.class)
 @SpringBootTest
 class OrganizerBackendApplicationTests {
 
