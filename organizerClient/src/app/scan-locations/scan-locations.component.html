@@ -30,7 +30,7 @@
         <td mat-cell *matCellDef="let location">
           <div class="description-wrapper">
             <p>
-              {{location.lastScan || 'Never'}}
+              {{location.lastScan | date:'medium' || 'Never'}}
             </p>
           </div>
 
