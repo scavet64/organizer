@@ -96,6 +96,7 @@ public class BrampTranscodingService implements ITranscodingService {
          }
 
          FFmpegProbeResult mediaProbeResult = ffprobe.probe(source.getAbsolutePath());
+         String segmentTimes = getSegmentTimes(mediaProbeResult.getFormat().duration);
 
          // Build the ffmpeg command
          FFmpegBuilder builder = new FFmpegBuilder()
@@ -111,7 +112,9 @@ public class BrampTranscodingService implements ITranscodingService {
              .addExtraArgs("-hls_flags", "delete_segments")
              .addExtraArgs("-segment_list", targetPlaylistFile.getAbsolutePath())
              .addExtraArgs("-segment_list_type", "hls")
-             .addExtraArgs("-segment_list_size", "0")
+             .addExtraArgs("-segment_times", segmentTimes)
+            .addExtraArgs("-g", "30")
+             .addExtraArgs("-map", "0")
              .addExtraArgs("-pix_fmt", "yuv420p") // To support iPhones, this needed to be set.
 
              .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
@@ -139,8 +142,6 @@ public class BrampTranscodingService implements ITranscodingService {
             }
          });
 
-         System.out.println(builder.toString());
-
          Thread t = new Thread(() -> {
             job.run();
          });
@@ -158,6 +159,15 @@ public class BrampTranscodingService implements ITranscodingService {
       } catch (IOException ex) {
          throw new TranscodingException(ex);
       }
+   }
+
+   private String getSegmentTimes(double duration) {
+      int segmentSize = 2;
+      StringBuilder b = new StringBuilder("0");
+      for (double i = segmentSize; i < duration; i += segmentSize) {
+         b.append(",").append(i);
+      }
+      return b.toString();
    }
 
    @Override
