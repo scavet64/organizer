@@ -141,7 +141,7 @@ public class MediaFileController {
 
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
       
-      File partFileTarget = Paths.get(TEMP_LOCATION, mediaFile.getHash(),partfile).toFile();
+      File partFileTarget = Paths.get(TEMP_LOCATION, mediaFile.getHash(),partfile + ".ts").toFile();
       
       Resource resource = new UrlResource(partFileTarget.toURI());
       
