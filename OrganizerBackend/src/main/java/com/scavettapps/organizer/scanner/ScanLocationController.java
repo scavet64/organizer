@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.scanner;
 
+import com.scavettapps.organizer.core.OrganizerRestController;
 import com.scavettapps.organizer.scanner.engine.FileScanningService;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.ErrorResponse;
@@ -36,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Vincent Scavetta
  */
-@RestController()
+@OrganizerRestController()
 @RequestMapping("/scan")
 public class ScanLocationController {
    

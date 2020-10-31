@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.core.OrganizerRestController;
 import com.scavettapps.organizer.media.json.AddTagRequest;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
@@ -51,7 +52,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Vincent Scavetta
  */
-@RestController
+@OrganizerRestController
 @RequestMapping("/media")
 public class MediaFileController {
 

@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.files;
 
+import com.scavettapps.organizer.core.OrganizerRestController;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
 import java.io.FileNotFoundException;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Vincent Scavetta.
  */
-@RestController
+@OrganizerRestController
 @RequestMapping("/stored")
 public class StoredFileController {
 

@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.folder;
 
+import com.scavettapps.organizer.core.OrganizerRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 /**
  * @author Vincent Scavetta
  */
-@RestController
+@OrganizerRestController
 public class FolderController {
 
    @Autowired

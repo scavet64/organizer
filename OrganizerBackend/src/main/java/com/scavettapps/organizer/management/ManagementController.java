@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.management;
 
+import com.scavettapps.organizer.core.OrganizerRestController;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.ErrorResponse;
 import com.scavettapps.organizer.core.response.Response;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Vincent Scavetta.
  */
-@RestController
+@OrganizerRestController
 @RequestMapping("/management")
 public class ManagementController {
    
