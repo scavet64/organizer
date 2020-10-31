@@ -1,8 +1,8 @@
-<div class="header-container mat-elevation-z3">
+<div *ngIf="isMobile" class="header-container mat-elevation-z3">
   <button mat-icon-button (click)="sidenav.toggle()"><mat-icon>menu</mat-icon></button>
   <app-header ></app-header >
 </div>
-<mat-sidenav-container class="content-container">
+<mat-sidenav-container class="content-container" [ngClass]="{'content-container-mobile' : isMobile}">
   <mat-sidenav #sidenav [mode]="sideNavMode" [opened]="isOpened" class="sidenav">
     <app-sidenav></app-sidenav>
   </mat-sidenav>

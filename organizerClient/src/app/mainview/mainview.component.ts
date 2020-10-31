@@ -11,6 +11,7 @@ export class MainviewComponent implements OnInit {
   private MIN_WIDTH = Constants.MIN_WIDTH;
   private innerWidth: number;
   isOpened: boolean;
+  isMobile: boolean;
 
   sideNavMode: string;
   DESKTOP_SIDENAV = 'side';
@@ -31,9 +32,11 @@ export class MainviewComponent implements OnInit {
     this.innerWidth = window.innerWidth;
     if (this.innerWidth < this.MIN_WIDTH) {
       this.sideNavMode = this.MOBILE_SIDENAV;
+      this.isMobile = true;
       this.isOpened = false;
     } else {
       this.sideNavMode = this.DESKTOP_SIDENAV;
+      this.isMobile = false;
       this.isOpened = true;
     }
   }

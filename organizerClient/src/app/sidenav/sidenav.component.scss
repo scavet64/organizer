@@ -1,6 +1,18 @@
+.title {
+  height: 75px;
+  align-items: center;
+  font-size: 30px;
+  font-weight: 100;
+}
+
+.title-rule {
+  margin-top: 0px;
+  width: 80%;
+  margin-bottom: 15px;
+}
+
 .sidenav-container {
   color: white;
-  padding: 1rem 0;
 }
 
 .menu-item {
@@ -53,4 +65,8 @@
 
 .menu-expander>.mat-expansion-indicator, .mat-expansion-indicator::after, .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
   color: white !important;
+}
+
+.menu-icon {
+  width: 20px;
 }
