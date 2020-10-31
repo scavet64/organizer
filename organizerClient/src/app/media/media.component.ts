@@ -6,7 +6,7 @@ import { PaginationResponse } from '../common/page-response';
 import { MediaService } from './media.service';
 import { TagService } from '../tags/tag.service';
 import { MatAutocomplete, MatChipInputEvent, MatAutocompleteSelectedEvent, MatDialog } from '@angular/material';
-import { startWith, map, filter } from 'rxjs/operators';
+import { startWith, map, flatMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { AlertService } from '../alert/alert.service';
@@ -16,6 +16,7 @@ import { MediaSearchRequest } from './requests/media-search-request';
 import { SlideInOut } from '../animations/SlideInOut';
 import { MediaSortType } from './media.sort.type';
 import { MediaTagsComponent } from './media-tags/media-tags.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-media',
@@ -24,47 +25,82 @@ import { MediaTagsComponent } from './media-tags/media-tags.component';
   animations: [SlideInOut]
 })
 export class MediaComponent implements OnInit {
+  // Default search properties
+  public static readonly DEFAULT_PAGE = 0;
+  public static readonly DEFAULT_RESULTS_PER_PAGE = 20;
+  public static readonly DEFAULT_SORT_COLUMN = MediaSortType.DateAddedSort.value;
+  public static readonly DEFAULT_SORT_DIRECTION = 'desc';
+  public static readonly DEFAULT_ONLY_SHOW_FAVORITE = false;
+  public static readonly DEFAULT_MEDIA_TYPE = null;
+
+  // Private readonly properties specific for this component
   private readonly advanceSearchStateKey = 'mediaAdvanceSearch';
-
-  visible = true;
-  selectable = true;
-  addOnBlur = true;
-  separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly pageSizeOptions = [10, 20, 50];
-  pageResponse: PaginationResponse<MediaFile>;
-  knownTags: TagModel[];
-  isListView = false;
-  searchBox: string;
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly mediaSortOptions: MediaSortType[] = MediaSortType.mediaSortOptions;
 
-  tagControl = new FormControl();
-
-  selectedTags: TagModel[] = [];
-  filteredTags: Observable<TagModel[]>;
-
-  mediaSortOptions: MediaSortType[] = MediaSortType.mediaSortOptions;
-  sortColumn: string = MediaSortType.DateAddedSort.value;
-  sortDirection: string = 'desc';
-  onlyShowFavorite = false;
-  mediaFilter: string = null;
-
-  selected = new FormControl(0);
-
+  // Visual based properties. These can change based on user interaction
   showAdvanceSearch = false;
   advanceSearchState = 'closed';
-
   editingMultiple = false;
+  isListView = false;
+
+  // Tag related properties.
+  tagControl = new FormControl();
+  readonly selectable = true;
+  readonly addOnBlur = true;            // True means that the tag will be added when the control loses focus
+  knownTags: TagModel[];                // All known tags in the application
+  filteredTags: Observable<TagModel[]>; // Filtered tags when typing in the list.
+
+  // Search related properties.
+  searchBox: string;
+  selectedTags: TagModel[] = [];
+  sortColumn: string;
+  sortDirection: string;
+  onlyShowFavorite: boolean;
+  mediaFilter: string;
+
+  // Media Type Controller
+  selectedMediaTypeControl = new FormControl(0);
+
+  // The actual data
+  pageResponse: PaginationResponse<MediaFile>;
 
   @ViewChild('chipInput', { static: false }) chipInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', { static: false }) matAutocomplete: MatAutocomplete;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private alertService: AlertService,
     private dialog: MatDialog,
     private mediaFileService: MediaService,
     private resourceService: ResourceService,
+    private router: Router,
     private tagService: TagService,
     public videoplayerService: VideoplayerService
   ) {
+  }
+
+  buildSearchRequest(
+    page = MediaComponent.DEFAULT_PAGE,
+    pageSize = MediaComponent.DEFAULT_RESULTS_PER_PAGE,
+    tagIds = null
+  ): MediaSearchRequest {
+    if (!tagIds) {
+      tagIds = [];
+      this.selectedTags.forEach(tag => tagIds.push(tag.id));
+    }
+
+    return new MediaSearchRequest(
+      this.searchBox,
+      tagIds,
+      this.sortColumn,
+      this.sortDirection,
+      this.mediaFilter,
+      this.onlyShowFavorite,
+      page,
+      pageSize
+    );
   }
 
   ngOnInit() {
@@ -72,34 +108,51 @@ export class MediaComponent implements OnInit {
     if (storedPref) {
       this.advanceSearchState = storedPref;
     }
-    this.search();
 
-    this.tagService.getAllTags().subscribe(res => {
-      this.knownTags = res.data;
-      console.log(this.knownTags);
-      this.filteredTags = this.tagControl.valueChanges.pipe(
-        startWith(null),
-        map((tagname: string | null) => tagname ? this._filter(tagname) : this.knownTags.slice()));
-    }, (err) => {
-      console.log(`Could not get tags`);
-    });
-  }
+    console.log("init running");
+    this.tagService.getAllTags().pipe(
+      flatMap((tagsResult) => {
+        console.log("Tags:");
+        this.knownTags = tagsResult.data;
+        console.log(this.knownTags);
+        this.filteredTags = this.tagControl.valueChanges.pipe(
+          startWith(null),
+          map((tagname: string | null) => {
+            console.log('filtertag');
+            console.log(tagname);
+            if (typeof tagname === 'string') {
+              return tagname ? this._filter(tagname) : this.knownTags.slice();
+            }
+          }));
+        console.log(this.filteredTags);
+        return this.activatedRoute.queryParams;
+      }),
+      flatMap((params) => {
+        // Process tag list
+        this.selectedTags = [];
+        if (params.tagIds) {
+          const tagIds = params.tagIds.split(',');
+          tagIds.forEach(id => {
+            this.selectedTags.push(this.getTagFromId(parseInt(id, 10)));
+          });
+        }
 
-  onPageChange(event) {
-    console.log(event);
-    console.log(event.pageIndex);
-    const request = new MediaSearchRequest(
-      this.searchBox,
-      this.selectedTags,
-      this.sortColumn,
-      this.sortDirection,
-      this.mediaFilter,
-      this.onlyShowFavorite,
-      event.pageIndex,
-      event.pageSize
-    );
-    this.mediaFileService.getMediaPagesSearch(request).subscribe(res => {
-      this.pageResponse = res.data;
+        console.log(params);
+        this.searchBox = params.name;
+        this.sortColumn = params.sortColumn || MediaComponent.DEFAULT_SORT_COLUMN;
+        this.sortDirection = params.sortDirection || MediaComponent.DEFAULT_SORT_DIRECTION;
+        this.mediaFilter = params.mediaType || MediaComponent.DEFAULT_MEDIA_TYPE;
+        this.onlyShowFavorite = params.onlyShowFavorite || MediaComponent.DEFAULT_ONLY_SHOW_FAVORITE;
+        const searchRequest = this.buildSearchRequest(params.currentPage, params.resultsPerPage, params.tagIds);
+        console.log('Init Search Request:');
+        console.log(searchRequest);
+
+        return this.mediaFileService.getMediaPagesSearch(searchRequest);
+      })
+    ).subscribe((mediaSearchResult) => {
+      console.log(mediaSearchResult);
+      this.pageResponse = mediaSearchResult.data;
+      console.log(this.pageResponse);
     });
   }
 
@@ -130,6 +183,11 @@ export class MediaComponent implements OnInit {
     return this.knownTags.find(tag => tag.name === name);
   }
 
+  private getTagFromId(id: number) {
+    console.log(this.knownTags);
+    return this.knownTags.find(tag => tag.id === id);
+  }
+
   removeTagFromSearch(tag: TagModel): void {
     const index = this.selectedTags.indexOf(tag);
 
@@ -154,24 +212,15 @@ export class MediaComponent implements OnInit {
     return filtered;
   }
 
-  search() {
-    console.log(this.searchBox);
-    console.log(this.sortColumn);
-    console.log(this.sortDirection);
-    console.log(this.onlyShowFavorite);
-    const request = new MediaSearchRequest(
-      this.searchBox,
-      this.selectedTags,
-      this.sortColumn,
-      this.sortDirection,
-      this.mediaFilter,
-      this.onlyShowFavorite,
-      0,
-      this.pageResponse ? this.pageResponse.size : 20
-    );
-    this.mediaFileService.getMediaPagesSearch(request).subscribe(res => {
-      this.pageResponse = res.data;
-      console.log(this.pageResponse);
+  onPageChange(event) {
+    this.search(event.pageIndex, event.pageSize);
+  }
+
+  search(pageNum = 0, pageSize = this.pageResponse ? this.pageResponse.size : 20) {
+    const request = this.buildSearchRequest(pageNum, pageSize);
+
+    this.router.navigate(['/media'], {
+      queryParams: request.toUrlParams()
     });
   }
 
@@ -235,12 +284,8 @@ export class MediaComponent implements OnInit {
   favoriteToggle(mediaFile: MediaFile) {
     this.mediaFileService.toggleFavorite(mediaFile.id, !mediaFile.isFavorite).subscribe(res => {
       mediaFile.isFavorite = res.data.isFavorite;
-      this.alertService.success(`Successfully favorited media`);
+      this.alertService.success(`Successfully set media as a favorite`);
     });
-  }
-
-  editMultiple() {
-    this.editingMultiple = true;
   }
 
   chooseSelectedMediasTags() {
@@ -274,6 +319,10 @@ export class MediaComponent implements OnInit {
     });
 
     console.log(`total checked: ${checkedMedia.length}`);
+  }
+
+  editMultiple() {
+    this.editingMultiple = true;
   }
 
   cancelEditMultiple() {

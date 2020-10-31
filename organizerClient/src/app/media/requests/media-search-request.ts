@@ -1,9 +1,9 @@
 import { HttpParams } from '@angular/common/http';
 import { PageRequest } from '../../common/PageRequest';
-import { TagModel } from '../../tags/tagModel';
 import { PageParams } from '../../common/PageParams';
 
 export class MediaSearchRequest extends PageRequest {
+
   sortColumn: string;
   sortDirection: string;
   name: string;
@@ -13,13 +13,13 @@ export class MediaSearchRequest extends PageRequest {
 
   constructor(
     name: string,
-    tags: TagModel[],
-    sortColumn: string = 'id',
-    sortDirection: string = 'desc',
+    tags: number[],
+    sortColumn: string,
+    sortDirection: string,
     mediaType: string,
     onlyShowFavorite: boolean,
-    pageNumber: number = 0,
-    resultsPerPage: number = 20
+    pageNumber: number,
+    resultsPerPage: number
     ) {
     super(pageNumber, resultsPerPage);
     this.name = name;
@@ -28,11 +28,20 @@ export class MediaSearchRequest extends PageRequest {
     this.sortDirection = sortDirection;
     this.mediaType = mediaType;
     this.onlyShowFavorite = onlyShowFavorite;
+    this.tagIds = tags;
+  }
 
-    if (tags != null) {
-      tags.forEach(tag => this.tagIds.push(tag.id));
-    }
-
+  toUrlParams() {
+    return {
+      ...((this.name && this.name !== '') && {name: this.name}),
+      ...((this.mediaType && this.mediaType !== '') && {mediaType: this.mediaType}),
+      ...(this.tagIds.length > 0 && {tagIds: this.tagIds.toString()}),
+      ...(this.sortColumn !== 'dateAdded' && { sortColumn: this.sortColumn }),
+      ...(this.sortDirection !== 'desc' && { sortDirection: this.sortDirection}),
+      ...(this.onlyShowFavorite && { onlyShowFavorite: this.onlyShowFavorite }),
+      ...(this.currentPage !== 0 && { currentPage: this.currentPage }),
+      ...(this.resultsPerPage !== 20 && {resultsPerPage: this.resultsPerPage})
+    };
   }
 
   toHttpParams(): HttpParams {
