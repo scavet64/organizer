@@ -1,13 +1,9 @@
 <div class="main-wrapper">
-  <mat-checkbox *ngIf="modifyMultiple" class="checkbox" [(ngModel)]="file.isSelected">
+  <mat-checkbox *ngIf="modifyMultiple" class="checkbox" [(ngModel)]="file.isSelected" (change)="checkboxClicked.next()"></mat-checkbox>
 
-  </mat-checkbox>
   <div class="wrapper">
-
     <!-- Media is a video -->
-
     <img [src]="imgSource" class="thumbnail" (click)="openMediaClick()" />
-
 
     <div class="content-wrapper">
       <div style="padding: 10px">

@@ -1,5 +1,4 @@
 <div class="content-margins">
-
   <div class="filter-wrapper" style="margin-top:20px;">
     <mat-form-field>
       <input matInput [(ngModel)]="searchBox" placeholder="Filter by Name" (keyup.enter)="search()">
@@ -84,18 +83,20 @@
   </div>
 
 
-
   <span class="body-header">
     <!-- Media Type Filter -->
-    <mat-tab-group [selectedIndex]="selectedMediaTypeControl.value" (selectedIndexChange)="mediaTypeFilterChanged($event)"
-      animationDuration="0ms">
-      <mat-tab label="All">
-      </mat-tab>
-      <mat-tab label="Videos">
-      </mat-tab>
-      <mat-tab label="Images">
-      </mat-tab>
-    </mat-tab-group>
+    <div class="checkbox-tabgroup-container">
+      <mat-checkbox *ngIf="editingMultiple" class="checkbox-all" [(ngModel)]="areAllChecked" [(indeterminate)]="isIndeterminate" (change)="allCheckClicked()"></mat-checkbox>
+      <mat-tab-group [selectedIndex]="selectedMediaTypeControl.value" (selectedIndexChange)="mediaTypeFilterChanged($event)"
+        animationDuration="0ms">
+        <mat-tab label="All">
+        </mat-tab>
+        <mat-tab label="Videos">
+        </mat-tab>
+        <mat-tab label="Images">
+        </mat-tab>
+      </mat-tab-group>
+    </div>
 
     <!-- Paginator -->
     <div style="display:flex">
@@ -112,17 +113,15 @@
         [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
       </mat-paginator>
     </div>
-
   </span>
-
-
 
 
   <!-- List View -->
   <div *ngIf="isListView">
     <app-media-list-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags"
       [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
-      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)">
+      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
+      (checkboxClicked)="checkboxClicked()">
     </app-media-list-item>
   </div>
 
@@ -130,7 +129,8 @@
   <div *ngIf="!isListView">
     <app-media-list-grid-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags"
       [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
-      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple">
+      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
+      (checkboxClicked)="checkboxClicked()">
     </app-media-list-grid-item>
   </div>
 

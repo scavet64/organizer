@@ -16,6 +16,7 @@ import { MediaInfoComponent } from '../media-info/media-info.component';
 })
 export class MediaListItemComponent implements OnInit {
 
+  @Input() modifyMultiple: boolean;
   @Input() knownTags: TagModel[];
   @Input() file: MediaFile;
   @Input() imgSource: string;
@@ -23,6 +24,7 @@ export class MediaListItemComponent implements OnInit {
   @Output() openMedia: EventEmitter<any> = new EventEmitter();
   @Output() tagClicked: EventEmitter<any> = new EventEmitter();
   @Output() favoriteToggled: EventEmitter<any> = new EventEmitter();
+  @Output() checkboxClicked: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog
@@ -73,6 +75,11 @@ export class MediaListItemComponent implements OnInit {
 
   favoriteToggle() {
     this.favoriteToggled.emit(this.file);
+  }
+
+  checkboxClickedMethod(file: MediaFile) {
+    file.isSelected = !file.isSelected;
+    this.checkboxClicked.next();
   }
 
 }

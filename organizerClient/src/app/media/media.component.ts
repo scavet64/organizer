@@ -44,6 +44,8 @@ export class MediaComponent implements OnInit {
   advanceSearchState = 'closed';
   editingMultiple = false;
   isListView = false;
+  areAllChecked = false;
+  isIndeterminate = false;
 
   // Tag related properties.
   tagControl = new FormControl();
@@ -108,6 +110,8 @@ export class MediaComponent implements OnInit {
     if (storedPref) {
       this.advanceSearchState = storedPref;
     }
+    this.areAllChecked = false;
+    this.isIndeterminate = false;
 
     console.log("init running");
     this.tagService.getAllTags().pipe(
@@ -333,5 +337,35 @@ export class MediaComponent implements OnInit {
   cancelEditMultiple() {
     this.editingMultiple = false;
     this.pageResponse.content.forEach(file => file.isSelected = false);
+  }
+
+  /**
+   * Callback method for when a checkbox inside of the list is clicked.
+   * This will maintain the current state of the indeterminate or all checked
+   */
+  checkboxClicked() {
+    const selected = this.pageResponse.content.filter(file => file.isSelected);
+    if (selected.length === 0) {
+      this.areAllChecked = false;
+      this.isIndeterminate = false;
+    } else if (selected.length === this.pageResponse.content.length) {
+      this.isIndeterminate = false;
+      this.areAllChecked = true;
+    } else {
+      this.isIndeterminate = true;
+      this.areAllChecked = false;
+    }
+  }
+
+  /**
+   * Callback for when the check-all checkbox is clicked. If the current
+   * state is indeterminate, the rest of the boxes will be checked.
+   */
+  allCheckClicked() {
+    if (this.isIndeterminate) {
+      this.areAllChecked = true;
+      this.isIndeterminate = false;
+    }
+    this.pageResponse.content.forEach(file => file.isSelected = this.areAllChecked);
   }
 }

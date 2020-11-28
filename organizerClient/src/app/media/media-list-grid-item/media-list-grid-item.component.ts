@@ -24,6 +24,7 @@ export class MediaListGridItemComponent implements OnInit {
   @Output() openMedia: EventEmitter<any> = new EventEmitter();
   @Output() tagClicked: EventEmitter<any> = new EventEmitter();
   @Output() favoriteToggled: EventEmitter<any> = new EventEmitter();
+  @Output() checkboxClicked: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog
@@ -75,6 +76,11 @@ export class MediaListGridItemComponent implements OnInit {
 
   favoriteToggle() {
     this.favoriteToggled.emit(this.file);
+  }
+
+  checkboxClickedMethod(file: MediaFile) {
+    file.isSelected = !file.isSelected;
+    this.checkboxClicked.next();
   }
 
 }
