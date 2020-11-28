@@ -7,12 +7,18 @@
   <div *ngIf="!currentFolder" style="margin-top:50px;">
     Scanned Media Folders
 
-    <div class="folder-container">
-      <div *ngFor="let rootFolder of rootFolders" class="" style="margin: 10px">
-        <button mat-button (click)="folderClicked(rootFolder)" class="folder-button mat-elevation-z3">
-          <i class="fas fa-folder"></i>
-          &nbsp;{{rootFolder.folderName}}
-        </button>
+    <div class="folder-wrapper">
+      <div class="folder-container">
+        <div *ngFor="let rootFolder of rootFolders">
+          <div matRipple (click)="folderClicked(rootFolder)" class="folder-button2 mat-elevation-z3">
+            <div>
+              <i class="fas fa-folder"></i>&nbsp;{{rootFolder.folderName}}
+            </div>
+            <div style="width: 100px;">
+              Children: {{rootFolder.files.length + rootFolder.folders.length}}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -34,21 +40,23 @@
 
     <!-- Folder List -->
     <div class="folder-wrapper">
-      <div *ngFor="let rootFolder of currentFolder.folders" class="folder-container" >
+      <div *ngFor="let rootFolder of currentFolder.folders" class="folder-container">
         <div matRipple (click)="folderClicked(rootFolder)" class="folder-button2 mat-elevation-z3">
-            <div>
-              <i class="fas fa-folder"></i>&nbsp;{{rootFolder.folderName}}
-            </div>
-            <div style="width: 100px;">
-              Children: {{rootFolder.files.length + rootFolder.folders.length}}
-            </div>
+          <div>
+            <i class="fas fa-folder"></i>&nbsp;{{rootFolder.folderName}}
           </div>
+          <div style="width: 100px;">
+            Children: {{rootFolder.files.length + rootFolder.folders.length}}
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Media List -->
     <div>
-      <app-media-list-item *ngFor="let file of currentFolder.files" [file]="file" [knownTags]="knownTags" [imgSource]="mediaFileService.getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="videoplayerService.showVideo(file)">
+      <app-media-list-item *ngFor="let file of currentFolder.files" [file]="file" [knownTags]="knownTags"
+        [imgSource]="mediaFileService.getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)"
+        (openMedia)="videoplayerService.showVideo(file)">
       </app-media-list-item>
     </div>
 
