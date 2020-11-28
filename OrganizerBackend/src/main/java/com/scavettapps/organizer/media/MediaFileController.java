@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.core.OrganizerRestController;
 import com.scavettapps.organizer.media.json.AddTagRequest;
 import com.scavettapps.organizer.core.response.DataResponse;
@@ -139,7 +140,7 @@ public class MediaFileController {
    )
        throws FileNotFoundException, TranscodingException, MalformedURLException {
 
-      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
+      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElseThrow(EntityNotFoundException::new);
       
       File partFileTarget = Paths.get(TEMP_LOCATION, mediaFile.getHash(),partfile + ".ts").toFile();
       

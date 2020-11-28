@@ -56,7 +56,7 @@ export class MediaComponent implements OnInit {
   mediaFilter: string;
 
   // Media Type Controller
-  selectedMediaTypeControl = new FormControl(0);
+  selectedMediaIndex = 0;
 
   // The actual data
   pageResponse: PaginationResponse<MediaFile>;
@@ -137,7 +137,7 @@ export class MediaComponent implements OnInit {
         const searchRequest = this.buildSearchRequest(params.currentPage, params.resultsPerPage, params.tagIds);
         console.log('Init Search Request:');
         console.log(searchRequest);
-
+        this.selectedMediaIndex = this.mediaFilterToIndexValue(this.mediaFilter);
         return this.mediaFileService.getMediaPagesSearch(searchRequest);
       })
     ).subscribe((mediaSearchResult) => {
@@ -225,6 +225,7 @@ export class MediaComponent implements OnInit {
     this.search();
   }
 
+  // TODO: Look into moving into media-list.component
   mediaTypeFilterChanged(event) {
     console.log(event);
     switch (event) {
@@ -239,6 +240,18 @@ export class MediaComponent implements OnInit {
         break;
     }
     this.search();
+  }
+
+  // TODO: Look into moving into media-list.component
+  mediaFilterToIndexValue(value) {
+    switch (value) {
+      case 'video':
+        return 1;
+      case 'image':
+        return 2;
+      default:
+        return 0;
+    }
   }
 
   showMoreFilters() {

@@ -28,10 +28,7 @@ export class MediaListComponent implements OnInit {
   @Output() tagClicked: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectedMediaChange: EventEmitter<any> = new EventEmitter<any>();
 
-  selectedMediaTypeControl = new FormControl(0);
-
   editingMultiple = false;
-  // isListView = false;
   areAllChecked = false;
   isIndeterminate = false;
 
@@ -51,6 +48,7 @@ export class MediaListComponent implements OnInit {
     this.tagService.getAllTags().subscribe(res => {
       this.knownTags = res.data;
     });
+    console.log(`selectedIndex is: ${this.selectedMediaIndex}`);
   }
 
   ///////////////// Checkbox and multiple tag editing /////////////////
@@ -148,6 +146,7 @@ export class MediaListComponent implements OnInit {
     } else if (mediaFile.mimetype.includes('image')) {
       url = this.resourceService.getMediaUrl(mediaFile);
     }
+    // TODO: Add Audio Thumbnail Icon
 
     // if URL couldn't be generated, fall back to this.
     if (!url) {

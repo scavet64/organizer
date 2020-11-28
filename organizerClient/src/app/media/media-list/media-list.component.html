@@ -3,7 +3,7 @@
   <div class="checkbox-tabgroup-container">
     <mat-checkbox *ngIf="editingMultiple" class="checkbox-all" [(ngModel)]="areAllChecked"
       [(indeterminate)]="isIndeterminate" (change)="allCheckClicked()"></mat-checkbox>
-    <mat-tab-group [selectedIndex]="selectedMediaTypeControl.value"
+    <mat-tab-group *ngIf="selectedMediaIndex !== undefined" [(selectedIndex)]="selectedMediaIndex"
       (selectedIndexChange)="selectedMediaChange.next($event)" animationDuration="0ms">
       <mat-tab label="All">
       </mat-tab>
