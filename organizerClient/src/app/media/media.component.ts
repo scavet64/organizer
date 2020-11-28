@@ -1,4 +1,4 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { COMMA, ENTER, TAB } from '@angular/cdk/keycodes';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MediaFile } from './media.file';
 import { TagModel } from '../tags/tagModel';
@@ -36,7 +36,7 @@ export class MediaComponent implements OnInit {
   // Private readonly properties specific for this component
   private readonly advanceSearchStateKey = 'mediaAdvanceSearch';
   readonly pageSizeOptions = [10, 20, 50];
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA, TAB];
   readonly mediaSortOptions: MediaSortType[] = MediaSortType.mediaSortOptions;
 
   // Visual based properties. These can change based on user interaction
@@ -165,7 +165,12 @@ export class MediaComponent implements OnInit {
 
       // Add our Tag
       if ((value || '').trim()) {
-        this.selectedTags.push(this.getTagFromName(value));
+        const matchingTag = this.getTagFromName(value);
+        if (matchingTag) {
+          this.selectedTags.push(matchingTag);
+        } else {
+
+        }
         // Kick off a search
         this.search();
       }
