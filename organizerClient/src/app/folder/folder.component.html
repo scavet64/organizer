@@ -1,7 +1,4 @@
 <div class="content-margins">
-  <!-- <div >
-    Scanned Media Folders
-  </div> -->
 
   <!-- Root folders list -->
   <div *ngIf="!currentFolder" style="margin-top:50px;">
@@ -23,6 +20,7 @@
     </div>
   </div>
 
+  <!-- Current Folder List -->
   <div *ngIf="currentFolder" style="margin-top:50px;">
     <!-- BreadCrumbs -->
     <div class="breadcrumb-container">
@@ -53,12 +51,17 @@
     </div>
 
     <!-- Media List -->
-    <div>
+    <!-- <div>
       <app-media-list-item *ngFor="let file of currentFolder.files" [file]="file" [knownTags]="knownTags"
         [imgSource]="mediaFileService.getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)"
         (openMedia)="videoplayerService.showVideo(file)">
       </app-media-list-item>
-    </div>
+    </div> -->
+
+    <app-media-list
+    *ngIf="pageResponse && pageResponse.content.length > 0"
+    [pageResponse]="pageResponse"
+    ></app-media-list>
 
 
   </div>

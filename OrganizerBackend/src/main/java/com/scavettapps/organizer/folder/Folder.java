@@ -20,17 +20,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.media.MediaFile;
+
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import com.sun.istack.NotNull;
 import java.io.File;
@@ -49,13 +45,18 @@ public class Folder extends AbstractPersistableEntity<Long> {
    private String path;
 
    @NotNull
+   @Column(name = "folderName")
+   private String folderName;
+
+   @NotNull
    @Column(name = "ignored")
    private boolean isIgnored;
 
-   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+   @OrderBy("UPPER(folderName) ASC")
    private Set<Folder> folders;
 
-   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
    private Set<MediaFile> files;
 
    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
@@ -64,6 +65,7 @@ public class Folder extends AbstractPersistableEntity<Long> {
    public Folder(String path) {
       super();
       this.path = path;
+      this.folderName = new File(path).getName();
       this.folders = new HashSet<>();
       this.files = new HashSet<>();
       this.isIgnored = false;
@@ -149,12 +151,13 @@ public class Folder extends AbstractPersistableEntity<Long> {
       return parentPath;
    }
 
-   /**
-    * @return the name of the folder.
-    */
+
    public String getFolderName() {
-      File folderFile = new File(this.path);
-      return folderFile.getName();
+      return folderName;
+   }
+
+   public void setFolderName(String folderName) {
+      this.folderName = folderName;
    }
 
    public String getPath() {

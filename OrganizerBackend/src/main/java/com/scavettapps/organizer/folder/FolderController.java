@@ -17,6 +17,7 @@ package com.scavettapps.organizer.folder;
 
 import com.scavettapps.organizer.core.OrganizerRestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.ErrorResponse;
 import com.scavettapps.organizer.core.response.Response;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -71,6 +73,11 @@ public class FolderController {
    public Response findFileById(@RequestParam long folderId) {
 
       return new DataResponse(this.folderRepo.findById(folderId));
+   }
+
+   @GetMapping("/folder/media")
+   public Response findFileByIdPage(@RequestParam long folderId, Pageable pageable) {
+      return new DataResponse(this.folderRepo.findAllMediaForFolder(folderId, pageable));
    }
 
 }

@@ -6,9 +6,11 @@ import { TagModel } from '../tags/tagModel';
 import { MediaService } from '../media/media.service';
 import { AlertService } from '../alert/alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { flatMap, switchMap } from 'rxjs/operators';
 import { VideoplayerService } from '../videoplayer/videoplayer.service';
 import { MediaFile } from '../media/media.file';
+import { PageRequest } from '../common/PageRequest';
+import { PaginationResponse } from '../common/page-response';
 
 export interface SearchParams {
   currentFolder: number;
@@ -31,6 +33,8 @@ export class FolderComponent implements OnInit {
   previousFolders: Folder[] = [];
   hadParams: boolean;
 
+  pageResponse: PaginationResponse<MediaFile>;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private alertService: AlertService,
@@ -44,7 +48,7 @@ export class FolderComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.queryParams
       .pipe(
-        switchMap(params => {
+        flatMap(params => {
           console.log(params);
           if (params.folder) {
             this.hadParams = true;
@@ -53,32 +57,35 @@ export class FolderComponent implements OnInit {
             this.hadParams = false;
             return this.folderService.getRootFolders();
           }
+        }),
+        flatMap((resp) => {
+          console.log(resp);
+          if (this.hadParams) {
+            this.currentFolder = resp.data;
+
+            // Build out the breadcrumbs again
+            this.previousFolders = [];
+            let previous = this.currentFolder.folder;
+            while (previous != null) {
+              this.previousFolders.push(previous);
+              previous = previous.folder;
+            }
+            this.previousFolders.reverse();
+            return this.folderService.getFolderPage(this.currentFolder.id, new PageRequest(0));
+          } else {
+            this.currentFolder = null;
+            this.rootFolders = resp.data.Folders;
+          }
+        }),
+        flatMap((resp) => {
+          this.pageResponse = resp.data;
+          console.log(this.pageResponse);
+
+          return this.tagService.getAllTags();
         }))
       .subscribe(resp => {
-        console.log(resp);
-        if (this.hadParams) {
-          this.currentFolder = resp.data;
-
-          // Build out the breadcrumbs again
-          this.previousFolders = [];
-          let previous = this.currentFolder.folder;
-          while (previous != null) {
-            this.previousFolders.push(previous);
-            previous = previous.folder;
-          }
-          this.previousFolders.reverse();
-        } else {
-          this.currentFolder = null;
-          this.rootFolders = resp.data.Folders;
-        }
+        this.knownTags = resp.data;
       });
-
-    this.tagService.getAllTags().subscribe(res => {
-      this.knownTags = res.data;
-      //console.log(this.knownTags);
-    }, (err) => {
-      console.log(`Could not get tags`);
-    });
   }
 
   folderClicked(folder: Folder) {
