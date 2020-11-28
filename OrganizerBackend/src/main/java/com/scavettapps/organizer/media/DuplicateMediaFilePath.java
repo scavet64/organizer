@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.scavettapps.organizer.core.entity;
+package com.scavettapps.organizer.media;
+
+import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

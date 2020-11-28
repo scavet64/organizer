@@ -15,7 +15,7 @@
  */
 package com.scavettapps.organizer.core.repository;
 
-import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
+import com.scavettapps.organizer.media.DuplicateMediaFilePath;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

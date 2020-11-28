@@ -15,12 +15,11 @@
  */
 package com.scavettapps.organizer.scanner.engine;
 
-import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
+import com.scavettapps.organizer.media.DuplicateMediaFilePath;
 import com.scavettapps.organizer.files.StoredFile;
-import com.scavettapps.organizer.files.StoredFileService;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,8 +29,6 @@ import java.util.concurrent.ExecutionException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections4.ListUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

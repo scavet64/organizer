@@ -27,7 +27,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
-import com.scavettapps.organizer.core.entity.DuplicateMediaFilePath;
 import com.scavettapps.organizer.files.StoredFile;
 import com.sun.istack.NotNull;
 import java.time.Instant;
