@@ -1,7 +1,20 @@
 .content-margins {
-  margin-left: 3%;
-  margin-right: 3%;
+  margin: auto;
   margin-bottom: 10px;
+  max-width: 1200px;
+}
+
+.folder-wrapper > .folder-container:last-child {
+  margin-right: 0px;
+}
+
+.folder-wrapper > .folder-container:first-child {
+  margin-left: 0px;
+}
+
+.folder-container {
+  //margin-right: 10px;
+  margin-bottom: 3px;
 }
 
 .filter-wrapper {
@@ -15,14 +28,36 @@
 }
 
 .folder-button {
-  width: 275px;
+  //width: 275px;
+  width: 100%;
   background-color: #424242;
 }
 
-.folder-container {
+.folder-button2 {
+  text-transform: none;
   display: flex;
-  justify-content: flex-start;
-  flex-flow: wrap;
+  justify-content: space-between;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 7px;
+  border-radius: 5px;
+  background-color: #424242;
+  cursor: pointer;
+}
+
+.folder-button2:hover {
+  background-color: #575757;
+}
+
+.folder-wrapper {
+  // display: flex;
+  // justify-content: flex-start;
+  // flex-flow: wrap;
 }
 
 .breadcrumb-container {

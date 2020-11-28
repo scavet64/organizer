@@ -9,7 +9,7 @@
 
     <div class="folder-container">
       <div *ngFor="let rootFolder of rootFolders" class="" style="margin: 10px">
-        <button mat-button style="text-transform: none" (click)="folderClicked(rootFolder)" class="folder-button mat-elevation-z3">
+        <button mat-button (click)="folderClicked(rootFolder)" class="folder-button mat-elevation-z3">
           <i class="fas fa-folder"></i>
           &nbsp;{{rootFolder.folderName}}
         </button>
@@ -33,12 +33,16 @@
     </div>
 
     <!-- Folder List -->
-    <div class="folder-container">
-      <div *ngFor="let rootFolder of currentFolder.folders" class="" style="margin: 10px">
-        <button mat-button style="text-transform: none" (click)="folderClicked(rootFolder)" class="folder-button mat-elevation-z3">
-          <i class="fas fa-folder"></i>
-          &nbsp;{{rootFolder.folderName}}
-        </button>
+    <div class="folder-wrapper">
+      <div *ngFor="let rootFolder of currentFolder.folders" class="folder-container" >
+        <div matRipple (click)="folderClicked(rootFolder)" class="folder-button2 mat-elevation-z3">
+            <div>
+              <i class="fas fa-folder"></i>&nbsp;{{rootFolder.folderName}}
+            </div>
+            <div style="width: 100px;">
+              Children: {{rootFolder.files.length + rootFolder.folders.length}}
+            </div>
+          </div>
       </div>
     </div>
 

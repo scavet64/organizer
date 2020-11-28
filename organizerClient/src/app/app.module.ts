@@ -51,7 +51,7 @@ import { AlertComponent } from './alert/alert.component';
 import { MediaListItemComponent } from './media/media-list-item/media-list-item.component';
 import { TruncationPipe } from './common/truncation.pipe';
 import { MediaTagsComponent } from './media/media-tags/media-tags.component';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CreateScanLocationDialogComponent } from './scan-locations/create-scan-location-dialog/create-scan-location-dialog.component';
 import { FolderComponent } from './folder/folder.component';
 import { VideoplayerComponent } from './videoplayer/videoplayer.component';
@@ -61,6 +61,7 @@ import { DataSizePipe } from './common/data-size.pipe';
 import { TagInfoComponent } from './tags/tag-info/tag-info.component';
 import { MediaListGridItemComponent } from './media/media-list-grid-item/media-list-grid-item.component';
 import { VjsPlayerComponent } from './vjs-player/vjs-player.component';
+import { MatRippleModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -124,6 +125,7 @@ import { VjsPlayerComponent } from './vjs-player/vjs-player.component';
     MatTableModule,
     MatGridListModule,
     NgbModule,
+    MatRippleModule,
     ReactiveFormsModule,
     MatSortModule
   ],
@@ -139,6 +141,6 @@ import { VjsPlayerComponent } from './vjs-player/vjs-player.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
