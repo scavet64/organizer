@@ -16,10 +16,6 @@
   width: 100%;
 }
 
-.paginator {
-  background-color: #1E1E1E;
-}
-
 .auto-complete-tag-name {
   margin-top: auto;
   margin-bottom: auto;
@@ -54,25 +50,4 @@
 
 .sort-direction-container {
   width: 49%;
-}
-
-.body-header {
-  margin-top: 50px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.editMultipleButton {
-  max-height: 35px;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-.checkbox-tabgroup-container {
-  display: flex;
-  align-items: center;
-}
-
-.checkbox-all {
-  margin-right: 20px;
 }

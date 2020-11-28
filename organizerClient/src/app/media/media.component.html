@@ -83,59 +83,12 @@
   </div>
 
 
-  <span class="body-header">
-    <!-- Media Type Filter -->
-    <div class="checkbox-tabgroup-container">
-      <mat-checkbox *ngIf="editingMultiple" class="checkbox-all" [(ngModel)]="areAllChecked" [(indeterminate)]="isIndeterminate" (change)="allCheckClicked()"></mat-checkbox>
-      <mat-tab-group [selectedIndex]="selectedMediaTypeControl.value" (selectedIndexChange)="mediaTypeFilterChanged($event)"
-        animationDuration="0ms">
-        <mat-tab label="All">
-        </mat-tab>
-        <mat-tab label="Videos">
-        </mat-tab>
-        <mat-tab label="Images">
-        </mat-tab>
-      </mat-tab-group>
-    </div>
-
-    <!-- Paginator -->
-    <div style="display:flex">
-      <button mat-flat-button *ngIf="!editingMultiple" (click)="editMultiple()" class="editMultipleButton">
-        Edit Multiple
-      </button>
-      <button *ngIf="editingMultiple" mat-flat-button (click)="chooseSelectedMediasTags()" class="editMultipleButton" style="margin-right: 10px;">
-        Choose Tags
-      </button>
-      <button *ngIf="editingMultiple" mat-flat-button (click)="cancelEditMultiple()" class="editMultipleButton">
-        Cancel Editing
-      </button>
-      <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
-        [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-      </mat-paginator>
-    </div>
-  </span>
-
-
-  <!-- List View -->
-  <div *ngIf="isListView">
-    <app-media-list-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags"
-      [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
-      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
-      (checkboxClicked)="checkboxClicked()">
-    </app-media-list-item>
-  </div>
-
-  <!-- Grid View -->
-  <div *ngIf="!isListView">
-    <app-media-list-grid-item *ngFor="let file of pageResponse.content" [file]="file" [knownTags]="knownTags"
-      [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
-      (tagClicked)="tagClicked($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
-      (checkboxClicked)="checkboxClicked()">
-    </app-media-list-grid-item>
-  </div>
-
-  <!-- Paginator -->
-  <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
-    [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-  </mat-paginator>
+  <app-media-list
+  [pageResponse]="pageResponse"
+  [selectedMediaIndex]="selectedMediaTypeControl.value"
+  [isListView]="isListView"
+  (pageChange)="onPageChange($event)"
+  (tagClicked)="tagClicked($event)"
+  (selectedMediaChange)="mediaTypeFilterChanged($event)"
+  ></app-media-list>
 </div>
