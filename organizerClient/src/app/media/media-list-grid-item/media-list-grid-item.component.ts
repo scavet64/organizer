@@ -16,6 +16,7 @@ import { tooltipDefaultOptions } from 'src/app/common/constants';
 })
 export class MediaListGridItemComponent implements OnInit {
 
+  @Input() isOdd: boolean;
   @Input() modifyMultiple: boolean;
   @Input() knownTags: TagModel[];
   @Input() file: MediaFile;

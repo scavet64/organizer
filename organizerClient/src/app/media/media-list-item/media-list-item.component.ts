@@ -16,6 +16,7 @@ import { MediaInfoComponent } from '../media-info/media-info.component';
 })
 export class MediaListItemComponent implements OnInit {
 
+  @Input() isOdd: boolean;
   @Input() modifyMultiple: boolean;
   @Input() knownTags: TagModel[];
   @Input() file: MediaFile;
