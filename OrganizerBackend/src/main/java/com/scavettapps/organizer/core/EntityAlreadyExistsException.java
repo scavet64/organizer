@@ -15,10 +15,14 @@
  */
 package com.scavettapps.organizer.core;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  *
  * @author Vincent Scavetta
  */
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Entity Already Exists")
 public class EntityAlreadyExistsException extends RuntimeException {
 
    public EntityAlreadyExistsException() {

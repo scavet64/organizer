@@ -26,8 +26,8 @@ public class ErrorResponse extends Response {
      * @param error
      */
     public ErrorResponse(Object error) {
-	super();
-	this.error = error;
+	   super();
+	   this.error = error;
     }
 
     /**
