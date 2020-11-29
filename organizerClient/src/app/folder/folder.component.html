@@ -6,7 +6,7 @@
 
     <div class="folder-wrapper">
       <div class="folder-container">
-        <div *ngFor="let rootFolder of rootFolders">
+        <div *ngFor="let rootFolder of rootFolders" class="folder-container">
           <div matRipple (click)="folderClicked(rootFolder)" class="folder-button2 mat-elevation-z3">
             <div>
               <i class="fas fa-folder"></i>&nbsp;{{rootFolder.folderName}}
