@@ -1,8 +1,9 @@
 <span class="body-header">
   <!-- Media Type Filter -->
-  <div class="checkbox-tabgroup-container">
-    <mat-checkbox *ngIf="editingMultiple" class="checkbox-all" [(ngModel)]="areAllChecked"
+  <mat-checkbox *ngIf="editingMultiple" class="checkbox-all" [(ngModel)]="areAllChecked"
       [(indeterminate)]="isIndeterminate" (change)="allCheckClicked()"></mat-checkbox>
+  <div class="checkbox-tabgroup-container">
+
     <mat-tab-group *ngIf="selectedMediaIndex !== undefined" [(selectedIndex)]="selectedMediaIndex"
       (selectedIndexChange)="selectedMediaChange.next($event)" animationDuration="0ms">
       <mat-tab label="All">
@@ -14,17 +15,19 @@
     </mat-tab-group>
   </div>
   <!-- Paginator -->
-  <div style="display:flex">
-    <button mat-flat-button *ngIf="!editingMultiple" (click)="editMultiple()" class="editMultipleButton">
-      Edit Multiple
-    </button>
-    <button *ngIf="editingMultiple" mat-flat-button (click)="chooseSelectedMediasTags()" class="editMultipleButton"
-      style="margin-right: 10px;">
-      Choose Tags
-    </button>
-    <button *ngIf="editingMultiple" mat-flat-button (click)="cancelEditMultiple()" class="editMultipleButton">
-      Cancel Editing
-    </button>
+  <div class="paginator-content">
+    <div class="tag-button-container">
+      <button mat-flat-button *ngIf="!editingMultiple" (click)="editMultiple()" class="editMultipleButton">
+        Edit Multiple
+      </button>
+      <button *ngIf="editingMultiple" mat-flat-button (click)="chooseSelectedMediasTags()" class="editMultipleButton"
+        style="margin-right: 10px;">
+        Choose Tags
+      </button>
+      <button *ngIf="editingMultiple" mat-flat-button (click)="cancelEditMultiple()" class="editMultipleButton">
+        Cancel Editing
+      </button>
+    </div>
     <mat-paginator class="paginator" [pageIndex]="pageResponse.number" [length]="pageResponse.totalElements"
       [pageSize]="pageResponse.size" [pageSizeOptions]="pageSizeOptions" (page)="pageChange.next($event)">
     </mat-paginator>

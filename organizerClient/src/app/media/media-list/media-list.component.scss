@@ -2,6 +2,12 @@
   margin-top: 50px;
   display: flex;
   justify-content: space-between;
+  flex-flow: wrap;
+}
+
+.paginator-content {
+  display: flex;
+  flex-flow: wrap-reverse;
 }
 
 .paginator {
@@ -12,6 +18,12 @@
   max-height: 35px;
   margin-top: auto;
   margin-bottom: auto;
+  //margin-left: auto;
+  //margin-right: auto;
+}
+
+.tag-button-container {
+  display: flex;
 }
 
 .checkbox-tabgroup-container {
@@ -21,4 +33,36 @@
 
 .checkbox-all {
   margin-right: 20px;
+}
+
+@media only screen and (max-width: 500px) {
+  .paginator-content {
+    justify-content: center;
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+
+  .editMultipleButton {
+    //margin-right: auto;
+  }
+
+  .body-header {
+    justify-content: center;
+  }
+
+  // .wrapper {
+  //   flex-direction: column;
+  //   margin-bottom: 10px;
+  // }
+
+  // .thumbnail {
+  //   -o-object-fit: cover;
+  //   object-fit: cover;
+  //   margin-right: 0px;
+  //   border-radius: 10px 10px 0px 0px;
+  //   width: auto;
+  //   max-width: 500px;
+  //   min-width: auto;
+  //   height: 200px;
+  // }
 }
