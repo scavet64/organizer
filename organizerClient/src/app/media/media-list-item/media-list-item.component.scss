@@ -33,7 +33,7 @@
   margin-right: 5px;
   border-radius: 10px 0px 0px 10px;
   // height: 85px;
-  max-height: 89px;
+  //max-height: 89px;
   width: 150px;
   max-width: 150px;
   min-width: 150px;
@@ -43,12 +43,24 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-flow: wrap;
+  padding: 10px;
+}
+
+.name-tag-container {
+  //padding-bottom: 10px
 }
 
 .button-container {
   margin-top: auto;
   margin-bottom: auto;
   display: flex;
+
+  margin-right: 0;
+  margin-left: auto;
+  align-items: center;
+  //flex:1;
 }
 
 .chip-video {
@@ -69,4 +81,54 @@
 .menu-button-wrapper {
   display: flex;
   align-items: center;
+}
+
+.file-container {
+  font-size: 0.9rem;
+  display: block;
+  /* text-align: justify; */
+  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  overflow: hidden;
+  margin-bottom: 5px;
+  word-break: break-all;
+}
+
+.button-image-wrapper {
+  margin-right: 15px;
+  //font-size: 12px;
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+}
+
+.info-text {
+  margin-left: 5px;
+  font-size: 12px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+@media only screen and (max-width: 500px) {
+
+  .content-wrapper {
+    width: auto;
+  }
+
+  .wrapper {
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .thumbnail {
+    -o-object-fit: cover;
+    object-fit: cover;
+    margin-right: 0px;
+    border-radius: 10px 10px 0px 0px;
+    width: auto;
+    max-width: 500px;
+    min-width: auto;
+    height: 200px;
+  }
+
 }

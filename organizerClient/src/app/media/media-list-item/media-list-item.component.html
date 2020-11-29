@@ -13,12 +13,10 @@
 
 
     <div class="content-wrapper">
-      <div style="padding: 10px">
-        <div style="font-size: .9rem; display:flex; text-align: justify;">
+      <div class="name-tag-container">
+        <div class="file-container">
           {{file.name}}
         </div>
-
-        <br>
 
         <!-- Tags -->
         <mat-chip-list>
@@ -32,13 +30,19 @@
         </mat-chip-list>
       </div>
       <div class="button-container">
-        <span style="margin-right: 15px; font-size: 12px; margin-top: auto; margin-bottom: auto;"
+        <span class="button-image-wrapper"
           matTooltip="Date Added: {{file.dateAdded | date:'medium'}}" matTooltipClass="organizer-tooltip">
-          <i class="fas fa-calendar-plus"></i>&nbsp; {{file.dateAdded | date}}
+          <i class="fas fa-calendar-plus"></i>
+          <div class="info-text">
+            {{file.dateAdded | date}}
+          </div>
         </span>
-        <span style="margin-right: 15px; font-size: 12px; margin-top: auto; margin-bottom: auto;"
+        <span class="button-image-wrapper"
           matTooltip="Total Views: {{file.views}}" matTooltipClass="organizer-tooltip">
-          <i class="far fa-eye"></i>&nbsp; {{file.views}}
+          <i class="far fa-eye"></i>
+          <div class="info-text">
+            {{file.views}}
+          </div>
         </span>
         <button mat-icon-button (click)="favoriteToggle()">
           <i *ngIf="!file.isFavorite" class="far fa-star"></i>
