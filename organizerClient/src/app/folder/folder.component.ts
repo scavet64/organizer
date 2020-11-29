@@ -11,6 +11,7 @@ import { VideoplayerService } from '../videoplayer/videoplayer.service';
 import { MediaFile } from '../media/media.file';
 import { PageRequest } from '../common/PageRequest';
 import { PaginationResponse } from '../common/page-response';
+import { Observable, Subscription } from 'rxjs';
 
 export interface SearchParams {
   currentFolder: number;
@@ -75,12 +76,14 @@ export class FolderComponent implements OnInit {
           } else {
             this.currentFolder = null;
             this.rootFolders = resp.data.Folders;
+            return new Observable<any>();
           }
         }),
         flatMap((resp) => {
-          this.pageResponse = resp.data;
-          console.log(this.pageResponse);
-
+          if (resp && resp.data) {
+            this.pageResponse = resp.data;
+            console.log(this.pageResponse);
+          }
           return this.tagService.getAllTags();
         }))
       .subscribe(resp => {
