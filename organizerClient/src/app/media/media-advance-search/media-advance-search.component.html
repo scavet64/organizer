@@ -1,0 +1,68 @@
+<div class="my-searchbar">
+  <div class="sb-recent-search">Recent Searches</div>
+  <div class="sb-input-holder">
+    <div class="search-item" *ngFor="let searchParam of searchParams">
+      <div class="search-param-key">{{searchParam.key}}</div>
+      <div *ngIf="searchParam.condition" class="search-param-key">{{searchParam.condition}}</div>
+      <div *ngIf="searchParam.data" class="search-param-key closable-key">
+        <span>{{searchParam.data}}</span>
+        <i class="fas fa-times close-key-button" (click)="removeSearchKey(searchParam)"></i>
+      </div>
+    </div>
+    <div [matMenuTriggerFor]="menu" #menuTrigger="matMenuTrigger"></div>
+    <div [matMenuTriggerFor]="conditional" #conditionalTrigger="matMenuTrigger"></div>
+    <div [matMenuTriggerFor]="tagMatMenu" #itemTrigger="matMenuTrigger"></div>
+    <input #inputField [(ngModel)]="searchBox" placeholder="Search for media" class="sb-input"
+      (focus)="inputFocus($event)" (ngModelChange)="dataChanged($event)" />
+    <mat-menu #menu="matMenu">
+      <button *ngFor="let opt of filteredFilterOptions" mat-menu-item
+        (click)="clickedFilterType(opt)">{{opt}}</button>
+      <button *ngIf="filteredFilterOptions.length === 0" mat-menu-item (click)="clickedFilterType('Name')">Search for
+        this text</button>
+    </mat-menu>
+
+    <mat-menu #conditional="matMenu">
+      <button *ngFor="let opt of conditionalOptions" mat-menu-item (click)="clickedConditional(opt)">{{opt}}</button>
+    </mat-menu>
+
+    <mat-menu #tagMatMenu="matMenu">
+      <div class="menu-container-please">
+        <button *ngFor="let tag of tags" mat-menu-item (click)="clickedData(tag)">
+          <div style="display: flex; justify-content: flex-start; height: 2rem;">
+            <div [style.backgroundColor]="tag.backgroundColor"
+              style="height: 1rem; width: 1rem; border-radius: 3px; margin-top: auto; margin-bottom: auto; margin-right: 15px;">
+            </div>
+            <div class="auto-complete-tag-name">
+              {{tag.name}}
+            </div>
+          </div>
+        </button>
+      </div>
+    </mat-menu>
+    <button class="sb-clear-button" mat-icon-button (click)="clearSearch()">
+      <i class="fas fa-times close-key-button"></i>
+    </button>
+  </div>
+  <div class="sorting-container">
+    <div class="sort-column-container sorter-container">
+      <button class="sort-column-button" mat-flat-button [matMenuTriggerFor]="directionMenu" #directionTrigger="matMenuTrigger">
+        <div class="sort-column-button-inner">
+          {{sortColumn.displayName}}
+          <i class="fas fa-chevron-down close-key-button"></i>
+        </div>
+      </button>
+    </div>
+    <div class="sort-direction-container">
+      <button class="sort-direction-button" mat-flat-button (click)="directionFlip()">
+        <i *ngIf="acceding" class="fas fa-long-arrow-alt-up close-key-button"></i>
+        <i *ngIf="!acceding" class="fas fa-long-arrow-alt-down close-key-button"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<mat-menu #directionMenu="matMenu" class="sort-column-menu">
+  <button *ngFor="let option of mediaSortOptions" mat-menu-item
+    (click)="clickedSortingColumn(option)">{{option.displayName}}
+  </button>
+</mat-menu>

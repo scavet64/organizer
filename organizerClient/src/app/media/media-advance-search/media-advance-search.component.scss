@@ -1,0 +1,140 @@
+.my-searchbar {
+  display: flex;
+  margin: 10px;
+}
+
+.sb-recent-search {
+  width: 100px;
+}
+
+.sb-input-holder {
+  display: flex;
+  background-color: white;
+  border-radius: 5px;
+  width: 100%;
+  height: 50px;
+}
+
+.sb-input {
+  width: 100%;
+  display: flex;
+  background: transparent;
+  border: 0;
+  margin: 3px;
+}
+
+.sb-input:focus {
+  outline-offset: 0px;
+  outline: 0px;
+}
+
+.sb-clear-button {
+  width: 40px;
+  color: black;
+  height: 50px;
+}
+
+.search-item {
+  display: flex;
+  margin: 4px;
+}
+
+.search-param-key {
+  padding: 4px;
+  background-color: grey;
+  border-radius: 2px;
+  margin: 1px;
+  display: flex;
+  align-items: center;
+}
+
+.closable-key {
+  display: flex;
+}
+
+.close-key-button {
+  margin-left: 5px;
+  margin-right: 5px;
+  opacity: 0.8;
+  font-size: 20px;
+}
+
+.close-key-button:hover {
+  opacity: 1;
+}
+
+.close-key-middle {
+  border-radius: 0px;
+}
+
+.menu-container-please {
+  max-height: 500px;
+}
+
+.auto-complete-tag-name {
+  text-overflow: ellipsis;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.sort-column-container {
+
+}
+
+.sort-column-button-inner {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+::ng-deep.mat-button-wrapper {
+  width: 100% !important;
+}
+
+.sort-column-button {
+  width: 150px;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sort-column-menu {
+  width: 135px
+}
+
+::ng-deep.mat-menu-panel {
+  width: 135px !important;
+}
+
+.sort-direction-container {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 5px;
+  height: 50px;
+}
+
+.sort-direction-button {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sorting-container {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 5px;
+}
+
+.sorter-container {
+  height: 20px;
+  margin-left: 5px;
+}

@@ -61,6 +61,7 @@ import { DataSizePipe } from './common/data-size.pipe';
 import { TagInfoComponent } from './tags/tag-info/tag-info.component';
 import { MediaListGridItemComponent } from './media/media-list-grid-item/media-list-grid-item.component';
 import { VjsPlayerComponent } from './vjs-player/vjs-player.component';
+import { MediaAdvanceSearchComponent } from './media/media-advance-search/media-advance-search.component';
 import { MatRippleModule } from '@angular/material/core';
 import { MediaListComponent } from './media/media-list/media-list.component';
 
@@ -90,6 +91,7 @@ import { MediaListComponent } from './media/media-list/media-list.component';
     TagInfoComponent,
     MediaListGridItemComponent,
     VjsPlayerComponent,
+    MediaAdvanceSearchComponent,
     MediaListComponent
   ],
   imports: [
