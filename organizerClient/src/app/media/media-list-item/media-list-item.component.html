@@ -40,20 +40,35 @@
           matTooltip="Total Views: {{file.views}}" matTooltipClass="organizer-tooltip">
           <i class="far fa-eye"></i>&nbsp; {{file.views}}
         </span>
-        <button mat-icon-button (click)="showMediaInfo()">
-          <i class="fas fa-info"></i>
-        </button>
         <button mat-icon-button (click)="favoriteToggle()">
           <i *ngIf="!file.isFavorite" class="far fa-star"></i>
           <i *ngIf="file.isFavorite" class="fas fa-star"></i>
         </button>
-        <button mat-icon-button (click)="showTags()">
-          <i class="fas fa-tags"></i>
-        </button>
-        <button mat-icon-button>
-          <i class="fas fa-trash-alt"></i>
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="showMediaInfo()">
+    <div class="menu-button-wrapper">
+      <i class="fas fa-info menu-button-icon"></i>
+      <div>Information</div>
+    </div>
+  </button>
+  <button mat-menu-item (click)="showTags()">
+    <div class="menu-button-wrapper">
+      <i class="fas fa-tags menu-button-icon"></i>
+      <span>Modify Tags</span>
+    </div>
+  </button>
+  <button mat-menu-item>
+    <div class="menu-button-wrapper">
+      <i class="fas fa-trash-alt menu-button-icon"></i>
+      <span>Hide Media</span>
+    </div>
+  </button>
+</mat-menu>

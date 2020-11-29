@@ -58,3 +58,15 @@
 .chip-image {
   background-color: hsl(335, 51%, 47%);
 }
+
+.menu-button-icon {
+  width: 10px;
+  margin-right: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-button-wrapper {
+  display: flex;
+  align-items: center;
+}
