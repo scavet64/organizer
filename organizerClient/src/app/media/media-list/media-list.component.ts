@@ -40,7 +40,8 @@ export class MediaListComponent implements OnInit {
     private mediaFileService: MediaService,
     private resourceService: ResourceService,
     private tagService: TagService,
-    public videoplayerService: VideoplayerService
+    public videoplayerService: VideoplayerService,
+    public router: Router
   ) {
   }
 
@@ -156,7 +157,12 @@ export class MediaListComponent implements OnInit {
   }
 
   openMedia(file: MediaFile) {
-    this.videoplayerService.showVideo(file);
+    if (file.mimetype.includes('video')) {
+      this.videoplayerService.showVideo(file);
+    } else {
+      window.open(this.resourceService.getMediaUrl(file), '_blank');
+      //this.router.navigateByUrl(this.resourceService.getMediaUrl(file));
+    }
   }
 
   favoriteToggle(mediaFile: MediaFile) {

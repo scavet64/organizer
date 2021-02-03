@@ -61,6 +61,8 @@
     <app-media-list
     *ngIf="pageResponse && pageResponse.content.length > 0"
     [pageResponse]="pageResponse"
+    [isListView]="true"
+    (pageChange)="onPageChange($event)"
     ></app-media-list>
 
 

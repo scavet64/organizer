@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MediaService } from '../media/media.service';
 import { ManagementService } from './management.service';
 import { AlertService } from '../alert/alert.service';
+import { ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material';
+import { TagService } from '../tags/tag.service';
 
 @Component({
   selector: 'app-management',
@@ -10,12 +13,18 @@ import { AlertService } from '../alert/alert.service';
 })
 export class ManagementComponent implements OnInit {
 
+  tags: any = [];
+
   constructor(
     private alertService: AlertService,
-    private managementService: ManagementService
+    private managementService: ManagementService,
+    private tagService: TagService
   ) { }
 
   ngOnInit() {
+    this.tagService.getAllTags().subscribe(res => {
+      this.tags = res.data;
+    });
   }
 
   clearAllScannedMedia() {
@@ -25,5 +34,4 @@ export class ManagementComponent implements OnInit {
       this.alertService.error(`Failed to clear media: ${error.error.error}`);
     });
   }
-
 }

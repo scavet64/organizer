@@ -12,6 +12,7 @@ import { MediaFile } from '../media/media.file';
 import { PageRequest } from '../common/PageRequest';
 import { PaginationResponse } from '../common/page-response';
 import { Observable, Subscription } from 'rxjs';
+import { FolderMediaSearchRequest } from './request/FolderMediaSearchRequest';
 
 export interface SearchParams {
   currentFolder: number;
@@ -46,11 +47,14 @@ export class FolderComponent implements OnInit {
     public videoplayerService: VideoplayerService
   ) { }
 
+  private params;
+
   ngOnInit() {
     this.activatedRoute.queryParams
       .pipe(
         flatMap(params => {
           console.log(params);
+          this.params = params;
           if (params.folder) {
             this.hadParams = true;
             return this.folderService.getFolder(params.folder);
@@ -72,7 +76,10 @@ export class FolderComponent implements OnInit {
               previous = previous.folder;
             }
             this.previousFolders.reverse();
-            return this.folderService.getFolderPage(this.currentFolder.id, new PageRequest(0));
+
+            const pageIndex = this.params.pageIndex ? this.params.pageIndex : 0;
+            const pageSize = this.params.pageSize ? this.params.pageSize : 20;
+            return this.folderService.getFolderPage(this.currentFolder.id, new PageRequest(pageIndex, pageSize));
           } else {
             this.currentFolder = null;
             this.rootFolders = resp.data.Folders;
@@ -121,5 +128,45 @@ export class FolderComponent implements OnInit {
   openMedia(mediaFile: MediaFile) {
     this.videoplayerService.showVideo(mediaFile);
   }
+
+  onPageChange(event) {
+    // this.search(event.pageIndex, event.pageSize);
+
+    console.log(event);
+    var params = {
+      folder: this.currentFolder.id,
+      ...(event.pageIndex !== 0 && { pageIndex: event.pageIndex }),
+      ...(event.pageSize !== 20 && {pageSize: event.pageSize})
+    };
+
+    this.router.navigate(['/folder'], {
+      queryParams: params
+    });
+  }
+
+  // search(pageNum = 0, pageSize = this.pageResponse ? this.pageResponse.size : 20) {
+  //   const request = this.buildSearchRequest(pageNum, pageSize);
+
+  //   this.router.navigate(['/media'], {
+  //     queryParams: request.toUrlParams()
+  //   });
+  // }
+
+  // buildSearchRequest(
+  //   folder,
+  //   page = MediaComponent.DEFAULT_PAGE,
+  //   pageSize = MediaComponent.DEFAULT_RESULTS_PER_PAGE,
+  // ): FolderMediaSearchRequest {
+
+  //   return new FolderMediaSearchRequest(
+  //     folder,
+  //     this.sortColumn,
+  //     this.sortDirection,
+  //     this.mediaFilter,
+  //     this.onlyShowFavorite,
+  //     page,
+  //     pageSize
+  //   );
+  // }
 
 }

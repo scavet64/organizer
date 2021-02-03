@@ -65,9 +65,7 @@ export class MediaListItemComponent implements OnInit {
   }
 
   openMediaClick() {
-    if (this.file.mimetype.includes('video')) {
-      this.openMedia.emit(this.file);
-    }
+    this.openMedia.emit(this.file);
   }
 
   viewMediaWithTag(tag: TagModel) {

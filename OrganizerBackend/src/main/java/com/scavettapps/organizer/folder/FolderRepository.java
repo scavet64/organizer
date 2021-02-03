@@ -38,7 +38,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
    
    List<Folder> findAllByFolder_Id(long id);
 
-   @Query("select mediafiles from Folder f inner join f.files mediafiles where f.id = :id")
+   @Query("select mediafiles from Folder f inner join f.files mediafiles where f.id = :id ORDER BY mediafiles.name")
    Page<MediaFile> findAllMediaForFolder(long id, Pageable page);
 
 }
