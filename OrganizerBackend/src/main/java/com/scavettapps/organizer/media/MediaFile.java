@@ -15,16 +15,11 @@
  */
 package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.folder.Folder;
 import com.scavettapps.organizer.tag.Tag;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.files.StoredFile;
@@ -54,6 +49,7 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    private long size;
 
    @NotNull
+   @Lob
    @Column(name = "path")
    private String path;
 
