@@ -24,6 +24,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.scavettapps.organizer.folder.Folder;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
    List<Folder> findAllByFolder_Id(long id);
 
    @Query("select mediafiles from Folder f inner join f.files mediafiles where f.id = :id ORDER BY mediafiles.name")
-   Page<MediaFile> findAllMediaForFolder(long id, Pageable page);
+   Page<MediaFile> findAllMediaForFolder(@Param("id") long id, Pageable page);
 
+   Optional<Folder> findByFilesContaining(MediaFile file);
 }

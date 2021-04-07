@@ -13,6 +13,7 @@ import { PageRequest } from '../common/PageRequest';
 import { PaginationResponse } from '../common/page-response';
 import { Observable, Subscription } from 'rxjs';
 import { FolderMediaSearchRequest } from './request/FolderMediaSearchRequest';
+import { RootFolder } from './root-folder';
 
 export interface SearchParams {
   currentFolder: number;
@@ -30,7 +31,7 @@ export class FolderComponent implements OnInit {
   knownTags: TagModel[];
 
   // These variables should be reloaded during navigation events
-  rootFolders: Folder[];
+  rootFolders: RootFolder[];
   currentFolder: Folder;
   previousFolders: Folder[] = [];
   hadParams: boolean;
@@ -82,7 +83,7 @@ export class FolderComponent implements OnInit {
             return this.folderService.getFolderPage(this.currentFolder.id, new PageRequest(pageIndex, pageSize));
           } else {
             this.currentFolder = null;
-            this.rootFolders = resp.data.Folders;
+            this.rootFolders = resp.data;
             return new Observable<any>();
           }
         }),

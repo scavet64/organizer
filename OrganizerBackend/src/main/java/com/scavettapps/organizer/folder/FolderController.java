@@ -57,10 +57,15 @@ public class FolderController {
    
    @RequestMapping("/folder/root")
    public Response findAllRootFolders() {
-      
-      Map<String, Object> returnMap = new HashMap<>();
-      returnMap.put("Folders", this.folderRepo.findAllByFolderNull());
-      return new DataResponse(returnMap);
+
+      RootFolderMapper mapper = new RootFolderMapper();
+      List<RootFolder> simpleRootFolders = new LinkedList<>();
+      var rootFolders = this.folderRepo.findAllByFolderNull();
+      rootFolders.forEach((folder -> {
+         simpleRootFolders.add(mapper.folderToRootFolder(folder));
+      }));
+
+      return new DataResponse(simpleRootFolders);
    }
    
    @RequestMapping("/folder/search")
@@ -72,7 +77,8 @@ public class FolderController {
    @GetMapping("/folder")
    public Response findFileById(@RequestParam long folderId) {
 
-      return new DataResponse(this.folderRepo.findById(folderId));
+      var folder = this.folderRepo.findById(folderId).get();
+      return new DataResponse(folder);
    }
 
    @GetMapping("/folder/media")
