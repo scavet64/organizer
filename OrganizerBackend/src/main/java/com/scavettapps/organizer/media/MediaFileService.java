@@ -59,32 +59,19 @@ public class MediaFileService {
 
    public static final String VIDEO = "/video";
 
-   public static final String CONTENT_TYPE = "Content-Type";
-   public static final String CONTENT_LENGTH = "Content-Length";
-   public static final String VIDEO_CONTENT = "video/";
-   public static final String CONTENT_RANGE = "Content-Range";
-   public static final String ACCEPT_RANGES = "Accept-Ranges";
-   public static final String BYTES = "bytes";
-   public static final int BYTE_RANGE = 1024;
-
    private final MediaFileRepository mediaFileRepository;
    private final MediaFileSpecification mediaFileSpecification;
    private final TagRepository tagRepository;
-   
-   @Autowired
-   private  BrampTranscodingService transcodingService;
 
    @Autowired
    public MediaFileService(
        MediaFileRepository mediaFileRepository,
        MediaFileSpecification mediaFileSpecification,
        TagRepository tagRepository
-       //@Qualifier("bramp") ITranscodingService transcodingService
    ) {
       this.mediaFileRepository = mediaFileRepository;
       this.mediaFileSpecification = mediaFileSpecification;
       this.tagRepository = tagRepository;
-      //this.transcodingService = transcodingService;
    }
 
    public Optional<MediaFile> getMediaFile(long id) {
@@ -99,6 +86,11 @@ public class MediaFileService {
       return this.mediaFileRepository.findByNameAndSize(fileName, size);
    }
 
+   /**
+    * Save a media file to the database.
+    * @param file The media file that should be saved
+    * @return The updated media file
+    */
    public MediaFile saveMediaFile(MediaFile file) {
       return this.mediaFileRepository.save(file);
    }
@@ -113,7 +105,7 @@ public class MediaFileService {
     */
    public Resource loadFileAsResource(String hash) throws FileNotFoundException {
 
-      MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
+      MediaFile file = getMediaFile(hash).orElseThrow(EntityNotFoundException::new);
 
       if (file.getMimetype().equals("video/x-matroska")) {
          // Convert
@@ -130,90 +122,6 @@ public class MediaFileService {
          throw new FileNotFoundException("Malformed URL Exception: " + file);
       }
    }
-
-   public ResponseEntity<byte[]> prepareContent(String hash, String range) throws TranscodingException {
-      
-      MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
-
-      long rangeStart = 0;
-      long rangeEnd;
-      byte[] data;
-      Long fileSize;
-      String pathToFileToPlay;
-      if (file.getMimetype().equals("video/x-matroska")) {
-         // Convert
-         //this.transcodingService.transcodeMediaFile();
-         pathToFileToPlay = file.getPath();
-      } else {
-         pathToFileToPlay = file.getPath();
-      }
-      
-      try {
-         //fileSize = getFileSize(file.getPath());
-         fileSize = file.getSize();
-         if (range == null) {
-            return ResponseEntity.status(HttpStatus.OK)
-                //.header(CONTENT_TYPE, VIDEO_CONTENT + fileType)
-                .header(CONTENT_LENGTH, String.valueOf(fileSize))
-                .body(readByteRange(pathToFileToPlay, rangeStart, fileSize - 1)); // Read the object and convert it as bytes
-         }
-         String[] ranges = range.split("-");
-         rangeStart = Long.parseLong(ranges[0].substring(6));
-         if (ranges.length > 1) {
-            rangeEnd = Long.parseLong(ranges[1]);
-         } else {
-            rangeEnd = fileSize - 1;
-         }
-         if (fileSize < rangeEnd) {
-            rangeEnd = fileSize - 1;
-         }
-         data = readByteRange(pathToFileToPlay, rangeStart, rangeEnd);
-      } catch (IOException e) {
-         logger.error("Exception while reading the file {}", e.getMessage());
-         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-      }
-      String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
-      return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-          //.header(CONTENT_TYPE, VIDEO_CONTENT + fileType)
-          .header(ACCEPT_RANGES, BYTES)
-          .header(CONTENT_LENGTH, contentLength)
-          .header(CONTENT_RANGE, BYTES + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
-          .body(data);
-   }
-
-   /**
-    * ready file byte by byte.
-    *
-    * @param filePath String.
-    * @param start long.
-    * @param end long.
-    * @return byte array.
-    * @throws IOException exception.
-    */
-   public byte[] readByteRange(String filePath, long start, long end) throws IOException {
-      Path path = Paths.get(filePath);
-      try ( InputStream inputStream = (Files.newInputStream(path));  ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream()) {
-         byte[] data = new byte[BYTE_RANGE];
-         int nRead;
-         while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-            bufferedOutputStream.write(data, 0, nRead);
-         }
-         bufferedOutputStream.flush();
-         byte[] result = new byte[(int) (end - start) + 1];
-         System.arraycopy(bufferedOutputStream.toByteArray(), (int) start, result, 0, result.length);
-         return result;
-      }
-   }
-
-//   /**
-//    * Get the filePath.
-//    *
-//    * @return String.
-//    */
-//   private String getFilePath() {
-//      URL url = this.getClass().getResource(VIDEO);
-//      return new File(url.getFile()).getAbsolutePath();
-//   }
 
    /**
     * Content length.
@@ -243,79 +151,19 @@ public class MediaFileService {
       return 0L;
    }
 
-//   private ResourceRegion resourceRegion(UrlResource video, HttpHeaders headers) {
-//	var contentLength = video.contentLength();
-//	var range = headers.get("range");
-//	if (range != null) {
-//		var start = range.getRangeStart(contentLength);
-//		var end = range.getRangeEnd(contentLength);
-//		var rangeLength = min(1 * 1024 * 1024, end - start + 1);
-//		ResourceRegion(video, start, rangeLength)
-//	} else {
-//		val rangeLength = min(1 * 1024 * 1024, contentLength)
-//		ResourceRegion(video, 0, rangeLength)
-//	}
-//}
    /**
-    * finds the file on the file system and loads it into a resource
+    * This method will update the media file's tags using the collection of provided tags.
     *
-    * @param hash the hash of the file
-    * @return resource that is the file
-    * @throws FileNotFoundException if the file is not found
-    * @throws EntityNotFoundException if the hash is not found
-    */
-   public Resource loadFileAsResource2(String hash) throws FileNotFoundException {
-
-      MediaFile file = getMediaFile(hash).orElseThrow(() -> new EntityNotFoundException());
-
-      try {
-         File target;
-         if (file.getName().toLowerCase().endsWith(".avi")) {
-            target = transcodingService.transcodeMediaFile(file);
-         } else {
-            target = new File(file.getPath());
-         }
-
-         Resource resource = new UrlResource(target.toURI());
-         if (resource.exists()) {
-            return resource;
-         } else {
-            throw new FileNotFoundException("File not found: " + file);
-         }
-      } catch (MalformedURLException ex) {
-         //Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
-         throw new FileNotFoundException("Malformed URL Exception: " + file);
-      } catch (TranscodingException ex) {
-         //Logger.getLogger(MediaFileService.class.getName()).log(Level.SEVERE, null, ex);
-         throw new FileNotFoundException("Transcoding Exception: " + file);
-      }
-   }
-
-   public MediaFile addTagToMediaFile(long mediaId, long tagId) {
-      if (mediaId < 0 || tagId < 0) {
-         throw new IllegalArgumentException("Ids cannot be negative");
-      }
-
-      // Find the media file
-      MediaFile file = mediaFileRepository.findById(mediaId).orElseThrow();
-
-      // Find the Tag and add it.
-      Tag tag = tagRepository.findById(tagId).orElseThrow();
-      file.addTag(tag);
-
-      return mediaFileRepository.save(file);
-   }
-
-   /**
-    * TODO: This could be made a little more efficient so that it does not reach out to the database
-    * so much, but since this is meant to be local/in memory for now, it is not as big of a deal.
+    * The method will clear all of the previously attached tags from this media and add each of the new tags in the
+    * collection to the media file if the tag exists. If the tag does not exist, an exception is thrown and the media
+    * file is not updated.
     *
-    * @param mediaId
-    * @param tags
-    * @return
+    * @param mediaId The media file to update.
+    * @param tags The full collection of tags that will be attached to this media file.
+    * @return The updated media file containing the new list of tags
     */
    @Transactional
-   public MediaFile addTagToMediaFile(long mediaId, Collection<Long> tags) {
+   public MediaFile setMediasTags(long mediaId, Collection<Long> tags) {
       if (mediaId < 0) {
          throw new IllegalArgumentException("Ids cannot be negative");
       }
@@ -340,10 +188,13 @@ public class MediaFileService {
    }
 
    /**
+    * Builds a specification object using the search parameters provided to this method. This specification object will
+    * be use to query a list of media from the database.
+    *
     * TODO: There has to be a better way than null checking every time
     *
-    * @param params
-    * @return
+    * @param params The options to filter media on.
+    * @return The MediaFile specification object to be used in a query
     */
    private Specification<MediaFile> getDefaultSpecification(MediaFileRequest params) {
       // Exposed attributes in API spec do not need to be same as Database table column names.
@@ -399,28 +250,51 @@ public class MediaFileService {
       return specs;
    }
 
+   /**
+    * Add a view to the specified media
+    * @param mediaId The media to increment its view count
+    * @return
+    */
    public MediaFile addView(long mediaId) {
-      MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
+      MediaFile file = getMediaFile(mediaId).orElseThrow(EntityNotFoundException::new);
       file.incrementViews();
       return this.mediaFileRepository.save(file);
    }
 
+   /**
+    * @return A list of media that contains duplicate files
+    */
    public List<MediaFile> findAllMediaWithDuplicates() {
       return this.mediaFileRepository.findAllByDuplicatePathsNotEmpty();
    }
 
+   /**
+    * Sets if a media file should be set as a favorite.
+    * @param mediaId The media file to update
+    * @param isFavorite if this media is now a favorite or not
+    * @return The updated media file
+    */
    public MediaFile setFavorite(long mediaId, boolean isFavorite) {
-      MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
+      MediaFile file = getMediaFile(mediaId).orElseThrow(EntityNotFoundException::new);
       file.setIsFavorite(isFavorite);
       return this.mediaFileRepository.save(file);
    }
 
+   /**
+    * Sets if a media file should be set as ignored
+    * @param mediaId The media file to update
+    * @param isIgnored if this media is now ignored or not
+    * @return The updated media file
+    */
    public MediaFile setIgnored(long mediaId, boolean isIgnored) {
-      MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
+      MediaFile file = getMediaFile(mediaId).orElseThrow(EntityNotFoundException::new);
       file.setIsFavorite(isIgnored);
       return this.mediaFileRepository.save(file);
    }
 
+   /**
+    * @return a random video from the database.
+    */
    public MediaFile getRandomVideo() {
       var list = this.mediaFileRepository.findAllByMimetypeContaining("video");
       var rng = new Random();

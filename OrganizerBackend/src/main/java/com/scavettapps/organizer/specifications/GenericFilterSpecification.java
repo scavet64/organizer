@@ -24,9 +24,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 
 /**
+ * Provides a default list of methods to filter objects on using common types.
+ *
  * @author Vincent Scavetta
  */
-public class AbstractFilterSpecification<TYPE>{
+public class GenericFilterSpecification<TYPE>{
 
    /**
     * Converter Functions

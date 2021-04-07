@@ -15,20 +15,22 @@
  */
 package com.scavettapps.organizer.media;
 
-import com.scavettapps.organizer.specifications.AbstractFilterSpecification;
+import com.scavettapps.organizer.specifications.GenericFilterSpecification;
 import com.scavettapps.organizer.tag.Tag;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ListJoin;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
+ * Extends the AbstractFilterSpecification class and implements a few extra methods to support special queries on media
+ * files. The default media
  *
  * @author Vincent Scavetta
  */
 @Service
-public class MediaFileSpecification extends AbstractFilterSpecification<MediaFile> {
+public class MediaFileSpecification extends GenericFilterSpecification<MediaFile> {
    public static final String NULL = "Null";
    
    public Specification<MediaFile> getTagAttributeContains(String attribute, String value) {

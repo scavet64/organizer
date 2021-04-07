@@ -47,7 +47,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
@@ -75,8 +74,6 @@ public class MediaFileController {
        @RequestHeader(value = "Range", required = false) String httpRangeList
    )
        throws FileNotFoundException {
-      
-      //return mediaFileService.prepareContent(fileHash, httpRangeList);
       
       Resource fileResource = mediaFileService.loadFileAsResource(fileHash);
       ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(fileResource);
@@ -151,16 +148,17 @@ public class MediaFileController {
    }
 
    /**
-    * 
-    * @param request
-    * @return 
+    * Update a single media file's tags
+    *
+    * @param request The request containing details about which media file and which tags to add/remove
+    * @return The updated media file containing its new media tags.
     */
    @PutMapping("/tags")
    public ResponseEntity<Response> updateTagsForMedia(
        @RequestBody @Validated AddTagRequest request
    ) {
 
-      MediaFile updatedFile = mediaFileService.addTagToMediaFile(
+      MediaFile updatedFile = mediaFileService.setMediasTags(
           request.getMediaId(),
           request.getTagIds()
       );
@@ -172,9 +170,14 @@ public class MediaFileController {
    }
    
    /**
-    * 
-    * @param request
-    * @return 
+    * Update multiple different media file's tags at once.
+    *
+    * <p>
+    *    This is intended to be used in bulk media tag updates.
+    * </p>
+    *
+    * @param request The request containing a list of media tags which contain the linkage between the tag and media.
+    * @return The list of media that was updated.
     */
    @PutMapping("/tags/multiple")
    public ResponseEntity<Response> updateMultipleMediasTags(
@@ -185,7 +188,7 @@ public class MediaFileController {
       
       request.getUpdatedMedia().forEach(mediaToTags -> {
          updatedMedia.add(
-             mediaFileService.addTagToMediaFile(
+             mediaFileService.setMediasTags(
                  mediaToTags.getMediaId(), 
                  mediaToTags.getTagIds()
              )
@@ -200,10 +203,11 @@ public class MediaFileController {
 
 
    /**
-    * Find a page of media. This is the main method as to get all media
-    * @param pageable
-    * @param request
-    * @return
+    * Find a page of media. This is the main method as to get all media.
+    *
+    * @param pageable The pageable object outlining which page and how many items per page to get.
+    * @param request The request object containing the constraints on which the search should be filtered on.
+    * @return Page of filtered media.
     */
    @GetMapping
    public ResponseEntity<Response> findMedia(
@@ -215,10 +219,9 @@ public class MediaFileController {
    }
 
    /**
-    * Find a page of media. This is the main method as to get all media
-    * @param pageable
-    * @param request
-    * @return
+    * Get a random video from the database.
+    *
+    * @return a random video
     */
    @GetMapping("/random/video")
    public ResponseEntity<Response> getRandomVideo() {
@@ -227,9 +230,10 @@ public class MediaFileController {
    }
    
    /**
-    * 
-    * @param mediaId
-    * @return 
+    * Add a view to the media with the provided ID.
+    *
+    * @param mediaId the media's ID that should have its view count incremented
+    * @return Result message
     */
    @PutMapping("/view")
    public ResponseEntity<Response> addView(@RequestBody Long mediaId) {
@@ -238,9 +242,9 @@ public class MediaFileController {
    }
    
    /**
-    * 
-    * @param req
-    * @return 
+    * Toggle a media file as a favorite.
+    * @param req The json request containing information about which video and the current favorite status
+    * @return Result message
     */
    @PutMapping("/favorite")
    public ResponseEntity<Response> toggleFavorite(@RequestBody SetMediaFavoriteRequest req) {
@@ -249,8 +253,9 @@ public class MediaFileController {
    }
    
    /**
-    * 
-    * @return 
+    * get a list of files that contain duplicates.
+    *
+    * @return List of duplicate media files
     */
    @GetMapping("/duplicate")
    public Response getDuplicates() {

@@ -1,12 +1,12 @@
 /**
  * Copyright 2019 Vincent Scavetta
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,17 +37,21 @@ import com.scavettapps.organizer.folder.Folder;
 import com.scavettapps.organizer.media.MediaFile;
 import com.scavettapps.organizer.hashing.IHashService;
 import com.scavettapps.organizer.folder.FolderService;
+
 import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+
 import com.scavettapps.organizer.media.MediaFileService;
 import com.scavettapps.organizer.scanner.ScanLocation;
 import com.scavettapps.organizer.scanner.ScanLocationSevice;
 import com.scavettapps.organizer.transcoding.ITranscodingService;
+
 import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.scheduling.annotation.Async;
@@ -70,11 +74,11 @@ public class FileScanningService {
 
    @Autowired
    public FileScanningService(
-       FolderService folderService,
-       @Qualifier("QuickHash") IHashService quickHash,
-       @Qualifier("bramp") ITranscodingService transcodingService,
-       MediaFileService mediaFileService,
-       ScanLocationSevice scanLocationService
+      FolderService folderService,
+      @Qualifier("QuickHash") IHashService quickHash,
+      @Qualifier("bramp") ITranscodingService transcodingService,
+      MediaFileService mediaFileService,
+      ScanLocationSevice scanLocationService
    ) {
       this.folderService = folderService;
       this.quickHash = quickHash;
@@ -119,8 +123,8 @@ public class FileScanningService {
 
          // Partition the list into equal parts for splitting into threads
          List<List<File>> parts = ListUtils.partition(
-             filesInLocation,
-             filesInLocation.size() / NUMBER_THREADS
+            filesInLocation,
+            filesInLocation.size() / NUMBER_THREADS
          );
 
          for (List<File> partitionedList : parts) {
@@ -142,6 +146,7 @@ public class FileScanningService {
 
    /**
     * Process a single file.
+    *
     * @param file The file to process
     * @return The processed media file
     * @throws AlreadyExistsException
@@ -163,24 +168,24 @@ public class FileScanningService {
             if (!isAllowedMimeType(mimetype)) {
                throw new IllegalMimeTypeException("Illegal mimetype: " + mimetype);
             }
-            
+
             BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 
             MediaFile newFile = new MediaFile(
-                hash,
-                file.getName(),
-                file.length(),
-                file.getPath(),
-                mimetype,
-                attr.creationTime().toInstant(),
-                attr.lastModifiedTime().toInstant()
+               hash,
+               file.getName(),
+               file.length(),
+               file.getPath(),
+               mimetype,
+               attr.creationTime().toInstant(),
+               attr.lastModifiedTime().toInstant()
             );
             if (mimetype != null && mimetype.contains("video")) {
                // Video Detected. Grab the thumbnail.
                newFile.setThumbnail(getVideoThumb(newFile));
             }
             log.info(
-                "new file added - hash: " + newFile.getHash() + " name: " + newFile.getName() + " mimetype: " + mimetype
+               "new file added - hash: " + newFile.getHash() + " name: " + newFile.getName() + " mimetype: " + mimetype
             );
             return newFile;
          } else {
@@ -205,7 +210,7 @@ public class FileScanningService {
          }
 
          existingFile.updateLastSeen();
-         
+
          this.mediaFileService.saveMediaFile(existingFile);
          throw new AlreadyExistsException("file already existed");
       }
@@ -220,7 +225,7 @@ public class FileScanningService {
     */
    @Transactional
    public void recurseDirectory(File[] files, Folder currentFolder, Set<MediaFile> scannedFiles)
-       throws IOException {
+      throws IOException {
       log.info("Now Entering: " + currentFolder.getPath());
       for (File file : files) {
          if (file.isDirectory()) {
@@ -249,28 +254,29 @@ public class FileScanningService {
 
          //Does this file already exist somewhere else in this current scanning session?
          MediaFile previousFile = scannedFiles.stream()
-             .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(processedFile.getHash())))
-             .collect(Collectors.toList())
-             .stream()
-             .findFirst()
-             .orElse(null);
+            .filter(mediaFile -> (mediaFile.getHash().equalsIgnoreCase(processedFile.getHash())))
+            .collect(Collectors.toList())
+            .stream()
+            .findFirst()
+            .orElse(null);
 
          // If this file was found, add to its duplicate file list
          if (previousFile != null) {
             log.warn("duplicate hash found during this scanning session!");
             previousFile.addDuplicatePath(
-                new DuplicateMediaFilePath(processedFile.getPath())
+               new DuplicateMediaFilePath(processedFile.getPath())
             );
          } else {
             // Make sure the thumbnail is unique too if it has one.
             if (processedFile.getThumbnail() != null) {
                previousFile = scannedFiles
-                   .stream()
-                   .filter(mediaFile -> (mediaFile.getThumbnail() != null && mediaFile.getThumbnail().getHash().equalsIgnoreCase(processedFile.getThumbnail().getHash())))
-                   .collect(Collectors.toList())
-                   .stream()
-                   .findFirst()
-                   .orElse(null);
+                  .stream()
+                  .filter(mediaFile -> (mediaFile.getThumbnail() != null && mediaFile.getThumbnail().getHash()
+                     .equalsIgnoreCase(processedFile.getThumbnail().getHash())))
+                  .collect(Collectors.toList())
+                  .stream()
+                  .findFirst()
+                  .orElse(null);
                if (previousFile != null) {
                   // Thumbnail file is not unique. Use the previously found's thumbnail
                   log.info("Found a duplicate thumbnail with hash [{}]", processedFile.getThumbnail().getHash());
@@ -297,6 +303,12 @@ public class FileScanningService {
       }
    }
 
+   /**
+    * Gets and generates the thumbnail file for this media.
+    *
+    * @param newFile the media file to get the thumbnail of
+    * @return
+    */
    private StoredFile getVideoThumb(MediaFile newFile) {
       log.info("Generating thumbnail for: " + newFile.getName());
       try {
@@ -304,10 +316,10 @@ public class FileScanningService {
          String thumbhash = this.quickHash.getHash(thumbnailFile);
 
          return new StoredFile(
-             thumbhash,
-             thumbnailFile.getAbsolutePath(),
-             thumbnailFile.getName(),
-             thumbnailFile.length()
+            thumbhash,
+            thumbnailFile.getAbsolutePath(),
+            thumbnailFile.getName(),
+            thumbnailFile.length()
          );
       } catch (IOException ex) {
          log.error("Could not generate thumbnail for video: " + newFile.getName());
@@ -315,6 +327,19 @@ public class FileScanningService {
       }
    }
 
+   /**
+    * Attempts to get the correct mimetype for the provided file.
+    * <p>
+    *    This method will run through a few different methods to attempt and guess the mimetype of the file.
+    *    The typical and quickest way is to guess based on the filename however this relys on the extension to be correct.
+    *    The second attempt is to leverage the URLConnection class to guess the content type from a file stream. If this
+    *    fails, the third and final attempt is to use a third party library, Tika, to guess the mimetype. If this fails,
+    *    null is returned.
+    * </p>
+    * @param file The file to check
+    * @return The guessed mimetype
+    * @throws IOException if there was a problem reading the file.
+    */
    private String getMimeType(File file) throws IOException {
       String mimetype = URLConnection.guessContentTypeFromName(file.getName());
       if (mimetype == null) {
@@ -334,6 +359,12 @@ public class FileScanningService {
       return mimetype;
    }
 
+   /**
+    * Check if this string is an allowed mime type.
+    *
+    * @param mimetype the mimetype of the file to check
+    * @return true if this mimetype is allowed to be added, false otherwise
+    */
    private boolean isAllowedMimeType(String mimetype) {
       if (mimetype == null) {
          return false;
@@ -343,7 +374,7 @@ public class FileScanningService {
       }
    }
 
-   class ScanThreadTask implements Runnable {
+   private class ScanThreadTask implements Runnable {
 
       private final List<File> partitionedList;
       private final Folder workingFolder;
@@ -359,9 +390,10 @@ public class FileScanningService {
       public void run() {
          try {
             recurseDirectory(
-                partitionedList.toArray(new File[partitionedList.size()]),
-                workingFolder,
-                addedFiles);
+               partitionedList.toArray(new File[partitionedList.size()]),
+               workingFolder,
+               addedFiles
+            );
          } catch (IOException ex) {
             log.error("Failed recursing directory", ex);
          }
