@@ -53,5 +53,17 @@ public class ManagementController {
       }
       
    }
+
+   @GetMapping("/export/mediaTags")
+   public ResponseEntity<Response> exportMedia() {
+      try {
+         var backupMediaTags = this.managementService.exportMediaTags();
+         return ResponseEntity.ok(new DataResponse(backupMediaTags));
+      } catch (ManagementException ex) {
+         return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new ErrorResponse(ex.getMessage()));
+      }
+   }
    
 }
