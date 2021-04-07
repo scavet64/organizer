@@ -148,7 +148,7 @@ public class FileScanningService {
     * @throws IOException
     * @throws IllegalMimeTypeException
     */
-   private MediaFile processFile(File file) throws AlreadyExistsException, IOException, IllegalMimeTypeException {
+   private MediaFile processFile(File file) throws AlreadyExistsException, IOException, IllegalMimeTypeException, MediaMovedException {
       // Check to see if we know this file using name and size
       MediaFile existingFile = this.mediaFileService.getMediaFile(file.getName(), file.length()).orElse(null);
       if (existingFile == null) {
@@ -190,11 +190,20 @@ public class FileScanningService {
          }
       } else {
          // This file was found via its name and length
-         // TODO: Check path to make sure this isnt a duplicate file
-         String mimeType = URLConnection.guessContentTypeFromName(file.getName());
-         log.info("existing file based on name and size - hash: " + existingFile.getHash() + " name: "
-            + existingFile.getName() + " mimetype: " + mimeType
-         );
+
+         // Check the path to see if it was a duplicate file or if it has moved.
+         var existingFilePath = existingFile.getPath();
+         if (!existingFilePath.equals(file.getPath())) {
+            // Path does not equal what is in the database
+            if (new File(existingFilePath).exists()) {
+               // The recorded file in the database still exists on the file system so this new file must be a duplicate
+               existingFile.addDuplicatePath(new DuplicateMediaFilePath(file.getAbsolutePath()));
+            } else {
+               // This file has moved, throw the exception to signal to the caller to update its folder.
+               throw new MediaMovedException(existingFile);
+            }
+         }
+
          existingFile.updateLastSeen();
          
          this.mediaFileService.saveMediaFile(existingFile);
@@ -234,10 +243,6 @@ public class FileScanningService {
 
    private void handleFile(Folder currentFolder, Set<MediaFile> scannedFiles, File file) throws IOException {
       try {
-         // TODO:
-         // Does file exist
-         // If not process the file
-         // If does, update last seen
 
          // Process the file
          MediaFile processedFile = processFile(file);
@@ -279,8 +284,14 @@ public class FileScanningService {
             currentFolder.addFile(processedFile);
             scannedFiles.add(processedFile);
          }
+      } catch (MediaMovedException ex) {
+         log.info("detected that file {} was moved to {}", file.getName(), currentFolder.getPath());
+         var movedMedia = ex.getMovedMedia();
+
+         this.folderService.MoveMedia(movedMedia, currentFolder);
+
       } catch (AlreadyExistsException ex) {
-         log.info("file already existed and is recorded. Skipping");
+         //log.info("file already existed and is recorded. Skipping");
       } catch (IllegalMimeTypeException ex) {
          log.info("file's mimetype was illegal: {}", ex.getMessage());
       }

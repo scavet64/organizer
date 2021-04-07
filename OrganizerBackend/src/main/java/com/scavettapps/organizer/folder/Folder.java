@@ -56,7 +56,7 @@ public class Folder extends AbstractPersistableEntity<Long> {
    @OrderBy("UPPER(folderName) ASC")
    private Set<Folder> folders;
 
-   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+   @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY, orphanRemoval = true)
    private Set<MediaFile> files;
 
    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)

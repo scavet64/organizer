@@ -15,14 +15,21 @@
  */
 package com.scavettapps.organizer.folder;
 
+import com.scavettapps.organizer.core.EntityNotFoundException;
+import com.scavettapps.organizer.media.MediaFile;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.Optional;
 
 /**
  *
  * @author Vincent Scavetta
  */
 @Service
+@Slf4j
 public class FolderService {
    
    private FolderRepository folderRepository;
@@ -48,5 +55,29 @@ public class FolderService {
 //   public Folder getFolderByPath(String path) {
 //      return this.folderRepository.findByPath(path).orElse(new Folder(path));
 //   }
+
+   public Folder findFolderContainingFile(MediaFile file) {
+      return this.folderRepository.findByFilesContaining(file).orElseThrow(EntityNotFoundException::new);
+   }
+
+   @Transactional(Transactional.TxType.REQUIRES_NEW)
+   public boolean MoveMedia(MediaFile file, Folder newFolder) {
+      var currentFolderOpt = this.folderRepository.findByFilesContaining(file);
+      if (currentFolderOpt.isPresent()) {
+         var currentFolder = currentFolderOpt.get();
+         if (currentFolder.getFiles().remove(file)) {
+            log.info("Successfully remove media [{}] from previous folder [{}]", file.getName(), currentFolder.getPath());
+            newFolder.addFile(file);
+            this.folderRepository.save(currentFolder);
+            log.info("Successfully moved media [{}] to [{}]", file.getName(), newFolder.getPath());
+            return true;
+         } else {
+            log.error("Could not remove media [{}] from previous folder [{}]", file.getName(), currentFolder.getPath());
+         }
+      } else {
+         log.error("Could not find existing media with id [{}] with in any folders", file.getName());
+      }
+      return false;
+   }
    
 }
