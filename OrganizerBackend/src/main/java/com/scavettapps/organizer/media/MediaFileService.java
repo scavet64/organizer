@@ -19,7 +19,6 @@ import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
 import com.scavettapps.organizer.transcoding.BrampTranscodingService;
-import com.scavettapps.organizer.transcoding.ITranscodingService;
 import com.scavettapps.organizer.transcoding.TranscodingException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,35 +27,26 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import static org.springframework.http.HttpHeaders.CONTENT_LENGTH;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
+import java.util.Random;
 
 /**
  *
@@ -429,5 +419,11 @@ public class MediaFileService {
       MediaFile file = getMediaFile(mediaId).orElseThrow(() -> new EntityNotFoundException());
       file.setIsFavorite(isIgnored);
       return this.mediaFileRepository.save(file);
+   }
+
+   public MediaFile getRandomVideo() {
+      var list = this.mediaFileRepository.findAllByMimetypeContaining("video");
+      var rng = new Random();
+      return list.get(rng.nextInt(list.size()));
    }
 }

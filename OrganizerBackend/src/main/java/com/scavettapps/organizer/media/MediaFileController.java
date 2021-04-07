@@ -203,14 +203,26 @@ public class MediaFileController {
     * Find a page of media. This is the main method as to get all media
     * @param pageable
     * @param request
-    * @return 
+    * @return
     */
    @GetMapping
    public ResponseEntity<Response> findMedia(
-       Pageable pageable,
-       MediaFileRequest request
+      Pageable pageable,
+      MediaFileRequest request
    ) {
       Page<MediaFile> mediaPage = this.mediaFileService.getPageOfMediaFiles(pageable, request);
+      return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
+   }
+
+   /**
+    * Find a page of media. This is the main method as to get all media
+    * @param pageable
+    * @param request
+    * @return
+    */
+   @GetMapping("/random/video")
+   public ResponseEntity<Response> getRandomVideo() {
+      MediaFile mediaPage = this.mediaFileService.getRandomVideo();
       return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
    }
    

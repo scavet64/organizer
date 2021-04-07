@@ -41,4 +41,6 @@ public interface MediaFileRepository extends JpaRepository<MediaFile, Long> {
    
    Page<MediaFile> findAll(Specification<MediaFile> specs, Pageable page);
 
+   List<MediaFile> findAllByMimetypeContaining(String mimetype);
+
 }
