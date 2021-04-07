@@ -19,6 +19,7 @@ import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Objects;
 
 /**
  *
@@ -42,5 +43,18 @@ public class DuplicateMediaFilePath extends AbstractPersistableEntity<Long> {
 
    public void setDuplicatePath(String duplicatePath) {
       this.duplicatePath = duplicatePath;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      DuplicateMediaFilePath that = (DuplicateMediaFilePath) o;
+      return duplicatePath.equals(that.duplicatePath);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(duplicatePath);
    }
 }
