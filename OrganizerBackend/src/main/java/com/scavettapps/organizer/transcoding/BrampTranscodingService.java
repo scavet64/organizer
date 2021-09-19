@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFmpegUtils;
@@ -55,11 +56,17 @@ public class BrampTranscodingService implements ITranscodingService {
 
    private final ApplicationResourceService applicationResourceService;
 
+   private final String ffmpegExeFile;
+   private final String ffprobeExeFile;
+
+
    @Autowired
    public BrampTranscodingService(
        ApplicationResourceService applicationResourceService
    ) {
       this.applicationResourceService = applicationResourceService;
+      ffmpegExeFile = new File("./resources/" + FFMPEG_EXE).getPath();
+      ffprobeExeFile = new File("./resources/" + FFPROBE_EXE).getPath();
    }
 
    /**
@@ -70,8 +77,9 @@ public class BrampTranscodingService implements ITranscodingService {
     */
    public File transcodeStream(MediaFile file) throws TranscodingException {
       try {
-         FFmpeg ffmpeg = new FFmpeg(applicationResourceService.getFileFromResources(FFMPEG_EXE).getPath());
-         FFprobe ffprobe = new FFprobe(applicationResourceService.getFileFromResources(FFPROBE_EXE).getPath());
+
+         FFmpeg ffmpeg = new FFmpeg(ffmpegExeFile);
+         FFprobe ffprobe = new FFprobe(ffprobeExeFile);
 
          File baseTempFolder = new File(TEMP_LOCATION);
          if (!baseTempFolder.exists()) {
@@ -179,8 +187,8 @@ public class BrampTranscodingService implements ITranscodingService {
          }
          File source = new File(file.getPath());
          File target = Paths.get(folder.getAbsolutePath(), file.getName()).toFile();
-         FFmpeg ffmpeg = new FFmpeg(applicationResourceService.getFileFromResources(FFMPEG_EXE).getPath());
-         FFprobe ffprobe = new FFprobe(applicationResourceService.getFileFromResources(FFPROBE_EXE).getPath());
+         FFmpeg ffmpeg = new FFmpeg(ffmpegExeFile);
+         FFprobe ffprobe = new FFprobe(ffprobeExeFile);
 
          FFmpegProbeResult in = ffprobe.probe(source.getAbsolutePath());
 
@@ -264,24 +272,9 @@ public class BrampTranscodingService implements ITranscodingService {
           multimediaFile.getName() + THUMBNAIL_FORMAT
       ).toFile();
 
-      FFmpeg ffmpeg = new FFmpeg(applicationResourceService.getFileFromResources(FFMPEG_EXE).getPath());
-      FFprobe ffprobe = new FFprobe(applicationResourceService.getFileFromResources(FFPROBE_EXE).getPath());
+      FFmpeg ffmpeg = new FFmpeg(ffmpegExeFile);
+      FFprobe ffprobe = new FFprobe(ffprobeExeFile);
 
-//      FFmpegProbeResult probeResult = ffprobe.probe("input.mp4");
-//
-//      FFmpegFormat format = probeResult.getFormat();
-//      System.out.format("%nFile: '%s' ; Format: '%s' ; Duration: %.3fs", 
-//         format.filename, 
-//         format.format_long_name,
-//         format.duration
-//      );
-//
-//      FFmpegStream stream = probeResult.getStreams().get(0);
-//      System.out.format("%nCodec: '%s' ; Width: %dpx ; Height: %dpx",
-//         stream.codec_long_name,
-//         stream.width,
-//         stream.height
-//      ); 
       FFmpegBuilder builder = new FFmpegBuilder()
           .setInput(mediaFileFile.getAbsolutePath())
           .addOutput(target.getAbsolutePath())
@@ -295,7 +288,7 @@ public class BrampTranscodingService implements ITranscodingService {
          // Run a one-pass encode
          executor.createJob(builder).run();
       } catch (Throwable ex) {
-         // Catch anyting this can throw and return our own exception
+         // Catch anything this can throw and return our own exception
          throw new IOException("Failed generating thumbnail", ex);
       }
 
@@ -306,7 +299,7 @@ public class BrampTranscodingService implements ITranscodingService {
 
       try {
          File source = new File(mediaFile.getPath());
-         FFprobe ffprobe = new FFprobe(applicationResourceService.getFileFromResources(FFPROBE_EXE).getPath());
+         FFprobe ffprobe = new FFprobe(ffprobeExeFile);
 
          FFmpegProbeResult probeResult = ffprobe.probe(source.getAbsolutePath());
 
