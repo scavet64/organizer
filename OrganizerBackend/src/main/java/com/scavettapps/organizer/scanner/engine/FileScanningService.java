@@ -31,6 +31,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.scavettapps.organizer.folder.Folder;
@@ -88,6 +89,21 @@ public class FileScanningService {
    }
 
    @Transactional
+   @Scheduled(cron = "0 0 3 * * *")
+   public void AutomatedScanning() {
+      var scanLocations = this.scanLocationService.findAllScanLocations();
+      for (var scanLocation: scanLocations) {
+         try {
+            scanLocationForFiles(scanLocation.getPath());
+            scanLocation.setLastScan(Instant.now());
+            this.scanLocationService.updateScanLocation(scanLocation);
+         } catch (InterruptedException | ExecutionException ex) {
+            log.error("Failed to scan: " + scanLocation.getPath());
+         }
+      }
+   }
+
+   @Transactional
    @Async
    public void initiateScanning(long id) {
       ScanLocation location = this.scanLocationService.getScanLocation(id);
@@ -102,7 +118,7 @@ public class FileScanningService {
    }
 
    @Transactional
-   public Folder scanLocationForFiles(String path) throws InterruptedException, ExecutionException {
+   public synchronized Folder scanLocationForFiles(String path) throws InterruptedException, ExecutionException {
       log.info("Initializing Scanning of: " + path);
 
       Set<MediaFile> addedFiles = Collections.synchronizedSet(new HashSet<>());
