@@ -101,4 +101,10 @@ export class MediaService {
       .put<Response<any>>(`${environment.baseURL}media/favorite`, data)
       .pipe(timeout(10000));
   }
+
+  public getRandomVideo(): Observable<Response<any>> {
+    return this.http
+      .get<Response<any>>(`${environment.baseURL}media/random/video`)
+      .pipe(timeout(10000));
+  }
 }

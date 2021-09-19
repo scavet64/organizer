@@ -13,6 +13,7 @@ import { MediaSearchRequest } from './requests/media-search-request';
 import { SlideInOut } from '../animations/SlideInOut';
 import { MediaSortType } from './media.sort.type';
 import { ActivatedRoute, Router } from '@angular/router';
+import { VideoplayerService } from '../videoplayer/videoplayer.service';
 
 @Component({
   selector: 'app-media',
@@ -69,6 +70,7 @@ export class MediaComponent implements OnInit {
     private mediaFileService: MediaService,
     private router: Router,
     private tagService: TagService,
+    private videoplayerService: VideoplayerService
   ) {
   }
 
@@ -257,5 +259,12 @@ export class MediaComponent implements OnInit {
   showMoreFilters() {
     this.advanceSearchState = this.advanceSearchState === 'closed' ? 'opened' : 'closed';
     localStorage.setItem(this.advanceSearchStateKey, this.advanceSearchState);
+  }
+
+  playRandomVideo() {
+    this.mediaFileService.getRandomVideo().subscribe(res => {
+      console.log(`random video - ${res.data.name}`)
+      this.videoplayerService.showVideo(res.data, false);
+    });
   }
 }

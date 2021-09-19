@@ -14,7 +14,7 @@ export class VideoplayerService {
     private dialog: MatDialog
   ) { }
 
-  public showVideo(file: MediaFile) {
+  public showVideo(file: MediaFile, transcode: boolean = true) {
 
     this.mediaFileService.getMediaDetails(file).subscribe(res => {
       console.log(res);
@@ -24,7 +24,7 @@ export class VideoplayerService {
         panelClass: 'videomodel',
         data: {
           rawUrl: this.mediaFileService.getVideoStreamURL(file),
-          transcodeUrl: this.mediaFileService.getVideoStreamURLTranscode(file),
+          transcodeUrl: transcode ? this.mediaFileService.getVideoStreamURLTranscode(file) : '',
           mime: file.mimetype,
           details: res.data
         }
