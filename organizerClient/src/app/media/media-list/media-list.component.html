@@ -40,7 +40,7 @@
   <app-media-list-item *ngFor="let file of pageResponse.content; let index = index" [file]="file" [knownTags]="knownTags"
     [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
     (tagClicked)="tagClicked.next($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
-    (checkboxClicked)="checkboxClicked()" [isOdd]="0 === index % 2">
+    (checkboxClicked)="checkboxClicked()" (openInDeoVRClicked)="openInDeoVR($event)" [isOdd]="0 === index % 2">
   </app-media-list-item>
 </div>
 
@@ -49,7 +49,7 @@
   <app-media-list-grid-item *ngFor="let file of pageResponse.content; let index = index" [file]="file" [knownTags]="knownTags"
     [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
     (tagClicked)="tagClicked.next($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
-    (checkboxClicked)="checkboxClicked()" [isOdd]="0 === index % 2">
+    (checkboxClicked)="checkboxClicked()" (openInDeoVRClicked)="openInDeoVR($event)" [isOdd]="0 === index % 2">
   </app-media-list-grid-item>
 </div>
 

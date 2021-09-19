@@ -107,4 +107,10 @@ export class MediaService {
       .get<Response<any>>(`${environment.baseURL}media/random/video`)
       .pipe(timeout(10000));
   }
+
+  public openFileInDeoVR(hash: string): Observable<Response<any>> {
+    return this.http
+      .get<Response<any>>(`${environment.baseURL}media/${hash}/deovr`)
+      .pipe(timeout(10000));
+  }
 }

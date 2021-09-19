@@ -17,6 +17,7 @@ package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.core.OrganizerRestController;
+import com.scavettapps.organizer.core.response.ErrorResponse;
 import com.scavettapps.organizer.media.json.AddTagRequest;
 import com.scavettapps.organizer.core.response.DataResponse;
 import com.scavettapps.organizer.core.response.Response;
@@ -26,6 +27,7 @@ import com.scavettapps.organizer.transcoding.BrampTranscodingService;
 import com.scavettapps.organizer.transcoding.TranscodingException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -145,6 +147,36 @@ public class MediaFileController {
       
       ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(resource);
       return resp;
+   }
+
+   /**
+    *
+    * @param fileHash the file ID corresponding to the video
+    * @return returns the video as a resource stream
+    */
+   @GetMapping(value = "/{fileHash}/deovr")
+   public @ResponseBody
+   ResponseEntity openVideoInDeoVR(
+      @PathVariable String fileHash,
+      @RequestHeader(value = "Range", required = false) String httpRangeList
+   )
+      throws FileNotFoundException {
+
+      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElseThrow();
+      try {
+         var deovrExe = new File("\"F:\\Games\\Steam Games\\steamapps\\common\\DeoVR Video Player\\DeoVR.exe\"");
+
+         var builder = new ProcessBuilder();
+         builder.command(deovrExe.getPath() + " \"" + mediaFile.getPath() + "\"");
+
+         var process = builder.start();
+      } catch (IOException ex) {
+         return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse("Failed to launch deovr: " + ex.getMessage()));
+      }
+
+      return ResponseEntity.ok().build();
    }
 
    /**

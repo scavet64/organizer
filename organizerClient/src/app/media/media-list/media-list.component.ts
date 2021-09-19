@@ -172,4 +172,10 @@ export class MediaListComponent implements OnInit {
     });
   }
 
+  openInDeoVR(mediaFile: MediaFile) {
+    this.mediaFileService.openFileInDeoVR(mediaFile.hash).subscribe(res => {
+      this.alertService.success(`Successfully opened in DeoVR`);
+    })
+  }
+
 }

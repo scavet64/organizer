@@ -26,6 +26,7 @@ export class MediaListItemComponent implements OnInit {
   @Output() tagClicked: EventEmitter<any> = new EventEmitter();
   @Output() favoriteToggled: EventEmitter<any> = new EventEmitter();
   @Output() checkboxClicked: EventEmitter<any> = new EventEmitter<any>();
+  @Output() openInDeoVRClicked: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog
@@ -79,6 +80,10 @@ export class MediaListItemComponent implements OnInit {
   checkboxClickedMethod(file: MediaFile) {
     file.isSelected = !file.isSelected;
     this.checkboxClicked.next();
+  }
+
+  openInDeoVR() {
+    this.openInDeoVRClicked.emit(this.file);
   }
 
 }
