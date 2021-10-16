@@ -247,6 +247,20 @@ public class MediaFileService {
          }
       }
 
+      if (!params.getShowIgnored()) {
+         if (specs == null) {
+            specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
+               "isIgnored",
+               "eq:False"
+            ));
+         } else {
+            specs = specs.and(mediaFileSpecification.getBooleanTypeSpecification(
+               "isIgnored",
+               "eq:False"
+            ));
+         }
+      }
+
       return specs;
    }
 
@@ -288,7 +302,7 @@ public class MediaFileService {
     */
    public MediaFile setIgnored(long mediaId, boolean isIgnored) {
       MediaFile file = getMediaFile(mediaId).orElseThrow(EntityNotFoundException::new);
-      file.setIsFavorite(isIgnored);
+      file.setIsIgnored(isIgnored);
       return this.mediaFileRepository.save(file);
    }
 

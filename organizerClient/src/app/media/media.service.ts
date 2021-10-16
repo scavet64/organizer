@@ -102,6 +102,16 @@ export class MediaService {
       .pipe(timeout(10000));
   }
 
+  public toggleIgnored(id: number, isIgnored: boolean): Observable<Response<any>> {
+    const data = {
+      mediaId: id,
+      isFavorite: isIgnored
+    };
+    return this.http
+      .put<Response<any>>(`${environment.baseURL}media/ignore`, data)
+      .pipe(timeout(10000));
+  }
+
   public getRandomVideo(): Observable<Response<any>> {
     return this.http
       .get<Response<any>>(`${environment.baseURL}media/random/video`)

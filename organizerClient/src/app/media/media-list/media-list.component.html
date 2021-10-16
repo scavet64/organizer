@@ -1,7 +1,7 @@
 <span class="body-header">
   <!-- Media Type Filter -->
   <mat-checkbox *ngIf="editingMultiple" class="checkbox-all" [(ngModel)]="areAllChecked"
-      [(indeterminate)]="isIndeterminate" (change)="allCheckClicked()"></mat-checkbox>
+    [(indeterminate)]="isIndeterminate" (change)="allCheckClicked()"></mat-checkbox>
   <div class="checkbox-tabgroup-container">
 
     <mat-tab-group *ngIf="selectedMediaIndex !== undefined" [(selectedIndex)]="selectedMediaIndex"
@@ -37,19 +37,21 @@
 
 <!-- List View -->
 <div *ngIf="isListView">
-  <app-media-list-item *ngFor="let file of pageResponse.content; let index = index" [file]="file" [knownTags]="knownTags"
-    [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
-    (tagClicked)="tagClicked.next($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
-    (checkboxClicked)="checkboxClicked()" (openInDeoVRClicked)="openInDeoVR($event)" [isOdd]="0 === index % 2">
+  <app-media-list-item *ngFor="let file of pageResponse.content; let index = index" [file]="file"
+    [knownTags]="knownTags" [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)"
+    (openMedia)="openMedia(file)" (tagClicked)="tagClicked.next($event)" (favoriteToggled)="favoriteToggle(file)"
+    [modifyMultiple]="editingMultiple" (checkboxClicked)="checkboxClicked()" (openInDeoVRClicked)="openInDeoVR($event)"
+    (ignoreMediaClicked)="ignoreMedia($event)" [isOdd]="0 === index % 2">
   </app-media-list-item>
 </div>
 
 <!-- Grid View -->
 <div *ngIf="!isListView">
-  <app-media-list-grid-item *ngFor="let file of pageResponse.content; let index = index" [file]="file" [knownTags]="knownTags"
-    [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)" (openMedia)="openMedia(file)"
-    (tagClicked)="tagClicked.next($event)" (favoriteToggled)="favoriteToggle(file)" [modifyMultiple]="editingMultiple"
-    (checkboxClicked)="checkboxClicked()" (openInDeoVRClicked)="openInDeoVR($event)" [isOdd]="0 === index % 2">
+  <app-media-list-grid-item *ngFor="let file of pageResponse.content; let index = index" [file]="file"
+    [knownTags]="knownTags" [imgSource]="getThumbnailSrc(file)" (tagsEdited)="updateMediaFilesTags($event)"
+    (openMedia)="openMedia(file)" (tagClicked)="tagClicked.next($event)" (favoriteToggled)="favoriteToggle(file)"
+    [modifyMultiple]="editingMultiple" (checkboxClicked)="checkboxClicked()" (openInDeoVRClicked)="openInDeoVR($event)"
+    (ignoreMediaClicked)="ignoreMedia($event)" [isOdd]="0 === index % 2">
   </app-media-list-grid-item>
 </div>
 

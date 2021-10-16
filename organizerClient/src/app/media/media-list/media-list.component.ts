@@ -178,4 +178,9 @@ export class MediaListComponent implements OnInit {
     })
   }
 
+  ignoreMedia(mediaFile: MediaFile) {
+    this.mediaFileService.toggleIgnored(mediaFile.id, !mediaFile.isHidden).subscribe(res => {
+      this.alertService.success(`Successfully Toggled Ignored Status`);
+    })
+  }
 }

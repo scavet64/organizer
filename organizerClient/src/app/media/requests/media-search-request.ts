@@ -10,6 +10,7 @@ export class MediaSearchRequest extends PageRequest {
   tagIds: number[];
   mediaType: string;
   onlyShowFavorite: boolean;
+  showIgnored: boolean;
 
   constructor(
     name: string,
@@ -29,6 +30,7 @@ export class MediaSearchRequest extends PageRequest {
     this.mediaType = mediaType;
     this.onlyShowFavorite = onlyShowFavorite;
     this.tagIds = tags;
+    this.showIgnored = false;
   }
 
   toUrlParams() {
@@ -39,6 +41,7 @@ export class MediaSearchRequest extends PageRequest {
       ...(this.sortColumn !== 'dateAdded' && { sortColumn: this.sortColumn }),
       ...(this.sortDirection !== 'desc' && { sortDirection: this.sortDirection}),
       ...(this.onlyShowFavorite && { onlyShowFavorite: this.onlyShowFavorite }),
+      ...(this.showIgnored && { showIgnored: this.showIgnored }),
       ...(this.currentPage !== 0 && { currentPage: this.currentPage }),
       ...(this.resultsPerPage !== 20 && {resultsPerPage: this.resultsPerPage})
     };
@@ -63,6 +66,8 @@ export class MediaSearchRequest extends PageRequest {
     }
 
     params = params.set(`isFavorite`, this.onlyShowFavorite.toString());
+
+    params = params.set(`showIgnored`, this.showIgnored.toString());
     return params;
   }
 }

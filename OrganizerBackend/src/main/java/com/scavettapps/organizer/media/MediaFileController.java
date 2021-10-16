@@ -283,6 +283,17 @@ public class MediaFileController {
       MediaFile updated = mediaFileService.setFavorite(req.getMediaId(), req.getIsFavorite());
       return ResponseEntity.ok(new DataResponse(updated));
    }
+
+   /**
+    * Toggle a media file as a favorite.
+    * @param req The json request containing information about which video and the current favorite status
+    * @return Result message
+    */
+   @PutMapping("/ignore")
+   public ResponseEntity<Response> toggleIgnored(@RequestBody SetMediaFavoriteRequest req) {
+      MediaFile updated = mediaFileService.setIgnored(req.getMediaId(), req.getIsFavorite());
+      return ResponseEntity.ok(new DataResponse(updated));
+   }
    
    /**
     * get a list of files that contain duplicates.

@@ -26,6 +26,7 @@ public class MediaFileRequest {
    private List<Long> tags;
    private String mediaType;
    private boolean isFavorite;
+   private boolean showIgnored;
 
    public MediaFileRequest() {
    }
@@ -60,5 +61,13 @@ public class MediaFileRequest {
 
    public void setIsFavorite(boolean isFavorite) {
       this.isFavorite = isFavorite;
+   }
+
+   public boolean getShowIgnored() {
+      return showIgnored;
+   }
+
+   public void setShowIgnored(boolean showIgnored) {
+      this.showIgnored = showIgnored;
    }
 }

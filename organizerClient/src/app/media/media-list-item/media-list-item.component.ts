@@ -27,6 +27,7 @@ export class MediaListItemComponent implements OnInit {
   @Output() favoriteToggled: EventEmitter<any> = new EventEmitter();
   @Output() checkboxClicked: EventEmitter<any> = new EventEmitter<any>();
   @Output() openInDeoVRClicked: EventEmitter<any> = new EventEmitter<any>();
+  @Output() ignoreMediaClicked: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(
     private dialog: MatDialog
@@ -86,4 +87,7 @@ export class MediaListItemComponent implements OnInit {
     this.openInDeoVRClicked.emit(this.file);
   }
 
+  ignoreMedia() {
+    this.ignoreMediaClicked.emit(this.file);
+  }
 }
