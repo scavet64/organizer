@@ -233,7 +233,19 @@ public class MediaFileService {
          }
       }
 
-      if (params.getIsFavorite()) {
+      if (params.getPath() != null) {
+         var spec = mediaFileSpecification.getStringTypeSpecification(
+            "path",
+            params.getPath().toLowerCase()
+         );
+         if (specs == null) {
+            specs = Specification.where(spec);
+         } else {
+            specs = specs.and(spec);
+         }
+      }
+
+      if (params.isFavorite()) {
          if (specs == null) {
             specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
                 "isFavorite",
@@ -247,7 +259,7 @@ public class MediaFileService {
          }
       }
 
-      if (!params.getShowIgnored()) {
+      if (!params.isShowIgnored()) {
          if (specs == null) {
             specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
                "isIgnored",
