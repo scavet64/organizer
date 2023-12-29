@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import com.scavettapps.organizer.media.MediaFileService;
 import com.scavettapps.organizer.scanner.ScanLocation;
-import com.scavettapps.organizer.scanner.ScanLocationSevice;
+import com.scavettapps.organizer.scanner.ScanLocationService;
 import com.scavettapps.organizer.transcoding.ITranscodingService;
 
 import java.io.FileInputStream;
@@ -71,7 +71,7 @@ public class FileScanningService {
    private final IHashService quickHash;
    private final ITranscodingService transcodingService;
    private final MediaFileService mediaFileService;
-   private final ScanLocationSevice scanLocationService;
+   private final ScanLocationService scanLocationService;
 
    @Autowired
    public FileScanningService(
@@ -79,7 +79,7 @@ public class FileScanningService {
       @Qualifier("QuickHash") IHashService quickHash,
       @Qualifier("bramp") ITranscodingService transcodingService,
       MediaFileService mediaFileService,
-      ScanLocationSevice scanLocationService
+      ScanLocationService scanLocationService
    ) {
       this.folderService = folderService;
       this.quickHash = quickHash;
@@ -329,10 +329,10 @@ public class FileScanningService {
       log.info("Generating thumbnail for: " + newFile.getName());
       try {
          File thumbnailFile = transcodingService.getDefaultThumbnail(newFile);
-         String thumbhash = this.quickHash.getHash(thumbnailFile);
+         String thumbHash = this.quickHash.getHash(thumbnailFile);
 
          return new StoredFile(
-            thumbhash,
+            thumbHash,
             thumbnailFile.getAbsolutePath(),
             thumbnailFile.getName(),
             thumbnailFile.length()
@@ -347,7 +347,7 @@ public class FileScanningService {
     * Attempts to get the correct mimetype for the provided file.
     * <p>
     *    This method will run through a few different methods to attempt and guess the mimetype of the file.
-    *    The typical and quickest way is to guess based on the filename however this relys on the extension to be correct.
+    *    The typical and quickest way is to guess based on the filename however this relies on the extension to be correct.
     *    The second attempt is to leverage the URLConnection class to guess the content type from a file stream. If this
     *    fails, the third and final attempt is to use a third party library, Tika, to guess the mimetype. If this fails,
     *    null is returned.

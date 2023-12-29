@@ -23,6 +23,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Vincent Scavetta
  */
 public interface DuplicateMediaFilePathRepository 
-        extends JpaRepository<DuplicateMediaFilePath, String> {
-   
+        extends JpaRepository<DuplicateMediaFilePath, Long> {
 }

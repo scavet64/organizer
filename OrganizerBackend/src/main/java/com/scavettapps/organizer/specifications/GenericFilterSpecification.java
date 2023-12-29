@@ -66,13 +66,6 @@ public class GenericFilterSpecification<TYPE>{
     */
    @Autowired
    private FilterSpecifications<TYPE, Long> longTypeSpecifications;
-   
-   /**
-    * {@link FilterSpecifications} for Entity {@link TYPE} and Field type
-    * {@link Long}
-    */
-   @Autowired
-   private FilterSpecifications<TYPE, Boolean> booleanTypeSpecifications;
 
    protected String containsLowerCase(String searchField) {
       return wildcard + searchField.toLowerCase() + wildcard;

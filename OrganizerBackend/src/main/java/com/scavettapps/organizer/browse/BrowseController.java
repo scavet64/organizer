@@ -15,20 +15,20 @@
  */
 package com.scavettapps.organizer.browse;
 
-import com.scavettapps.organizer.core.OrganizerRestController;
-import com.scavettapps.organizer.core.response.DataResponse;
-import com.scavettapps.organizer.core.response.ErrorResponse;
-import com.scavettapps.organizer.core.response.Response;
 import java.io.IOException;
 import java.util.List;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import com.scavettapps.organizer.core.OrganizerRestController;
+import com.scavettapps.organizer.core.response.DataResponse;
+import com.scavettapps.organizer.core.response.ErrorResponse;
+import com.scavettapps.organizer.core.response.Response;
 
 /**
  *
@@ -37,8 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 @OrganizerRestController
 @RequestMapping("/browse")
 public class BrowseController {
-   
-   private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(BrowseController.class);
    
    private final BrowseService browseService;
 

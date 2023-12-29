@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
@@ -44,25 +43,25 @@ public class ScanLocationController {
    private static final Logger LOGGER = LoggerFactory.getLogger(ScanLocationController.class);
    
    private final FileScanningService fileScanningService;
-   private final ScanLocationSevice scanLocationSevice;
+   private final ScanLocationService scanLocationService;
 
    @Autowired
    public ScanLocationController(
        FileScanningService fileScanningService,
-       ScanLocationSevice scanLocationSevice
+       ScanLocationService scanLocationService
    ) {
       this.fileScanningService = fileScanningService;
-      this.scanLocationSevice = scanLocationSevice;
+      this.scanLocationService = scanLocationService;
    }
    
    @GetMapping
    public ResponseEntity<Response> getScanLocations() {
-      return ResponseEntity.ok(new DataResponse(scanLocationSevice.findAllScanLocations()));
+      return ResponseEntity.ok(new DataResponse(scanLocationService.findAllScanLocations()));
    }
    
    @DeleteMapping
    public ResponseEntity<Response> removeScanLocation(@RequestParam long id) {
-      if (this.scanLocationSevice.deleteScanLocation(id)) {
+      if (this.scanLocationService.deleteScanLocation(id)) {
          return ResponseEntity.ok(new DataResponse("Scan Location was successfully deleted"));
       } else {
          return ResponseEntity.badRequest().body(new ErrorResponse("Cannot delete something that does not exist"));
@@ -78,7 +77,7 @@ public class ScanLocationController {
       }
       
       try {
-         ScanLocation newLoc = this.scanLocationSevice.createNewScanLocation(request.getPath());
+         ScanLocation newLoc = this.scanLocationService.createNewScanLocation(request.getPath());
          return ResponseEntity.ok(new DataResponse(newLoc));
       } catch (IllegalScanningLocationException ex) {
          LOGGER.warn("Invalid Scanning path", ex);

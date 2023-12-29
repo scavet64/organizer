@@ -15,9 +15,6 @@
  */
 package com.scavettapps.organizer.media;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.scavettapps.organizer.folder.Folder;
 import com.scavettapps.organizer.tag.Tag;
 import java.util.Set;
 

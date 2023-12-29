@@ -16,7 +16,6 @@
 package com.scavettapps.organizer.core;
 
 import com.scavettapps.organizer.core.response.ErrorResponse;
-import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,19 +35,19 @@ public class RestExceptionHandler {
    private static final Logger LOGGER = LogManager.getLogger(RestExceptionHandler.class.getName());
    
    @ExceptionHandler(value = { FileNotFoundException.class })
-   public ResponseEntity fileNotFound(FileNotFoundException ex, WebRequest request) {
+   public ResponseEntity<ErrorResponse> fileNotFound(FileNotFoundException ex, WebRequest request) {
       LOGGER.debug("handling FileNotFoundException...");
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
    }
 
    @ExceptionHandler(value = { EntityNotFoundException.class })
-   public ResponseEntity entityNotFoundException(EntityNotFoundException ex, WebRequest request) {
+   public ResponseEntity<ErrorResponse> entityNotFoundException(EntityNotFoundException ex, WebRequest request) {
       LOGGER.debug("handling EntityNotFoundException...");
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getLocalizedMessage()));
    }
    
    @ExceptionHandler(value = { EntityAlreadyExistsException.class })
-   public ResponseEntity entityAlreadyExistsException(EntityAlreadyExistsException ex, WebRequest request) {
+   public ResponseEntity<ErrorResponse> entityAlreadyExistsException(EntityAlreadyExistsException ex, WebRequest request) {
       LOGGER.debug("handling EntityAlreadyExistsException...");
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getLocalizedMessage()));
    }

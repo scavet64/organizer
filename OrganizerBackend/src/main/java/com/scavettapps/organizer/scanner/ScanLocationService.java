@@ -15,27 +15,28 @@
  */
 package com.scavettapps.organizer.scanner;
 
-import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.io.File;
-import java.time.Instant;
 import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.scavettapps.organizer.core.EntityNotFoundException;
 
 /**
  *
  * @author Vincent Scavetta
  */
 @Service
-public class ScanLocationSevice {
+public class ScanLocationService {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(ScanLocationSevice.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(ScanLocationService.class);
    private final ScanLocationRepository scanLocationRepository;
 
    @Autowired
-   public ScanLocationSevice(ScanLocationRepository scanLocationRepository) {
+   public ScanLocationService(ScanLocationRepository scanLocationRepository) {
       this.scanLocationRepository = scanLocationRepository;
    }
 

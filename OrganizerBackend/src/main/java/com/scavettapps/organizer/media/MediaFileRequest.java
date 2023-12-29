@@ -32,46 +32,11 @@ public class MediaFileRequest {
    private boolean showIgnored;
    private String path;
 
-//   public MediaFileRequest() {
-//   }
+   public boolean getIsFavorite() {
+      return isFavorite;
+   }
 
-//   public String getName() {
-//      return name;
-//   }
-//
-//   public void setName(String name) {
-//      this.name = name;
-//   }
-//
-//   public List<Long> getTags() {
-//      return tags;
-//   }
-//
-//   public void setTags(List<Long> tags) {
-//      this.tags = tags;
-//   }
-//
-//   public String getMediaType() {
-//      return mediaType;
-//   }
-//
-//   public void setMediaType(String typefilter) {
-//      this.mediaType = typefilter;
-//   }
-//
-//   public boolean getIsFavorite() {
-//      return isFavorite;
-//   }
-//
-//   public void setIsFavorite(boolean isFavorite) {
-//      this.isFavorite = isFavorite;
-//   }
-//
-//   public boolean getShowIgnored() {
-//      return showIgnored;
-//   }
-//
-//   public void setShowIgnored(boolean showIgnored) {
-//      this.showIgnored = showIgnored;
-//   }
+   public void setIsFavorite(boolean isFavorite) {
+      this.isFavorite = isFavorite;
+   }
 }

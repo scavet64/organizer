@@ -15,10 +15,8 @@
  */
 package com.scavettapps.organizer.files;
 
-import com.scavettapps.organizer.core.OrganizerRestController;
-import com.scavettapps.organizer.core.response.DataResponse;
-import com.scavettapps.organizer.core.response.Response;
 import java.io.FileNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -27,8 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+
+import com.scavettapps.organizer.core.OrganizerRestController;
+import com.scavettapps.organizer.core.response.DataResponse;
+import com.scavettapps.organizer.core.response.Response;
 
 /**
  *

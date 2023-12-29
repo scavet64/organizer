@@ -71,11 +71,10 @@ public class MediaFileController {
     */
    @GetMapping(value = "/{fileHash}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
-   ResponseEntity getFullVideo(
+   ResponseEntity<Resource> getFullVideo(
        @PathVariable String fileHash,
        @RequestHeader(value = "Range", required = false) String httpRangeList
-   )
-       throws FileNotFoundException {
+   ) throws FileNotFoundException {
       
       Resource fileResource = mediaFileService.loadFileAsResource(fileHash);
       ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(fileResource);
@@ -89,11 +88,10 @@ public class MediaFileController {
     */
    @GetMapping(value = "/{fileHash}/info")
    public @ResponseBody
-   ResponseEntity getVideoDetails(
+   ResponseEntity<Response> getVideoDetails(
        @PathVariable String fileHash,
        @RequestHeader(value = "Range", required = false) String httpRangeList
-   )
-       throws FileNotFoundException {
+   ) throws FileNotFoundException {
       
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
       var details = this.brampTranscodingService.getMediaDetails(mediaFile);
@@ -110,15 +108,15 @@ public class MediaFileController {
    ResponseEntity<Resource> transcodeVideo(
        @PathVariable String fileHash,
        @RequestHeader HttpHeaders headers
-   )
-       throws FileNotFoundException, TranscodingException, MalformedURLException {
+   ) throws FileNotFoundException, TranscodingException, MalformedURLException {
 
-      var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElse(null);
+      var mediaFile = this.mediaFileService
+         .getMediaFile(fileHash)
+         .orElse(null);
       
       var playlistFile = brampTranscodingService.transcodeStream(mediaFile);
       Resource resource = new UrlResource(playlistFile.toURI());
       
-      //Resource fileResource = mediaFileService.loadFileAsResource(fileHash);
       ResponseEntity<Resource> resp = ResponseEntity.status(HttpStatus.OK).body(resource);
       return resp;
    }
@@ -156,7 +154,7 @@ public class MediaFileController {
     */
    @GetMapping(value = "/{fileHash}/deovr")
    public @ResponseBody
-   ResponseEntity openVideoInDeoVR(
+   ResponseEntity<Response> openVideoInDeoVR(
       @PathVariable String fileHash,
       @RequestHeader(value = "Range", required = false) String httpRangeList
    )
@@ -164,12 +162,13 @@ public class MediaFileController {
 
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElseThrow();
       try {
-         var deovrExe = new File("\"F:\\Games\\Steam Games\\steamapps\\common\\DeoVR Video Player\\DeoVR.exe\"");
+         // TODO: Make environment variable
+         var deovrExe = new File("\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\DeoVR Video Player\\DeoVR.exe\"");
 
          var builder = new ProcessBuilder();
          builder.command(deovrExe.getPath() + " \"" + mediaFile.getPath() + "\"");
 
-         var process = builder.start();
+         builder.start();
       } catch (IOException ex) {
          return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
@@ -247,7 +246,7 @@ public class MediaFileController {
       MediaFileRequest request
    ) {
       Page<MediaFile> mediaPage = this.mediaFileService.getPageOfMediaFiles(pageable, request);
-      return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
+      return new ResponseEntity<Response>(new DataResponse(mediaPage), HttpStatus.OK);
    }
 
    /**
@@ -258,7 +257,7 @@ public class MediaFileController {
    @GetMapping("/random/video")
    public ResponseEntity<Response> getRandomVideo() {
       MediaFile mediaPage = this.mediaFileService.getRandomVideo();
-      return new ResponseEntity(new DataResponse(mediaPage), HttpStatus.OK);
+      return new ResponseEntity<Response>(new DataResponse(mediaPage), HttpStatus.OK);
    }
    
    /**

@@ -15,18 +15,16 @@
  */
 package com.scavettapps.organizer.folder;
 
+import java.util.List;
 import java.util.Optional;
 
-import com.scavettapps.organizer.media.MediaFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.scavettapps.organizer.folder.Folder;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import com.scavettapps.organizer.media.MediaFile;
 
 /**
  * @author Vincent Scavetta

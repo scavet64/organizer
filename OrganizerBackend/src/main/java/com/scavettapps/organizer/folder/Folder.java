@@ -15,22 +15,26 @@
  */
 package com.scavettapps.organizer.folder;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.media.MediaFile;
-
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.*;
-
 import com.sun.istack.NotNull;
-import java.io.File;
-import java.util.stream.Collectors;
 
 /**
  * @author Vincent Scavetta

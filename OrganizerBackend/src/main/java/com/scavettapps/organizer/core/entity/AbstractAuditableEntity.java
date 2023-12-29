@@ -15,11 +15,8 @@
  */
 package com.scavettapps.organizer.core.entity;
 
-import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,8 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractAuditableEntity<U, ID>
-        extends AbstractPersistableEntity<ID>
-        implements Serializable {
+        extends AbstractPersistableEntity<ID> {
 
    @CreatedDate
    LocalDate createdDate = LocalDate.now();
