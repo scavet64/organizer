@@ -185,7 +185,7 @@ public class BrampTranscodingService implements ITranscodingService {
 
          // Give a few seconds for the file to be generated. TODO: Look into doing this better
          try {
-            Thread.sleep(5000L);
+            Thread.sleep(2000L);
          } catch (InterruptedException ex) {
             Logger.getLogger(BrampTranscodingService.class.getName()).log(Level.SEVERE, null, ex);
          }

@@ -34,22 +34,22 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
    @Override
-   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-      registry.addResourceHandler("/**/*")
-         .addResourceLocations("classpath:/static/")
-         .resourceChain(true)
-         .addResolver(new PathResourceResolver() {
-            @Override
-            protected Resource getResource(String resourcePath,
-                                           Resource location) throws IOException {
-               Resource requestedResource = location.createRelative(resourcePath);
-               // If it's a separate resource that exists like an endpoint or an image, return
-               // that, otherwise return index.html
-               return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                  : new ClassPathResource("/static/index.html");
-            }
-         });
-   }
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver() {
+                    @Override
+                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
+                        Resource requestedResource = location.createRelative(resourcePath);
+                        // If it's a separate resource that exists like an endpoint or an image, return
+                        // that, otherwise return index.html
+                        return requestedResource.exists() && requestedResource.isReadable()
+                                ? requestedResource
+                                : new ClassPathResource("/static/index.html");
+                    }
+                });
+    }
 
    public void configurePathMatch(PathMatchConfigurer configurer) {
       configurer.addPathPrefix(

@@ -17,13 +17,13 @@ package com.scavettapps.organizer.browse;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
-import static org.junit.Assert.assertThat;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,7 +33,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author Vincent Scavetta.
  */
-@RunWith(MockitoJUnitRunner.class)
 public class BrowseControllerTest {
    
    private static ObjectMapper mapper = new ObjectMapper();

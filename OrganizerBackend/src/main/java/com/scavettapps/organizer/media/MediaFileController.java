@@ -33,6 +33,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -139,7 +141,7 @@ public class MediaFileController {
 
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElseThrow(EntityNotFoundException::new);
       
-      File partFileTarget = Paths.get(EnvironmentUtils.getDataPath(), mediaFile.getHash(),partfile + ".ts").toFile();
+      File partFileTarget = Paths.get(EnvironmentUtils.getDataPath(), mediaFile.getHash(), partfile).toFile();
       
       Resource resource = new UrlResource(partFileTarget.toURI());
       
