@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.scavettapps.organizer.Util.EnvironmentUtils;
 import com.scavettapps.organizer.core.ApplicationResourceService;
 import com.scavettapps.organizer.media.MediaFile;
 
@@ -45,9 +46,12 @@ import net.bramp.ffmpeg.progress.ProgressListener;
 @Service("bramp")
 public class BrampTranscodingService implements ITranscodingService {
 
-   private static final String TEMP_LOCATION = "C:/temp/organizer";  // TODO: Environment variable
    private static final String FFPROBE_EXE = "ffprobe.exe";
    private static final String FFMPEG_EXE = "ffmpeg.exe";
+
+   private static final String FFPROBE_UNIX = "ffprobe";
+   private static final String FFMPEG_UNIX = "ffmpeg";
+
    private static final String THUMBNAIL_FORMAT = ".png";
    private static final String VIDEO_FORMAT = "mp4";
    private static final String VIDEO_CODEC = "libx264";
@@ -59,14 +63,18 @@ public class BrampTranscodingService implements ITranscodingService {
 
    private final String ffmpegExeFile;
    private final String ffprobeExeFile;
+   private final String DATA_PATH;
 
    @Autowired
    public BrampTranscodingService(
        ApplicationResourceService applicationResourceService
    ) {
       this.applicationResourceService = applicationResourceService;
-      ffmpegExeFile = new File("./resources/" + FFMPEG_EXE).getPath();
-      ffprobeExeFile = new File("./resources/" + FFPROBE_EXE).getPath();
+      var isContainer = EnvironmentUtils.isRunningInsideDocker();
+      ffmpegExeFile = new File("./resources/" + (isContainer ? FFMPEG_UNIX : FFMPEG_EXE)).getPath();
+      ffprobeExeFile = new File("./resources/" + (isContainer ? FFPROBE_UNIX : FFPROBE_EXE)).getPath();
+
+      DATA_PATH = EnvironmentUtils.getDataPath();
    }
 
    /**
@@ -83,7 +91,7 @@ public class BrampTranscodingService implements ITranscodingService {
          FFmpeg ffmpeg = new FFmpeg(ffmpegExeFile);
          FFprobe ffprobe = new FFprobe(ffprobeExeFile);
 
-         File baseTempFolder = new File(TEMP_LOCATION);
+         File baseTempFolder = new File(DATA_PATH);
          if (!baseTempFolder.exists()) {
             baseTempFolder.mkdirs();
          }
@@ -118,7 +126,7 @@ public class BrampTranscodingService implements ITranscodingService {
              .setVideoCodec("h264") // Video using x264
              .setAudioCodec("aac") // using the aac codec
              .setPreset(PROFILE_PRESET)
-             .setFormat("ssegment") // should this be "segment"
+             .setFormat("segment")
              .addExtraArgs("-hls_flags", "delete_segments")
              .addExtraArgs("-segment_list", targetPlaylistFile.getAbsolutePath())
              .addExtraArgs("-segment_list_type", "hls")
@@ -183,7 +191,7 @@ public class BrampTranscodingService implements ITranscodingService {
    @Override
    public synchronized File transcodeMediaFile(MediaFile file) throws TranscodingException {
       try {
-         File folder = new File(TEMP_LOCATION);
+         File folder = new File(DATA_PATH);
          if (!folder.exists()) {
             folder.mkdirs();
          }
@@ -250,7 +258,7 @@ public class BrampTranscodingService implements ITranscodingService {
     */
    @Override
    public File getDefaultThumbnail(MediaFile multimediaFile) throws IOException {
-      File folder = new File(TEMP_LOCATION);
+      File folder = new File(DATA_PATH);
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -279,6 +287,7 @@ public class BrampTranscodingService implements ITranscodingService {
          executor.createJob(builder).run();
       } catch (Throwable ex) {
          // Catch anything this can throw and return our own exception
+         Logger.getLogger(BrampTranscodingService.class.getName()).log(Level.SEVERE, null, ex);
          throw new IOException("Failed generating thumbnail", ex);
       }
 

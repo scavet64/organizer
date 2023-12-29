@@ -15,6 +15,7 @@
  */
 package com.scavettapps.organizer.media;
 
+import com.scavettapps.organizer.Util.EnvironmentUtils;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.core.OrganizerRestController;
 import com.scavettapps.organizer.core.response.ErrorResponse;
@@ -32,6 +33,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.tools.ant.types.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -121,8 +124,6 @@ public class MediaFileController {
       return resp;
    }
    
-   private static final String TEMP_LOCATION = "C:/temp/organizer";
-   
    /**
     *
     * @param fileHash the file ID corresponding to the video
@@ -139,7 +140,7 @@ public class MediaFileController {
 
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElseThrow(EntityNotFoundException::new);
       
-      File partFileTarget = Paths.get(TEMP_LOCATION, mediaFile.getHash(),partfile + ".ts").toFile();
+      File partFileTarget = Paths.get(EnvironmentUtils.getDataPath(), mediaFile.getHash(),partfile + ".ts").toFile();
       
       Resource resource = new UrlResource(partFileTarget.toURI());
       
@@ -155,20 +156,33 @@ public class MediaFileController {
    @GetMapping(value = "/{fileHash}/deovr")
    public @ResponseBody
    ResponseEntity<Response> openVideoInDeoVR(
-      @PathVariable String fileHash,
-      @RequestHeader(value = "Range", required = false) String httpRangeList
+      @PathVariable String fileHash
    )
       throws FileNotFoundException {
 
+      if (EnvironmentUtils.isRunningInsideDocker()){
+         return ResponseEntity
+               .status(HttpStatus.BAD_REQUEST)
+               .body(new ErrorResponse("DeoVR Cannot be launched from a container"));
+      }
+
       var mediaFile = this.mediaFileService.getMediaFile(fileHash).orElseThrow();
       try {
-         // TODO: Make environment variable
+         // TODO: This will only work when running the jar locally and not via container.
          var deovrExe = new File("\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\DeoVR Video Player\\DeoVR.exe\"");
 
-         var builder = new ProcessBuilder();
-         builder.command(deovrExe.getPath() + " \"" + mediaFile.getPath() + "\"");
+         if (deovrExe.exists()){
+            var builder = new ProcessBuilder();
+            builder.command(deovrExe.getPath() + " \"" + mediaFile.getPath() + "\"");
 
-         builder.start();
+            builder.start();
+         } else {
+            return ResponseEntity
+               .status(HttpStatus.BAD_REQUEST)
+               .body(new ErrorResponse("DeoVR is not installed."));
+         }
+
+         
       } catch (IOException ex) {
          return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)

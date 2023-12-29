@@ -338,7 +338,7 @@ public class FileScanningService {
             thumbnailFile.length()
          );
       } catch (IOException ex) {
-         log.error("Could not generate thumbnail for video: " + newFile.getName());
+         log.error("Could not generate thumbnail for video: " + newFile.getName(), ex);
          return null;
       }
    }
