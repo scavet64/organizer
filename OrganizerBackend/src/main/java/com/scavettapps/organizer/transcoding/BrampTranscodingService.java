@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +79,16 @@ public class BrampTranscodingService implements ITranscodingService {
       DATA_PATH = EnvironmentUtils.getDataPath();
    }
 
+   private void ThrowIfExecutablePathIsNull(){
+      if (ffmpegExeFile == null || ffmpegExeFile.isEmpty()) {
+         throw new RuntimeException("Could not find ffmpeg executable");
+      }
+
+      if (ffprobeExeFile == null || ffprobeExeFile.isEmpty()) {
+         throw new RuntimeException("Could not find ffprobe executable");
+      }
+   }
+
    /**
     * Returns the playlist file for the transcoded version of the MediaFile provided.
     * If the file has already been transcoded before and the playlist file exists, the existing file will be returned and
@@ -85,8 +97,9 @@ public class BrampTranscodingService implements ITranscodingService {
     * @return
     * @throws TranscodingException
     */
-   public File transcodeStream(MediaFile file) throws TranscodingException {
+   public File transcodeStream(@Nonnull MediaFile file) throws TranscodingException {
       try {
+         ThrowIfExecutablePathIsNull();
 
          FFmpeg ffmpeg = new FFmpeg(ffmpegExeFile);
          FFprobe ffprobe = new FFprobe(ffprobeExeFile);
@@ -145,18 +158,22 @@ public class BrampTranscodingService implements ITranscodingService {
 
             @Override
             public void progress(Progress progress) {
-               double percentage = progress.out_time_ns / duration_ns;
+               try{
+                  double percentage = progress.out_time_ns / duration_ns;
 
-               // Print out interesting information about the progress
-               System.out.println(String.format(
-                   "[%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx",
-                   percentage * 100,
-                   progress.status,
-                   progress.frame,
-                   FFmpegUtils.toTimecode(progress.out_time_ns, TimeUnit.NANOSECONDS),
-                   progress.fps.doubleValue(),
-                   progress.speed
-               ));
+                  // Print out interesting information about the progress
+                  System.out.println(String.format(
+                     "[%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx",
+                     percentage * 100,
+                     progress.status,
+                     progress.frame,
+                     FFmpegUtils.toTimecode(progress.out_time_ns, TimeUnit.NANOSECONDS),
+                     progress.fps.doubleValue(),
+                     progress.speed
+                  ));
+               } catch (Throwable ex){
+                  Logger.getLogger(BrampTranscodingService.class.getName()).log(Level.SEVERE, null, ex);
+               }
             }
          });
 

@@ -18,5 +18,6 @@
         "thumbhash",
         "Tika",
         "ultrafast"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
