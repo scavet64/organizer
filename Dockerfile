@@ -13,7 +13,7 @@ COPY ./organizerClient .
 RUN npm run build -- --prod
 
 # Stage 2: Build Spring Boot API with Angular app
-FROM openjdk:17-alpine as java-angular-app
+FROM openjdk:21-slim as java-angular-app
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ COPY --from=angular-builder /app/dist/prod ./target/classes/static
 RUN ./mvnw package -f ./pom.xml -DskipTests
 
 # Stage 3: Final application image
-FROM openjdk:17-alpine
+FROM openjdk:21-slim
 
 WORKDIR /app
 
