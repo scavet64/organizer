@@ -6,3 +6,6 @@
 /organizerClient/.npm
 
 /OrganizerBackend/target
+
+/data
+/logs
