@@ -17,8 +17,8 @@ package com.scavettapps.organizer.media;
 
 import com.scavettapps.organizer.specifications.GenericFilterSpecification;
 import com.scavettapps.organizer.tag.Tag;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

@@ -18,13 +18,15 @@ package com.scavettapps.organizer.media;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
+
+import jakarta.transaction.Transactional;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

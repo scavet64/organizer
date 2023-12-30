@@ -76,7 +76,7 @@ public class MediaFileController {
    @GetMapping(value = "/{fileHash}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
    ResponseEntity<Resource> getFullVideo(
-       @PathVariable String fileHash,
+       @PathVariable("fileHash") String fileHash,
        @RequestHeader(value = "Range", required = false) String httpRangeList
    ) throws FileNotFoundException {
       
@@ -93,7 +93,7 @@ public class MediaFileController {
    @GetMapping(value = "/{fileHash}/info")
    public @ResponseBody
    ResponseEntity<Response> getVideoDetails(
-       @PathVariable String fileHash,
+       @PathVariable("fileHash") String fileHash,
        @RequestHeader(value = "Range", required = false) String httpRangeList
    ) throws FileNotFoundException {
       
@@ -110,7 +110,7 @@ public class MediaFileController {
    @GetMapping(value = "/{fileHash}/transcode", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
    ResponseEntity<Resource> transcodeVideo(
-       @PathVariable String fileHash,
+       @PathVariable("fileHash") String fileHash,
        @RequestHeader HttpHeaders headers
    ) throws FileNotFoundException, TranscodingException, MalformedURLException {
 
@@ -133,8 +133,8 @@ public class MediaFileController {
    @GetMapping(value = "/{fileHash}/{partfile}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
    public @ResponseBody
    ResponseEntity<Resource> videoPartFile(
-       @PathVariable String fileHash,
-       @PathVariable String partfile,
+       @PathVariable("fileHash") String fileHash,
+       @PathVariable("partfile") String partfile,
        @RequestHeader HttpHeaders headers
    )
        throws FileNotFoundException, TranscodingException, MalformedURLException {
@@ -157,7 +157,7 @@ public class MediaFileController {
    @GetMapping(value = "/{fileHash}/deovr")
    public @ResponseBody
    ResponseEntity<Response> openVideoInDeoVR(
-      @PathVariable String fileHash
+      @PathVariable("fileHash") String fileHash
    )
       throws FileNotFoundException {
 

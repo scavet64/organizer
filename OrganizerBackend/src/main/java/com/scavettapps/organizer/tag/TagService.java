@@ -18,7 +18,7 @@ package com.scavettapps.organizer.tag;
 import com.scavettapps.organizer.core.EntityAlreadyExistsException;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import java.util.Collection;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

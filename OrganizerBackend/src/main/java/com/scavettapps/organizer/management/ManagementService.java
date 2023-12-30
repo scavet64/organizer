@@ -18,8 +18,6 @@ package com.scavettapps.organizer.management;
 import java.util.HashMap;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,8 @@ import com.scavettapps.organizer.media.MediaFileRepository;
 import com.scavettapps.organizer.scanner.ScanLocationRepository;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
+
+import jakarta.transaction.Transactional;
 
 /**
  * @author Vincent Scavetta.
