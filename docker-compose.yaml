@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  organizer:
+    build: .
+    ports:
+      - 8080:8080
+    volumes: 
+      - C:\temp\docker-organizer:/app/data
+      # - <local-media-directory>:<container-mounted-directory>
