@@ -15,11 +15,14 @@
  */
 package com.scavettapps.organizer.transcoding;
 
-import com.scavettapps.organizer.media.MediaFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+
 import org.springframework.stereotype.Service;
+
+import com.scavettapps.organizer.media.MediaFile;
+
 import ws.schild.jave.AudioAttributes;
 import ws.schild.jave.Encoder;
 import ws.schild.jave.EncoderException;
@@ -38,7 +41,7 @@ public class JaveTranscodingService implements ITranscodingService {
    @Override
    public File transcodeMediaFile(MediaFile file) throws TranscodingException {
       try {
-         File folder = new File("C:/temp/");
+         File folder = new File("C:/temp/"); // TODO: Environment variable
          if (!folder.exists()) {
             folder.mkdirs();
          }

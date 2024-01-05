@@ -11,6 +11,11 @@
     </div> -->
   </div>
   <div>
+    <mat-form-field>
+      <input matInput [(ngModel)]="folderName" placeholder="Filter by Folder" (keyup.enter)="search()">
+    </mat-form-field>
+  </div>
+  <div>
     <div>
       <mat-form-field class="example-chip-list">
         <mat-chip-list #chipList aria-label="Tag selection">
@@ -82,6 +87,7 @@
     </div>
   </div>
   <div>
+    <button style="margin-right: 10px" mat-raised-button (click)="search()">Search</button>
     <button mat-raised-button (click)="playRandomVideo()">Play Random Video</button>
   </div>
 

@@ -15,14 +15,12 @@
  */
 package com.scavettapps.organizer.files;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
-import com.sun.istack.NotNull;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 /**
  *

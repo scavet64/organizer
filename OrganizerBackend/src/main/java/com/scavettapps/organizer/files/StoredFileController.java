@@ -15,10 +15,8 @@
  */
 package com.scavettapps.organizer.files;
 
-import com.scavettapps.organizer.core.OrganizerRestController;
-import com.scavettapps.organizer.core.response.DataResponse;
-import com.scavettapps.organizer.core.response.Response;
 import java.io.FileNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -27,8 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+
+import com.scavettapps.organizer.core.OrganizerRestController;
+import com.scavettapps.organizer.core.response.DataResponse;
+import com.scavettapps.organizer.core.response.Response;
 
 /**
  *
@@ -46,7 +46,7 @@ public class StoredFileController {
    }
 
    @GetMapping(value = "/{fileID}/full", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-   public ResponseEntity<Resource> getFullVideo(@PathVariable long fileID)
+   public ResponseEntity<Resource> getFullVideo(@PathVariable("fileID") long fileID)
        throws FileNotFoundException {
 
       Resource fileResource = StoredFileService.loadFileAsResource(fileID);

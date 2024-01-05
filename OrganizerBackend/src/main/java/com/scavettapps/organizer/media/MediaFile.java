@@ -15,17 +15,16 @@
  */
 package com.scavettapps.organizer.media;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.scavettapps.organizer.folder.Folder;
 import com.scavettapps.organizer.tag.Tag;
 import java.util.Set;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import com.scavettapps.organizer.core.entity.AbstractPersistableEntity;
 import com.scavettapps.organizer.files.StoredFile;
-import com.sun.istack.NotNull;
+
+import java.sql.Clob;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -50,8 +49,7 @@ public class MediaFile extends AbstractPersistableEntity<Long> {
    private long size;
 
    @NotNull
-   @Lob
-   @Column(name = "path")
+   @Column(name = "path", columnDefinition = "nvarchar(1000)")
    private String path;
 
    @NotNull

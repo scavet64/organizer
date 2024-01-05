@@ -15,9 +15,10 @@
  */
 package com.scavettapps.organizer.media.json;
 
-import com.sun.istack.NotNull;
 import java.util.Collection;
 import java.util.Objects;
+
+import jakarta.validation.constraints.NotNull;
 
 /**
  *

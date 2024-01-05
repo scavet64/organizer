@@ -1,0 +1,11 @@
+# Ignore node_modules and npm-related files during Angular build
+/organizerClient/node_modules
+/organizerClient/dist
+/organizerClient/npm-debug.log
+/organizerClient/yarn-error.log
+/organizerClient/.npm
+
+/OrganizerBackend/target
+
+/data
+/logs

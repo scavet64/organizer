@@ -50,6 +50,7 @@ export class MediaComponent implements OnInit {
 
   // Search related properties.
   searchBox: string;
+  folderName: string;
   selectedTags: TagModel[] = [];
   sortColumn: string;
   sortDirection: string;
@@ -92,7 +93,8 @@ export class MediaComponent implements OnInit {
       this.mediaFilter,
       this.onlyShowFavorite,
       page,
-      pageSize
+      pageSize,
+      this.folderName
     );
   }
 
@@ -132,6 +134,7 @@ export class MediaComponent implements OnInit {
 
         console.log(params);
         this.searchBox = params.name;
+        this.folderName = params.path;
         this.sortColumn = params.sortColumn || MediaComponent.DEFAULT_SORT_COLUMN;
         this.sortDirection = params.sortDirection || MediaComponent.DEFAULT_SORT_DIRECTION;
         this.mediaFilter = params.mediaType || MediaComponent.DEFAULT_MEDIA_TYPE;

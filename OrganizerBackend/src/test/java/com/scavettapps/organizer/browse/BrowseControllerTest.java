@@ -15,26 +15,24 @@
  */
 package com.scavettapps.organizer.browse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
- * TODO: Make this use folders inside the repository so that they can work wherever and not just 
- * on my PC
  * @author Vincent Scavetta.
  */
-@RunWith(MockitoJUnitRunner.class)
 public class BrowseControllerTest {
    
    private static ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +64,7 @@ public class BrowseControllerTest {
           .post("/browse")
           .accept(MediaType.APPLICATION_JSON)
           .contentType(MediaType.APPLICATION_JSON)
-      .content(mapper.writeValueAsString(new BrowseRequest("E:\\", false))))
+      .content(mapper.writeValueAsString(new BrowseRequest("./", false))))
           .andExpect(status().isOk())
           .andReturn().getResponse()
           .getContentAsString();
@@ -81,7 +79,7 @@ public class BrowseControllerTest {
           .post("/browse")
           .accept(MediaType.APPLICATION_JSON)
           .contentType(MediaType.APPLICATION_JSON)
-      .content(mapper.writeValueAsString(new BrowseRequest("E:\\", true))))
+      .content(mapper.writeValueAsString(new BrowseRequest("./", true))))
           .andExpect(status().isOk())
           .andReturn().getResponse()
           .getContentAsString();

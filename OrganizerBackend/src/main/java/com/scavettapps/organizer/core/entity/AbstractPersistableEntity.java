@@ -17,11 +17,10 @@ package com.scavettapps.organizer.core.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 
 /**
  * @author Vincent Scavetta
@@ -32,9 +31,6 @@ public abstract class AbstractPersistableEntity<ID> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private ID id;
-//
-//    @Version
-//    private Long version;
 
     /**
      * @return the id
@@ -49,19 +45,4 @@ public abstract class AbstractPersistableEntity<ID> implements Serializable {
     public void setId(ID id) {
         this.id = id;
     }
-
-//    /**
-//     * @return the version
-//     */
-//    public Long getVersion() {
-//        return version;
-//    }
-//
-//    /**
-//     * @param version the version to set
-//     */
-//    public void setVersion(Long version) {
-//        this.version = version;
-//    }
-
 }

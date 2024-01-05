@@ -15,17 +15,8 @@
  */
 package com.scavettapps.organizer.management;
 
-import com.scavettapps.organizer.files.StoredFileRepository;
-import com.scavettapps.organizer.folder.FolderRepository;
-import com.scavettapps.organizer.management.backup.BackupFile;
-import com.scavettapps.organizer.management.backup.BackupMediaTags;
-import com.scavettapps.organizer.media.MediaFileRepository;
-import com.scavettapps.organizer.media.json.MediaTags;
-import com.scavettapps.organizer.scanner.ScanLocationRepository;
-import com.scavettapps.organizer.tag.Tag;
-import com.scavettapps.organizer.tag.TagRepository;
-
-import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +24,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Set;
+import com.scavettapps.organizer.files.StoredFileRepository;
+import com.scavettapps.organizer.folder.FolderRepository;
+import com.scavettapps.organizer.management.backup.BackupMediaTags;
+import com.scavettapps.organizer.media.MediaFileRepository;
+import com.scavettapps.organizer.scanner.ScanLocationRepository;
+import com.scavettapps.organizer.tag.Tag;
+import com.scavettapps.organizer.tag.TagRepository;
+
+import jakarta.transaction.Transactional;
 
 /**
  * @author Vincent Scavetta.

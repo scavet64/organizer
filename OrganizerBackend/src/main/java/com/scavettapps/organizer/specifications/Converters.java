@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.stereotype.Service;
+
+import jakarta.annotation.PostConstruct;
 
 
 /**

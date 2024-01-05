@@ -15,16 +15,17 @@
  */
 package com.scavettapps.organizer.files;
 
-import com.scavettapps.organizer.core.EntityNotFoundException;
-import com.scavettapps.organizer.media.MediaFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+
+import com.scavettapps.organizer.core.EntityNotFoundException;
 
 /**
  *

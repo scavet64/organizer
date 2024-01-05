@@ -11,6 +11,7 @@ export class MediaSearchRequest extends PageRequest {
   mediaType: string;
   onlyShowFavorite: boolean;
   showIgnored: boolean;
+  folderName: string;
 
   constructor(
     name: string,
@@ -20,7 +21,8 @@ export class MediaSearchRequest extends PageRequest {
     mediaType: string,
     onlyShowFavorite: boolean,
     pageNumber: number,
-    resultsPerPage: number
+    resultsPerPage: number,
+    folderName: string
     ) {
     super(pageNumber, resultsPerPage);
     this.name = name;
@@ -31,11 +33,13 @@ export class MediaSearchRequest extends PageRequest {
     this.onlyShowFavorite = onlyShowFavorite;
     this.tagIds = tags;
     this.showIgnored = false;
+    this.folderName = folderName;
   }
 
   toUrlParams() {
     return {
       ...((this.name && this.name !== '') && {name: this.name}),
+      ...((this.folderName && this.folderName !== '') && {path: this.folderName}),
       ...((this.mediaType && this.mediaType !== '') && {mediaType: this.mediaType}),
       ...(this.tagIds.length > 0 && {tagIds: this.tagIds.toString()}),
       ...(this.sortColumn !== 'dateAdded' && { sortColumn: this.sortColumn }),
@@ -51,6 +55,10 @@ export class MediaSearchRequest extends PageRequest {
     let params = super.toHttpParams();
     if (this.name && this.name !== '') {
       params = params.set('name', `like:${this.name}`.toLowerCase());
+    }
+
+    if (this.folderName && this.folderName !== '') {
+      params = params.set('path', `like:${this.folderName}`.toLowerCase());
     }
 
     if (this.mediaType && this.mediaType !== '') {

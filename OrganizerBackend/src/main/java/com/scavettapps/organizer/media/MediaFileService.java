@@ -18,15 +18,15 @@ package com.scavettapps.organizer.media;
 import com.scavettapps.organizer.core.EntityNotFoundException;
 import com.scavettapps.organizer.tag.Tag;
 import com.scavettapps.organizer.tag.TagRepository;
-import com.scavettapps.organizer.transcoding.BrampTranscodingService;
-import com.scavettapps.organizer.transcoding.TranscodingException;
+
+import jakarta.transaction.Transactional;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +36,9 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -233,6 +229,18 @@ public class MediaFileService {
          }
       }
 
+      if (params.getPath() != null) {
+         var spec = mediaFileSpecification.getStringTypeSpecification(
+            "path",
+            params.getPath().toLowerCase()
+         );
+         if (specs == null) {
+            specs = Specification.where(spec);
+         } else {
+            specs = specs.and(spec);
+         }
+      }
+
       if (params.getIsFavorite()) {
          if (specs == null) {
             specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
@@ -247,7 +255,7 @@ public class MediaFileService {
          }
       }
 
-      if (!params.getShowIgnored()) {
+      if (!params.isShowIgnored()) {
          if (specs == null) {
             specs = Specification.where(mediaFileSpecification.getBooleanTypeSpecification(
                "isIgnored",

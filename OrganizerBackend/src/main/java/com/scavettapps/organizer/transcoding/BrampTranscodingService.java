@@ -15,16 +15,21 @@
  */
 package com.scavettapps.organizer.transcoding;
 
-import com.scavettapps.organizer.core.ApplicationResourceService;
-import com.scavettapps.organizer.media.MediaFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.annotation.Nonnull;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.scavettapps.organizer.Util.EnvironmentUtils;
+import com.scavettapps.organizer.core.ApplicationResourceService;
+import com.scavettapps.organizer.media.MediaFile;
 
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
@@ -35,8 +40,6 @@ import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  *
@@ -45,43 +48,63 @@ import org.springframework.stereotype.Service;
 @Service("bramp")
 public class BrampTranscodingService implements ITranscodingService {
 
-   private static final String TEMP_LOCATION = "C:/temp/organizer";
    private static final String FFPROBE_EXE = "ffprobe.exe";
    private static final String FFMPEG_EXE = "ffmpeg.exe";
+
+   private static final String FFPROBE_UNIX = "ffprobe";
+   private static final String FFMPEG_UNIX = "ffmpeg";
+
    private static final String THUMBNAIL_FORMAT = ".png";
    private static final String VIDEO_FORMAT = "mp4";
    private static final String VIDEO_CODEC = "libx264";
    private static final String VIDEO_MP4 = "video/mp4";
    private static final String VIDEO_WEBM = "video/webm";
+   private static final String PROFILE_PRESET = "ultrafast";
 
    private final ApplicationResourceService applicationResourceService;
 
    private final String ffmpegExeFile;
    private final String ffprobeExeFile;
-
+   private final String DATA_PATH;
 
    @Autowired
    public BrampTranscodingService(
        ApplicationResourceService applicationResourceService
    ) {
       this.applicationResourceService = applicationResourceService;
-      ffmpegExeFile = new File("./resources/" + FFMPEG_EXE).getPath();
-      ffprobeExeFile = new File("./resources/" + FFPROBE_EXE).getPath();
+      var isContainer = EnvironmentUtils.isRunningInsideDocker();
+      ffmpegExeFile = new File("./resources/" + (isContainer ? FFMPEG_UNIX : FFMPEG_EXE)).getPath();
+      ffprobeExeFile = new File("./resources/" + (isContainer ? FFPROBE_UNIX : FFPROBE_EXE)).getPath();
+
+      DATA_PATH = EnvironmentUtils.getDataPath();
+   }
+
+   private void ThrowIfExecutablePathIsNull(){
+      if (ffmpegExeFile == null || ffmpegExeFile.isEmpty()) {
+         throw new RuntimeException("Could not find ffmpeg executable");
+      }
+
+      if (ffprobeExeFile == null || ffprobeExeFile.isEmpty()) {
+         throw new RuntimeException("Could not find ffprobe executable");
+      }
    }
 
    /**
-    *
+    * Returns the playlist file for the transcoded version of the MediaFile provided.
+    * If the file has already been transcoded before and the playlist file exists, the existing file will be returned and
+    * no transcoding will take place.
     * @param file
     * @return
     * @throws TranscodingException
     */
-   public File transcodeStream(MediaFile file) throws TranscodingException {
+   public File transcodeStream(@Nonnull MediaFile file) throws TranscodingException {
       try {
+         ThrowIfExecutablePathIsNull();
 
          FFmpeg ffmpeg = new FFmpeg(ffmpegExeFile);
          FFprobe ffprobe = new FFprobe(ffprobeExeFile);
 
-         File baseTempFolder = new File(TEMP_LOCATION);
+         File baseTempFolder = new File(DATA_PATH);
          if (!baseTempFolder.exists()) {
             baseTempFolder.mkdirs();
          }
@@ -115,13 +138,13 @@ public class BrampTranscodingService implements ITranscodingService {
              // Set Options
              .setVideoCodec("h264") // Video using x264
              .setAudioCodec("aac") // using the aac codec
-             .setPreset("ultrafast")
-             .setFormat("ssegment")
+             .setPreset(PROFILE_PRESET)
+             .setFormat("segment")
              .addExtraArgs("-hls_flags", "delete_segments")
              .addExtraArgs("-segment_list", targetPlaylistFile.getAbsolutePath())
              .addExtraArgs("-segment_list_type", "hls")
              .addExtraArgs("-segment_times", segmentTimes)
-            .addExtraArgs("-g", "30")
+             .addExtraArgs("-g", "30")
              .addExtraArgs("-map", "0")
              .addExtraArgs("-pix_fmt", "yuv420p") // To support iPhones, this needed to be set.
 
@@ -135,18 +158,22 @@ public class BrampTranscodingService implements ITranscodingService {
 
             @Override
             public void progress(Progress progress) {
-               double percentage = progress.out_time_ns / duration_ns;
+               try{
+                  double percentage = progress.out_time_ns / duration_ns;
 
-               // Print out interesting information about the progress
-               System.out.println(String.format(
-                   "[%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx",
-                   percentage * 100,
-                   progress.status,
-                   progress.frame,
-                   FFmpegUtils.toTimecode(progress.out_time_ns, TimeUnit.NANOSECONDS),
-                   progress.fps.doubleValue(),
-                   progress.speed
-               ));
+                  // Print out interesting information about the progress
+                  System.out.println(String.format(
+                     "[%.0f%%] status:%s frame:%d time:%s ms fps:%.0f speed:%.2fx",
+                     percentage * 100,
+                     progress.status,
+                     progress.frame,
+                     FFmpegUtils.toTimecode(progress.out_time_ns, TimeUnit.NANOSECONDS),
+                     progress.fps.doubleValue(),
+                     progress.speed
+                  ));
+               } catch (Throwable ex){
+                  Logger.getLogger(BrampTranscodingService.class.getName()).log(Level.SEVERE, null, ex);
+               }
             }
          });
 
@@ -158,7 +185,7 @@ public class BrampTranscodingService implements ITranscodingService {
 
          // Give a few seconds for the file to be generated. TODO: Look into doing this better
          try {
-            Thread.sleep(5000L);
+            Thread.sleep(2000L);
          } catch (InterruptedException ex) {
             Logger.getLogger(BrampTranscodingService.class.getName()).log(Level.SEVERE, null, ex);
          }
@@ -181,7 +208,7 @@ public class BrampTranscodingService implements ITranscodingService {
    @Override
    public synchronized File transcodeMediaFile(MediaFile file) throws TranscodingException {
       try {
-         File folder = new File(TEMP_LOCATION);
+         File folder = new File(DATA_PATH);
          if (!folder.exists()) {
             folder.mkdirs();
          }
@@ -193,32 +220,22 @@ public class BrampTranscodingService implements ITranscodingService {
          FFmpegProbeResult in = ffprobe.probe(source.getAbsolutePath());
 
          FFmpegBuilder builder = new FFmpegBuilder()
-             .setInput(source.getAbsolutePath()) // Filename, or a FFmpegProbeResult
-             .overrideOutputFiles(true) // Override the output if it exists
+             .setInput(source.getAbsolutePath()) // Can be the filename, or a FFmpegProbeResult
+             .overrideOutputFiles(true)
 
              .addOutput(target.getAbsolutePath()) // Filename for the destination
-             .setFormat("mp4") // Format is inferred from filename, or can be set
-             //.setTargetSize(250_000) // Aim for a 250KB file
+             .setFormat(VIDEO_FORMAT) 
 
-             .disableSubtitle() // No subtiles
-
-             //.setAudioChannels(1) // Mono audio
-             //.setAudioCodec("aac") // using the aac codec
-             //.setAudioSampleRate(48_000) // at 48KHz
-             //.setAudioBitRate(32768) // at 32 kbit/s
-
-             .setVideoCodec(VIDEO_CODEC) // Video using x264
-             .setPreset("ultrafast")
-             //.setVideoBitRate(in.getFormat().bit_rate > 3000 ? 3000 : in.getFormat().bit_rate)
+             .setVideoCodec(VIDEO_CODEC)
+             .setPreset(PROFILE_PRESET)
              .setVideoQuality(5)
-             .setVideoResolution(1920, 1080)
-             .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL) // Allow FFmpeg to use experimental specs
+             .setVideoResolution(1920, 1080)   // TODO: Dynamically scale depending on the source and player
+             .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)  // Allow FFmpeg to use experimental specs
              .done();
 
          FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
-//         // Run a one-pass encode
-//         executor.createJob(builder).run();
+         // Run a one-pass encode with a listener to print out progress to the console
          FFmpegJob job = executor.createJob(builder, new ProgressListener() {
 
             // Using the FFmpegProbeResult determine the duration of the input
@@ -243,8 +260,6 @@ public class BrampTranscodingService implements ITranscodingService {
 
          job.run();
 
-         // Or run a two-pass encode (which is better quality at the cost of being slower)
-         //executor.createTwoPassJob(builder).run();
          return target;
       } catch (IOException ex) {
          throw new TranscodingException(ex);
@@ -260,7 +275,7 @@ public class BrampTranscodingService implements ITranscodingService {
     */
    @Override
    public File getDefaultThumbnail(MediaFile multimediaFile) throws IOException {
-      File folder = new File(TEMP_LOCATION);
+      File folder = new File(DATA_PATH);
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -289,6 +304,7 @@ public class BrampTranscodingService implements ITranscodingService {
          executor.createJob(builder).run();
       } catch (Throwable ex) {
          // Catch anything this can throw and return our own exception
+         Logger.getLogger(BrampTranscodingService.class.getName()).log(Level.SEVERE, null, ex);
          throw new IOException("Failed generating thumbnail", ex);
       }
 

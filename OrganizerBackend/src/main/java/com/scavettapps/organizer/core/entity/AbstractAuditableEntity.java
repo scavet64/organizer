@@ -15,15 +15,12 @@
  */
 package com.scavettapps.organizer.core.entity;
 
-import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,8 +34,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractAuditableEntity<U, ID>
-        extends AbstractPersistableEntity<ID>
-        implements Serializable {
+        extends AbstractPersistableEntity<ID> {
 
    @CreatedDate
    LocalDate createdDate = LocalDate.now();

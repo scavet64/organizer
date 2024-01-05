@@ -15,45 +15,22 @@
  */
 package com.scavettapps.organizer.media;
 
+import lombok.Data;
+
 import java.util.List;
 
 /**
  *
  * @author Vincent Scavetta
  */
+@Data
 public class MediaFileRequest {
    private String name;
    private List<Long> tags;
    private String mediaType;
    private boolean isFavorite;
    private boolean showIgnored;
-
-   public MediaFileRequest() {
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
-   public List<Long> getTags() {
-      return tags;
-   }
-
-   public void setTags(List<Long> tags) {
-      this.tags = tags;
-   }
-
-   public String getMediaType() {
-      return mediaType;
-   }
-
-   public void setMediaType(String typefilter) {
-      this.mediaType = typefilter;
-   }
+   private String path;
 
    public boolean getIsFavorite() {
       return isFavorite;
@@ -61,13 +38,5 @@ public class MediaFileRequest {
 
    public void setIsFavorite(boolean isFavorite) {
       this.isFavorite = isFavorite;
-   }
-
-   public boolean getShowIgnored() {
-      return showIgnored;
-   }
-
-   public void setShowIgnored(boolean showIgnored) {
-      this.showIgnored = showIgnored;
    }
 }
